@@ -10,6 +10,7 @@ book:
   chapters:
     - index.qmd
     - intro.qmd
+    - heatmaps.qmd
     - summary.qmd
     - references.qmd
 
