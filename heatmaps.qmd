@@ -107,8 +107,53 @@ ggplot(df, aes(Var1, Var2, fill = Value)) +
   ) 
 ```
 
+As a quick aside - what happens if we have missing values in our `Value` column? Let's introduce five random `NA` values into that column:
+
 ```{r}
+df$Value[sample(1:25,5)]<-NA
+head(df)
 
 ```
 
-making diagonal NA, setting to white.
+Now we can plot with the same code as above:
+
+```{r}
+ggplot(df, aes(Var1, Var2, fill = Value)) + 
+  geom_tile(color="white", linewidth=1.75) +
+  coord_equal() +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  scale_fill_continuous(low="#edf4f7", high="#123abc") +
+  xlab("") + 
+  ylab("") +
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color="black", size=rel(1.2)),
+    legend.text = element_text(color="black", size=rel(1.1)),
+    legend.background = element_rect(fill="white"),
+    legend.position = "bottom",
+    legend.title=element_blank()
+  ) 
+```
+
+What happens is that these default to a dark-greyish beige color, as seen above. In some circumstances, this color fill will be fine. However, in other situations we might want to dictate the color. Here, we make those `NA` cells white by adding `na.value = "white"` inside our `scale_fill_continuous()` .
+
+```{r}
+
+ggplot(df, aes(Var1, Var2, fill = Value)) + 
+  geom_tile(color="white", linewidth=1.75) +
+  coord_equal() +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  scale_fill_continuous(low="#edf4f7", high="#123abc", na.value = "white") +
+  xlab("") + 
+  ylab("") +
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color="black", size=rel(1.2)),
+    legend.text = element_text(color="black", size=rel(1.1)),
+    legend.background = element_rect(fill="white"),
+    legend.position = "bottom",
+    legend.title=element_blank()
+  )
+```
