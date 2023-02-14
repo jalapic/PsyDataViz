@@ -178,7 +178,6 @@ head(df1)
 Using the same code as above - just changing the colors to a green palette:
 
 ```{r}
-
 ggplot(df1, aes(Var1, Var2, fill = Value)) + 
   geom_tile(color="white", linewidth=1.75) +
   coord_equal() +
@@ -217,5 +216,161 @@ ggplot(df1, aes(Var1, Var2, fill = Value)) +
     legend.title=element_blank()
   )
 ```
+
+<br>
+
+**Example 3: Correlation Matrices**
+
+A common usage of heatmaps is to illustrate the correlations between a set of continuous variables.
+
+First, we should look at some data. Let's import the dataset `cordata.csv` from our folder `data_raw`. This dataset contains eight continuous variables, boringly named V1, V2,...... V8.
+
+```{r, warning=FALSE, message=FALSE}
+cd <- read.csv("data_raw/cordata.csv")
+head(cd)
+```
+
+A quick way to get all the correlations between continuous variables in a data.frame is to use `cor()`. I'm surrounding this function with `round()` to make the output more easy to read:
+
+```{r}
+cdmat <- round(cor(cd),2)
+cdmat
+```
+
+This matrix is essentially what we want to plot, however, to do that, we first need to turn it into a dataframe with three columns. The first two being the row and column of the eventual plot and the third being the fill value (the correlation coeffecient). We can `melt()` the matrix into that dataframe:
+
+```{r}
+cdmat.df <- reshape2::melt(cdmat)
+head(cdmat.df)
+```
+
+Let's plot this long data using similar code to above. However, here I'm using `scale_fill_gradient2()` to set low, mid and high colors at Pearson correlations of -1, 0 and +1 respectively:
+
+```{r, warning=FALSE}
+ggplot(cdmat.df, aes(Var1, Var2, fill = value)) + 
+  geom_tile(color="white", linewidth=1.75) +
+  coord_equal() +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Pearson's r")  +
+  xlab("") + 
+  ylab("") +
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color="black", size=rel(1.2)),
+    legend.text = element_text(color="black", size=rel(1.0)),
+    legend.background = element_rect(fill="white"),
+    legend.position = "bottom"
+  )
+```
+
+There are three problems with this matrix. First, who cares that the diagonals are all r=1. We don't need that information. Second, correlation matrices have symmetry along the axis, and so we could just plot either the upper or lower triangle of the matrix. Third, these variables could be reordered to make the relationships between variables be more intuitive.
+
+Let's get rid of the diagonal and only keep the lower triangle. We can use the functions `diag()` and `upper.tri()` to make the diagonal and top triangle of the matrix `NA`. Then we melt the matrix again:
+
+```{r}
+diag(cdmat)<-NA
+cdmat[upper.tri(cdmat)]<-NA
+cdmat
+```
+
+```{r}
+cdlt.df <- reshape2::melt(cdmat)
+head(cdlt.df)
+```
+
+We can plot this in the same way as before but adding `na.value="white"` inside the `scale_fill_gradient2()` to white out the `NA` values, leaving the bottom of the matrix.
+
+```{r, warning=FALSE}
+ggplot(cdlt.df, aes(Var1, Var2, fill = value)) + 
+  geom_tile(color="white", linewidth=1.75) +
+  coord_equal() +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       na.value="white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Pearson's r")  +
+  xlab("") + 
+  ylab("") +
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color="black", size=rel(1.2)),
+    legend.text = element_text(color="black", size=rel(1.0)),
+    legend.background = element_rect(fill="white"),
+    legend.position = "bottom"
+  )
+```
+
+To reorder the matrix, we first need to recreate our original correlation matrix.
+
+```{r, warning=FALSE, message=FALSE}
+cdmat1 <- round(cor(cd),2)
+cdmat1
+```
+
+Next, we can use a clustering method such as hierarchical clustering to identify the relationships between each variable:
+
+```{r, warning=FALSE}
+dd <- as.dist((1-cdmat1)/2)
+hc <- hclust(dd)
+cdmat1 <-cdmat1[hc$order, hc$order]
+cdmat1
+```
+
+We then do the same process of adding `NA` to the diagonal and upper triangle of the matrix, and we can plot:
+
+```{r, warning=FALSE}
+diag(cdmat1)<-NA
+cdmat1[upper.tri(cdmat1)]<-NA
+cdlt1.df <- reshape2::melt(cdmat1)
+
+ggplot(cdlt1.df, aes(Var1, Var2, fill = value)) + 
+  geom_tile(color="white", linewidth=1.75) +
+  coord_equal() +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       na.value="white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Pearson's r")  +
+  xlab("") + 
+  ylab("") +
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color="black", size=rel(1.2)),
+    legend.text = element_text(color="black", size=rel(1.0)),
+    legend.background = element_rect(fill="white"),
+    legend.position = "bottom"
+  )
+```
+
+One final step that we might want to do is to add the actual correlations over the top of the colored cells. We can add this with `geom_text()`.
+
+```{r, warning=FALSE}
+ggplot(cdlt1.df, aes(Var1, Var2, fill = value)) + 
+  geom_tile(color="white", linewidth=1.75) +
+  coord_equal() +
+  geom_text(aes(Var1, Var2, label = value), color = "black", size = 3.5) +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       na.value="white",
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Pearson's r")  +
+  xlab("") + 
+  ylab("") +
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_text(color="black", size=rel(1.2)),
+    legend.text = element_text(color="black", size=rel(1.0)),
+    legend.background = element_rect(fill="white"),
+    legend.position = "bottom"
+  ) 
+```
+
+<br>
 
 <br>
