@@ -1,6 +1,6 @@
 # Histograms
 
-Histograms are very common data visualizations. Histograms plot the frequency on the y-axis of a continuous variable on the x-axis.  For instance, let's say we had the following data, that we'll call `d1`:
+Histograms are very common data visualizations. Histograms plot the frequency on the y-axis of a continuous variable on the x-axis. For instance, let's say we had the following data, that we'll call `d1`:
 
 ```{r}
 d1 <- data.frame(vals = c(1, 3, 4, 3, 6, 7, 2, 9, 3, 2, 2, 3, 1, 5, 4, 4))
@@ -12,23 +12,22 @@ If we wanted to know how many of each number in the column vals we have, we coul
 ```{r}
 table(d1$vals)
 ```
+
 The table above represents the **frequency table** or **frequency count** of the data. We can plot these data like this:
 
 ![](img/hist1.png)
 
 In this histogram, the height of each bar represents the total amount of the number on the x-axis. So, the height of the bar at `x=9` is one. This mean we have 1 of this value in our data distribution. The height of the bar at `x=3` is four, therefore we have four in our distribution for the value 3.
 
-In the example above, the width of the bars is precisely 1. We could change the width to say two.  This is illustrated below:
+In the example above, the width of the bars is precisely 1. We could change the width to say two. This is illustrated below:
 
 ![](img/hist2.png)
 
-Here, the first bar is at height 9. It spans the values of x between 1-3.  The second bar is at height 4, this include values between 3.01-5, and so on.  What we did here was to adjust the `binwidth`. When we have large distributions, adjusting the binwidth helps us to interpret the data more easily. 
-
+Here, the first bar is at height 9. It spans the values of x between 1-3. The second bar is at height 4, this include values between 3.01-5, and so on. What we did here was to adjust the `binwidth`. When we have large distributions, adjusting the binwidth helps us to interpret the data more easily.
 
 ## Histograms with ggplot2
 
 To describe how to make histograms with the `ggplot()` function, lets look at the `films.csv` dataset.
-
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -40,17 +39,14 @@ This dataset contains 146 rows of data. Each row has a unique film, with the fin
 
 If we wished to plot the distribution of `imdb` scores, we need to put `x=imdb` inside the `aes()` part of the ggplot code. That is to tell it to plot these scores on the x-axis. We do not need to put a `y=` inside this, as we are not plotting anything from our dataset on the y-axis. Instead, ggplot2 will count up the frequency of our scores between regular intervals of `imdb` scores.
 
-We then add `+ geom_histogram()` to tell it to make a histogram.  All together it looks like this:
-
+We then add `+ geom_histogram()` to tell it to make a histogram. All together it looks like this:
 
 ```{r, fig.width = 5, fig.height = 3}
 ggplot(film, aes(x=imdb)) + 
   geom_histogram()  
 ```
 
-
-Now, this doesn't look great and we have several problems with it.  The two major problems that we get with our first histograms are.  1) The binwidth is almost never appropriate. We need to tell ggplot exactly what we want the binwidth on the x-axis to be. That is, what interval do we want our scores to be counted over. Looking at the graph, our scores range from just below 4 to about 8.6.  Perhaps a better interval would be 0.2, so we count how many films had scores between 3.6-3.8, 3.8-4.0, 4.0-4.2, 4.2-4.4, ........ 8.4-8.6, 8.6-8.8 etc.  2) Having black bars makes it really hard to distinguish the bars when they are close in heights. We need to fix the color scheme.
-
+Now, this doesn't look great and we have several problems with it. The two major problems that we get with our first histograms are. 1) The binwidth is almost never appropriate. We need to tell ggplot exactly what we want the binwidth on the x-axis to be. That is, what interval do we want our scores to be counted over. Looking at the graph, our scores range from just below 4 to about 8.6. Perhaps a better interval would be 0.2, so we count how many films had scores between 3.6-3.8, 3.8-4.0, 4.0-4.2, 4.2-4.4, ........ 8.4-8.6, 8.6-8.8 etc. 2) Having black bars makes it really hard to distinguish the bars when they are close in heights. We need to fix the color scheme.
 
 OK, let's make the bars dodgerblue and border them white. Inside `geom_histogram()` we use `color="white"` to represent the outside *lines* of the bars. We use `fill="dodgerblue` to indicate the color inside the bars should be dodgerblue.
 
@@ -59,19 +55,16 @@ ggplot(film, aes(x=imdb)) +
   geom_histogram(color="white", fill="dodgerblue") 
 ```
 
-
-Now let's fix that binwidth.  To resolve this, inside `geom_histogram()` we write `binwidth = 0.2`.
-
+Now let's fix that binwidth. To resolve this, inside `geom_histogram()` we write `binwidth = 0.2`.
 
 ```{r, fig.width = 5, fig.height = 3}
 ggplot(film, aes(x = imdb)) + 
   geom_histogram(binwidth = 0.2, color="white", fill="dodgerblue") 
 ```
 
-This looks a lot better. Now we can see that the majority of films have ratings in the 6.2-7.8 range, with relatively few above 8 and below 5.  It's not always easy to know what size interval to choose for the x-axis in histograms. It's worth just playing around with that number and seeing how it looks.
+This looks a lot better. Now we can see that the majority of films have ratings in the 6.2-7.8 range, with relatively few above 8 and below 5. It's not always easy to know what size interval to choose for the x-axis in histograms. It's worth just playing around with that number and seeing how it looks.
 
-When we set the interval to be some value - here, we chose 0.2 - R doesn't automatically make that between easy to interpret numbers such as 4.0-4.2, 4.2-4.4 etc.  It could just as easily have chosen 3.874-4.074, 4.074-4.274.  Obviously, the latter is hard for us to interpret when looking at the axes. You can see in the above plot, that the vertical lines of the histogram bars don't neatly fall on top of whole numbers. To fix, this you can adjust the boundaries by picking a value to center your interval on. So, if we pick `boundary=4`, then that will be a boundary marker, and the interval will go 4.0-4.2, 4.2-4.4 etc.  
-
+When we set the interval to be some value - here, we chose 0.2 - R doesn't automatically make that between easy to interpret numbers such as 4.0-4.2, 4.2-4.4 etc. It could just as easily have chosen 3.874-4.074, 4.074-4.274. Obviously, the latter is hard for us to interpret when looking at the axes. You can see in the above plot, that the vertical lines of the histogram bars don't neatly fall on top of whole numbers. To fix, this you can adjust the boundaries by picking a value to center your interval on. So, if we pick `boundary=4`, then that will be a boundary marker, and the interval will go 4.0-4.2, 4.2-4.4 etc.
 
 ```{r, fig.width = 5, fig.height = 3}
 ggplot(film, aes(x = imdb)) + 
@@ -79,7 +72,6 @@ ggplot(film, aes(x = imdb)) +
 ```
 
 Just be careful with using the boundaries that it does not crop your histogram incorrectly. Changing histograms too much can lead to misrepresenting the data. We would recommend that you don't use the boundary feature unless you have a real need to do so - just be careful!
-
 
 Like with all ggplot figures, you can add as much customization as you wish. Here, we add a new theme, title and x- and y-axis labels:
 
@@ -93,9 +85,6 @@ ggplot(film, aes(x = imdb)) +
 ```
 
 This looks really nice !
-
-
-
 
 <br><br><br>
 
@@ -119,12 +108,11 @@ ggplot(film, aes(x = imdb)) +
 
 The useful thing about density plots is that they give you a quick visual aid as to the overall shape of the distribution. You can easily see where the bulk of the data lie (here between 6 and 8 ratings score), and whether the data is symmetrical or not.
 
-
 <br>
 
 ## Comparing Distributions
 
-Instead of just plotting one histogram or one density curve, we often are interested in comparing two or more distributions. This means we are interested in comparing two or more histograms or density curves. To do this, we first need to ensure that our data are all measured in the same units.  
+Instead of just plotting one histogram or one density curve, we often are interested in comparing two or more distributions. This means we are interested in comparing two or more histograms or density curves. To do this, we first need to ensure that our data are all measured in the same units.
 
 <br>
 
@@ -137,11 +125,11 @@ life <- read_csv("data_raw/lifeexp.csv")
 head(life)
 ```
 
-You can see that one of the columns is called `lifeExp` which is the life expectancy of each country in either 1952 or 2007. The year is shown in the `year` column, and the country is shown in the `country` column.  You'll notice that these data are in long format.
+You can see that one of the columns is called `lifeExp` which is the life expectancy of each country in either 1952 or 2007. The year is shown in the `year` column, and the country is shown in the `country` column. You'll notice that these data are in long format.
 
 Perhaps we are interested in the distribution of life expectancies across all countries in the year 1952 compared to the distribution of life expectancies in the year 2007. We have a few options to do this.
 
-The first option does not look good for this example (although it may work in other situations). This is an **overlaid histogram**. To do this, inside `aes()` as well as saying which column our distribution data is in `x=lifeExp`, we also tell it to make separate histograms based on the year column with `fill=year`. This will ensure it uses different fill colors for the two different years. Although not necessary, putting `position="identity"` inside `geom_histogram()` helps make the plot a little nicer.  Putting `color="black"` and `alpha=.7` inside `geom_histogram()` also helps distinguish the two histograms. 
+The first option does not look good for this example (although it may work in other situations). This is an **overlaid histogram**. To do this, inside `aes()` as well as saying which column our distribution data is in `x=lifeExp`, we also tell it to make separate histograms based on the year column with `fill=year`. This will ensure it uses different fill colors for the two different years. Although not necessary, putting `position="identity"` inside `geom_histogram()` helps make the plot a little nicer. Putting `color="black"` and `alpha=.7` inside `geom_histogram()` also helps distinguish the two histograms.
 
 ```{r, fig.width = 5, fig.height = 3}
 ggplot(life, aes(x=lifeExp, fill=year)) +  
@@ -149,10 +137,9 @@ ggplot(life, aes(x=lifeExp, fill=year)) +
   theme_minimal()
 ```
 
-
 This plot is still pretty bad though. This method of plotting is better when the histograms are quite distinctive from one another and there isn't much overlap in the distributions.
 
-Choosing two colors that contrast more strongly than the default colors can help. Here, we are using hexcodes to pick a gray and a mustard yellow color. We manually define our fill colors using `+  scale_fill_manual(values = c("#999999", "#E69F00"))`.  To change the colors, just change the hexcodes to different ones or the names of colors you'd like. Just make sure that you have the same number of colors as groups in your data. Here, we have two groups (1952 and 2007) so we need two colors.  Also, notice that it says `scale_fill_manual` and not `scale_color_manual`. Because we are dealing with the inside color - this is considered to be a **fill** in ggplot2 terms. We used `fill=year` inside `aes()` so we need to match that with `fill` when manually choosing colors.
+Choosing two colors that contrast more strongly than the default colors can help. Here, we are using hexcodes to pick a gray and a mustard yellow color. We manually define our fill colors using `+  scale_fill_manual(values = c("#999999", "#E69F00"))`. To change the colors, just change the hexcodes to different ones or the names of colors you'd like. Just make sure that you have the same number of colors as groups in your data. Here, we have two groups (1952 and 2007) so we need two colors. Also, notice that it says `scale_fill_manual` and not `scale_color_manual`. Because we are dealing with the inside color - this is considered to be a **fill** in ggplot2 terms. We used `fill=year` inside `aes()` so we need to match that with `fill` when manually choosing colors.
 
 ```{r, fig.width = 5, fig.height = 3}
 ggplot(life, aes(x=lifeExp, fill=year)) +  
@@ -161,11 +148,10 @@ ggplot(life, aes(x=lifeExp, fill=year)) +
   scale_fill_manual(values = c("#999999", "#E69F00"))
 ```
 
-
 **Overlaid Density Plots**
 
-Comparing distributions can also be done with `geom_density`. This is usually simpler to compare than overlaid histograms. 
-  
+Comparing distributions can also be done with `geom_density`. This is usually simpler to compare than overlaid histograms.
+
 The default plot for this would be to include `fill=year` inside the `aes()` code, as the `year` column contains the data that we wish to make separate plots for.
 
 ```{r, fig.width = 5, fig.height = 3}
@@ -182,16 +168,13 @@ ggplot(life, aes(x=lifeExp, fill=year)) +
   theme_classic()
 ```
 
-
 This plot is now very easy to interpret. It's clear that in 2007 most countries had life expectancies of over 70, with a tail towards younger life expectancies. In 1952, the opposite pattern is found with most countries having life expectancies around 40 with the tail going towards older countries.
-
 
 <br>
 
 ## Stem-and-Leaf Plots
 
-Stem-and-leaf plots are a simplistic version of histograms. Before the advent of computers, this kind of plot would sometimes be easier to make than a histogram. Their heyday was quite a few decades ago! In fact, nowadays, these types of plots are almost never made by researchers or data scientists in the real world. They are pretty much exclusive to introductory statistics courses.  This is a bit of a shame because we think they are pretty cute.
-
+Stem-and-leaf plots are a simplistic version of histograms. Before the advent of computers, this kind of plot would sometimes be easier to make than a histogram. Their heyday was quite a few decades ago! In fact, nowadays, these types of plots are almost never made by researchers or data scientists in the real world. They are pretty much exclusive to introductory statistics courses. This is a bit of a shame because we think they are pretty cute.
 
 Here is an example. Imagine we have the following numbers in a distribution. They may represent temperatures:
 
@@ -201,10 +184,9 @@ We can represent these in a stem-and-leaf plot as below. The first column repres
 
 ![](img/sl1.png)
 
-The columns do not have to be tens and ones.  For instance, if our data had been seconds, and the distribution was `2.0, 2.0, 2.3, 2.8....... 7.5, 8.2, 8.6` we could have done the same stem-and-leaf plot. 
+The columns do not have to be tens and ones. For instance, if our data had been seconds, and the distribution was `2.0, 2.0, 2.3, 2.8....... 7.5, 8.2, 8.6` we could have done the same stem-and-leaf plot.
 
 There isn't a simple ggplot way of making stem-and-leaf plots, but there is a built-in function called `stem()` that can make them.
-
 
 For an example, if we return to our imdb ratings:
 
@@ -212,14 +194,12 @@ For an example, if we return to our imdb ratings:
 head(film)
 ```
 
-We can make a stem-and-leaf plot of the `imdb` column like this.  The `scale=0.6` parameter dictates how long the stem-and-leaf plot should be. You can adjust it to your liking. Lower numbers make the plot shorter:
+We can make a stem-and-leaf plot of the `imdb` column like this. The `scale=0.6` parameter dictates how long the stem-and-leaf plot should be. You can adjust it to your liking. Lower numbers make the plot shorter:
 
 ```{r}
 stem(film$imdb, scale=0.6)
 ```
 
 Here, the lowest rating we have is 4.0, and the highest is 8.6.
-
-
 
 <br><br><br>

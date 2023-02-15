@@ -1,0 +1,109 @@
+# Small Multiples
+
+Often we want to compare graphs across multiple categories. One good strategy to do this is to make **small multiples**, which is essentially replicating the same graph for each group several times in different panels. This is probably best explained by doing an example.
+
+
+## **Scatterplot small multiple**
+
+Here, we load in the `penguins.csv` dataset. This data shows the size of various penguins culmen (the beak) and flippers:
+
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+penguins <- read_csv("data_raw/penguins.csv")
+head(penguins)
+
+
+```
+
+The dataset contains three different species:
+
+```{r, fig.width = 5, fig.height = 3}
+table(penguins$species)
+```
+
+We might be interested in examining how body mass is associated with flipper length across species and across sex. Here, we have two different columns containing categorical variables. We have `sex` and `species`. If we wanted to show all of this on just one scatterplot, we could change the color of the points to represent species, and the shape of the points to represent sex. We change the shape by a column using `shape=` inside of `aes()`:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(penguins, aes(x = body_mass_g,  y = flipper_length_mm, 
+                     color = species, shape = sex)) + 
+  geom_point() +
+  theme_classic()
+
+```
+
+The problem with this sort of graph is that it is far too cluttered. Using shape to distinguish categories isn't that useful or helpful. You really have to squint at the graph to work out what is a circle and what is a triangle.
+
+
+An alternative approach is to make small multiples. We create a separate scatterplot for each species. Here, we color our points by sex with `color=sex` inside `aes()`. We add to our code the line `facet_wrap(~species)` to tell `ggplot()` to make separate scatterplots for each species. Please note the `~` that comes before the column name that you wish to make separate plots for:
+
+```{r, fig.width = 8, fig.height = 3}
+ggplot(penguins, aes(x = body_mass_g,  y = flipper_length_mm, color = sex)) + 
+  geom_point() +
+  theme_minimal() +
+  facet_wrap(~ species)
+```
+
+
+You may notice that all the scatterplots have the same range of values on the x-axis.  Technically, this is the most appropriate approach as it enables you to make comparisons across groups more easily.  However, if you want to fit the data on each scatterplot to cover the whole canvas, you can make the axes unfixed by adding `scales="free"` to your `facet_wrap()` command:
+
+```{r, fig.width = 8, fig.height = 3}
+ggplot(penguins, aes(x = body_mass_g,  y = flipper_length_mm, color = sex)) + 
+  geom_point() +
+  theme_minimal() +
+  facet_wrap(~ species, scales = "free")
+```
+
+<br>
+
+## **Line graph small multiple**
+
+We can also make small multiples for line graphs. Let's illustrate this using the `lifeexp_all.csv` dataset.
+
+```{r, warning=FALSE, message=FALSE}
+le <- read_csv("data_raw/lifeexp_all.csv")
+
+head(le)
+
+```
+
+In this dataset we have a column giving the life expectancy (`lifeExp`) of various countries that are in the `country` column. We also have a `year` column that goes from 1952 to 2007 at five year intervals.  Consequently, we could plot a line graph of year on the x-axis and life expectancy on the y-axis. We could make separate lines for each country. As there are far too many countries to plot, it is not worth making each one a separate color. Because of this, rather than putting `color=country` into `aes()` to indicate to make separate lines for each country, we'll put `group=country`.  This will make separate lines for each country, but make them all the same color. If we make them a light color and a bit transparent, it will look best:
+
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(le, aes(x = year, y = lifeExp, group = country)) + 
+  geom_line(color="cornflowerblue", alpha=0.2) +
+  theme_minimal()
+
+```
+
+This gives us a sense of the overall pattern of life expectancies from 1952 to 2007. The trend for most countries is generally upwards, though there are some countries that have big crashes.
+
+We also have another categorical variable in our dataset. There is a column called `continent`.  We could replot this line graph, but separate the plots based on which continent the lines/countries belong to.  We do that again using `facet_wrap(~continent)`.
+
+
+```{r, fig.width = 9, fig.height = 7}
+ggplot(le, aes(x = year, y = lifeExp, group = country)) + 
+  geom_line(color="cornflowerblue", alpha=0.5) +
+  theme_minimal() +
+  facet_wrap(~continent)
+
+```
+
+Because there are fewer lines on each graph, we upped the alpha to 0.5 to make the lines a bit darker on this plot.
+
+
+If you wish to make the lines belonging to each panel different colors from each other, you can add `color=continent` to your `aes()`.  You have to remove the color from `geom_line()` to make this work:
+
+
+```{r, fig.width = 9, fig.height = 7}
+ggplot(le, aes(x = year, y = lifeExp, group = country, color = continent)) + 
+  geom_line( alpha=0.5) +
+  theme_minimal() +
+  facet_wrap(~continent)+
+  xlab("Year") +
+  ylab("Life Expectancy")
+
+```
+
+

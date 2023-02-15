@@ -14,7 +14,10 @@ book:
     - lines.qmd
     - histograms.qmd
     - distributionsgroups.qmd
+    - bar.qmd
+    - smallmult.qmd
     - heatmaps.qmd
+    - savingexporting.qmd
     - summary.qmd
     - references.qmd
 
