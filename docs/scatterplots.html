@@ -195,7 +195,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#bubble-charts" id="toc-bubble-charts" class="nav-link active" data-scroll-target="#bubble-charts"><span class="toc-section-number">2.0.1</span>  Bubble Charts</a></li>
+  <li><a href="#multiple-groups-on-a-scatterplot" id="toc-multiple-groups-on-a-scatterplot" class="nav-link active" data-scroll-target="#multiple-groups-on-a-scatterplot"><span class="toc-section-number">2.1</span>  Multiple Groups on a Scatterplot</a></li>
+  <li><a href="#bubble-charts" id="toc-bubble-charts" class="nav-link" data-scroll-target="#bubble-charts"><span class="toc-section-number">2.2</span>  Bubble Charts</a></li>
   </ul>
 </nav>
     </div>
@@ -345,8 +346,8 @@ i Specify the column types or set `show_col_types = FALSE` to quiet this message
 </div>
 </div>
 <p><br></p>
-<section id="multiple-groups-on-a-scatterplot" class="level4" data-number="2.0.0.1">
-<h4 data-number="2.0.0.1" class="anchored" data-anchor-id="multiple-groups-on-a-scatterplot"><span class="header-section-number">2.0.0.1</span> Multiple Groups on a Scatterplot</h4>
+<section id="multiple-groups-on-a-scatterplot" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="multiple-groups-on-a-scatterplot"><span class="header-section-number">2.1</span> Multiple Groups on a Scatterplot</h2>
 <p>We can add multiple trendlines to each group of datapoints plotted on a scatterplot. Let’s look at the following data of the chemical components of different olive oils produced in Italy. This is what the data look like:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>olives <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data_raw/olives.csv"</span>)</span>
@@ -397,8 +398,8 @@ Centre.North     Sardinia        South
 <p><br></p>
 <p><br></p>
 </section>
-<section id="bubble-charts" class="level3" data-number="2.0.1">
-<h3 data-number="2.0.1" class="anchored" data-anchor-id="bubble-charts"><span class="header-section-number">2.0.1</span> Bubble Charts</h3>
+<section id="bubble-charts" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="bubble-charts"><span class="header-section-number">2.2</span> Bubble Charts</h2>
 <p>Bubble Charts are an extension to scatterplots. In scatterplots we plot two continuous variables against each other. With a bubble chart we add a third continuous variable and vary the size of our datapoints according to this variable. For example, say we wish to also plot skull size on our Blue Jay scatterplot. We could increase the size of the points for individuals with larger skull sizes. We do this by adding <code>size=Skull</code> into our <code>aes()</code> part:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>Mass, <span class="at">y=</span>Head, <span class="at">color =</span> KnownSex, <span class="at">size =</span> Skull) ) <span class="sc">+</span> </span>

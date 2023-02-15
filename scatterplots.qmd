@@ -105,7 +105,7 @@ ggplot(df, aes(x=Mass, y=Head, color = KnownSex) ) +
 
 <br>
 
-#### Multiple Groups on a Scatterplot
+## Multiple Groups on a Scatterplot
 
 We can add multiple trendlines to each group of datapoints plotted on a scatterplot. Let's look at the following data of the chemical components of different olive oils produced in Italy. This is what the data look like: 
 
@@ -144,7 +144,7 @@ ggplot(olives, aes(x=oleic, y=linoleic, color=macro.area)) +
 
 <br>
 
-### Bubble Charts
+## Bubble Charts
 
 Bubble Charts are an extension to scatterplots. In scatterplots we plot two continuous variables against each other. With a bubble chart we add a third continuous variable and vary the size of our datapoints according to this variable.  For example, say we wish to also plot skull size on our Blue Jay scatterplot. We could increase the size of the points for individuals with larger skull sizes.  We do this by adding `size=Skull` into our `aes()` part:
 
