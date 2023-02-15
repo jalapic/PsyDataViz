@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>PsyDataViz - 4&nbsp; Summary</title>
+<title>PsyDataViz - 4&nbsp; Histograms</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -70,7 +133,7 @@ ul.task-list li input[type="checkbox"] {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Summary</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Histograms</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -115,7 +178,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./histograms.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./histograms.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Histograms</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -143,14 +206,23 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#histograms-with-ggplot2" id="toc-histograms-with-ggplot2" class="nav-link active" data-scroll-target="#histograms-with-ggplot2"><span class="toc-section-number">4.1</span>  Histograms with ggplot2</a></li>
+  <li><a href="#density-curves" id="toc-density-curves" class="nav-link" data-scroll-target="#density-curves"><span class="toc-section-number">4.2</span>  Density Curves</a></li>
+  <li><a href="#comparing-distributions" id="toc-comparing-distributions" class="nav-link" data-scroll-target="#comparing-distributions"><span class="toc-section-number">4.3</span>  Comparing Distributions</a></li>
+  <li><a href="#stem-and-leaf-plots" id="toc-stem-and-leaf-plots" class="nav-link" data-scroll-target="#stem-and-leaf-plots"><span class="toc-section-number">4.4</span>  Stem-and-Leaf Plots</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Summary</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Histograms</span></h1>
 </div>
 
 
@@ -165,9 +237,258 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>There is no summary. I was just scared to delete this file.</p>
+<p>Histograms are very common data visualizations. Histograms plot the frequency on the y-axis of a continuous variable on the x-axis. For instance, let’s say we had the following data, that we’ll call <code>d1</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>d1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">vals =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>d1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   vals
+1     1
+2     3
+3     4
+4     3
+5     6
+6     7
+7     2
+8     9
+9     3
+10    2
+11    2
+12    3
+13    1
+14    5
+15    4
+16    4</code></pre>
+</div>
+</div>
+<p>If we wanted to know how many of each number in the column vals we have, we could use <code>table()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(d1<span class="sc">$</span>vals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+1 2 3 4 5 6 7 9 
+2 3 4 3 1 1 1 1 </code></pre>
+</div>
+</div>
+<p>The table above represents the <strong>frequency table</strong> or <strong>frequency count</strong> of the data. We can plot these data like this:</p>
+<p><img src="img/hist1.png" class="img-fluid"></p>
+<p>In this histogram, the height of each bar represents the total amount of the number on the x-axis. So, the height of the bar at <code>x=9</code> is one. This mean we have 1 of this value in our data distribution. The height of the bar at <code>x=3</code> is four, therefore we have four in our distribution for the value 3.</p>
+<p>In the example above, the width of the bars is precisely 1. We could change the width to say two. This is illustrated below:</p>
+<p><img src="img/hist2.png" class="img-fluid"></p>
+<p>Here, the first bar is at height 9. It spans the values of x between 1-3. The second bar is at height 4, this include values between 3.01-5, and so on. What we did here was to adjust the <code>binwidth</code>. When we have large distributions, adjusting the binwidth helps us to interpret the data more easily.</p>
+<section id="histograms-with-ggplot2" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="histograms-with-ggplot2"><span class="header-section-number">4.1</span> Histograms with ggplot2</h2>
+<p>To describe how to make histograms with the <code>ggplot()</code> function, lets look at the <code>films.csv</code> dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>film <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data_raw/films.csv"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(film)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 x 5
+  film                     year rottentomatoes  imdb metacritic
+  &lt;chr&gt;                   &lt;dbl&gt;          &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+1 Avengers: Age of Ultron  2015             74   7.8         66
+2 Cinderella               2015             85   7.1         67
+3 Ant-Man                  2015             80   7.8         64
+4 Do You Believe?          2015             18   5.4         22
+5 Hot Tub Time Machine 2   2015             14   5.1         29
+6 The Water Diviner        2015             63   7.2         50</code></pre>
+</div>
+</div>
+<p>This dataset contains 146 rows of data. Each row has a unique film, with the final three columns giving three different ratings measures of how good the film was. These are their respective <code>rottentomatoes</code>, <code>imdb</code> and <code>metacritic</code> scores.</p>
+<p>If we wished to plot the distribution of <code>imdb</code> scores, we need to put <code>x=imdb</code> inside the <code>aes()</code> part of the ggplot code. That is to tell it to plot these scores on the x-axis. We do not need to put a <code>y=</code> inside this, as we are not plotting anything from our dataset on the y-axis. Instead, ggplot2 will count up the frequency of our scores between regular intervals of <code>imdb</code> scores.</p>
+<p>We then add <code>+ geom_histogram()</code> to tell it to make a histogram. All together it looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(film, <span class="fu">aes</span>(<span class="at">x=</span>imdb)) <span class="sc">+</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Now, this doesn’t look great and we have several problems with it. The two major problems that we get with our first histograms are. 1) The binwidth is almost never appropriate. We need to tell ggplot exactly what we want the binwidth on the x-axis to be. That is, what interval do we want our scores to be counted over. Looking at the graph, our scores range from just below 4 to about 8.6. Perhaps a better interval would be 0.2, so we count how many films had scores between 3.6-3.8, 3.8-4.0, 4.0-4.2, 4.2-4.4, …….. 8.4-8.6, 8.6-8.8 etc. 2) Having black bars makes it really hard to distinguish the bars when they are close in heights. We need to fix the color scheme.</p>
+<p>OK, let’s make the bars dodgerblue and border them white. Inside <code>geom_histogram()</code> we use <code>color="white"</code> to represent the outside <em>lines</em> of the bars. We use <code>fill="dodgerblue</code> to indicate the color inside the bars should be dodgerblue.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(film, <span class="fu">aes</span>(<span class="at">x=</span>imdb)) <span class="sc">+</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color=</span><span class="st">"white"</span>, <span class="at">fill=</span><span class="st">"dodgerblue"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Now let’s fix that binwidth. To resolve this, inside <code>geom_histogram()</code> we write <code>binwidth = 0.2</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(film, <span class="fu">aes</span>(<span class="at">x =</span> imdb)) <span class="sc">+</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.2</span>, <span class="at">color=</span><span class="st">"white"</span>, <span class="at">fill=</span><span class="st">"dodgerblue"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>This looks a lot better. Now we can see that the majority of films have ratings in the 6.2-7.8 range, with relatively few above 8 and below 5. It’s not always easy to know what size interval to choose for the x-axis in histograms. It’s worth just playing around with that number and seeing how it looks.</p>
+<p>When we set the interval to be some value - here, we chose 0.2 - R doesn’t automatically make that between easy to interpret numbers such as 4.0-4.2, 4.2-4.4 etc. It could just as easily have chosen 3.874-4.074, 4.074-4.274. Obviously, the latter is hard for us to interpret when looking at the axes. You can see in the above plot, that the vertical lines of the histogram bars don’t neatly fall on top of whole numbers. To fix, this you can adjust the boundaries by picking a value to center your interval on. So, if we pick <code>boundary=4</code>, then that will be a boundary marker, and the interval will go 4.0-4.2, 4.2-4.4 etc.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(film, <span class="fu">aes</span>(<span class="at">x =</span> imdb)) <span class="sc">+</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.2</span>, <span class="at">color=</span><span class="st">"white"</span>, <span class="at">fill=</span><span class="st">"dodgerblue"</span>,<span class="at">boundary=</span><span class="dv">4</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Just be careful with using the boundaries that it does not crop your histogram incorrectly. Changing histograms too much can lead to misrepresenting the data. We would recommend that you don’t use the boundary feature unless you have a real need to do so - just be careful!</p>
+<p>Like with all ggplot figures, you can add as much customization as you wish. Here, we add a new theme, title and x- and y-axis labels:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(film, <span class="fu">aes</span>(<span class="at">x =</span> imdb)) <span class="sc">+</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.2</span>, <span class="at">color=</span><span class="st">"white"</span>, <span class="at">fill=</span><span class="st">"dodgerblue"</span>) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Histogram of IMDB Ratings"</span>) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Rating"</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>This looks really nice !</p>
+<p><br><br><br></p>
+</section>
+<section id="density-curves" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="density-curves"><span class="header-section-number">4.2</span> Density Curves</h2>
+<p>Instead of plotting the <strong>frequency</strong> or counts of values on the y-axis, we can instead plot <strong>density</strong>. Here, we essentially convert the histogram to a solid line that estimates the overall shape of the distribution. We call this line a density curve. You can make this plot using <code>ggplot()</code> using <code>+ geom_density()</code> instead of <code>+ geom_histogram()</code>.</p>
+<p>In the code below we do this for the <code>imdb</code> ratings, and we make the line color navy, and the fill of the density curve dodgerblue:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(film, <span class="fu">aes</span>(<span class="at">x =</span> imdb)) <span class="sc">+</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">color =</span> <span class="st">"navy"</span>, <span class="at">fill =</span> <span class="st">"dodgerblue"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Usually the fill of these plots is too much, so it’s nice to add some transparency. You can do that by picking a number between 0 and 1 to provide to the <code>alpha</code> argument. Here we choose <code>alpha = .4</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(film, <span class="fu">aes</span>(<span class="at">x =</span> imdb)) <span class="sc">+</span>  </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">color =</span> <span class="st">"navy"</span>, <span class="at">fill =</span> <span class="st">"dodgerblue"</span>, <span class="at">alpha=</span>.<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>The useful thing about density plots is that they give you a quick visual aid as to the overall shape of the distribution. You can easily see where the bulk of the data lie (here between 6 and 8 ratings score), and whether the data is symmetrical or not.</p>
+<p><br></p>
+</section>
+<section id="comparing-distributions" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="comparing-distributions"><span class="header-section-number">4.3</span> Comparing Distributions</h2>
+<p>Instead of just plotting one histogram or one density curve, we often are interested in comparing two or more distributions. This means we are interested in comparing two or more histograms or density curves. To do this, we first need to ensure that our data are all measured in the same units.</p>
+<p><br></p>
+<p><strong>Overlaid Histograms</strong></p>
+<p>To illustrate this, let’s use the <code>lifeexp.csv</code> data which contains life expectancy data for many countries.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>life <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data_raw/lifeexp.csv"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(life)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 x 6
+  country     continent year      lifeExp      pop gdpPercap
+  &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 Afghanistan Asia      year_1952    28.8  8425333      779.
+2 Afghanistan Asia      year_2007    43.8 31889923      975.
+3 Albania     Europe    year_1952    55.2  1282697     1601.
+4 Albania     Europe    year_2007    76.4  3600523     5937.
+5 Algeria     Africa    year_1952    43.1  9279525     2449.
+6 Algeria     Africa    year_2007    72.3 33333216     6223.</code></pre>
+</div>
+</div>
+<p>You can see that one of the columns is called <code>lifeExp</code> which is the life expectancy of each country in either 1952 or 2007. The year is shown in the <code>year</code> column, and the country is shown in the <code>country</code> column. You’ll notice that these data are in long format.</p>
+<p>Perhaps we are interested in the distribution of life expectancies across all countries in the year 1952 compared to the distribution of life expectancies in the year 2007. We have a few options to do this.</p>
+<p>The first option does not look good for this example (although it may work in other situations). This is an <strong>overlaid histogram</strong>. To do this, inside <code>aes()</code> as well as saying which column our distribution data is in <code>x=lifeExp</code>, we also tell it to make separate histograms based on the year column with <code>fill=year</code>. This will ensure it uses different fill colors for the two different years. Although not necessary, putting <code>position="identity"</code> inside <code>geom_histogram()</code> helps make the plot a little nicer. Putting <code>color="black"</code> and <code>alpha=.7</code> inside <code>geom_histogram()</code> also helps distinguish the two histograms.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(life, <span class="fu">aes</span>(<span class="at">x=</span>lifeExp, <span class="at">fill=</span>year)) <span class="sc">+</span>  </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth=</span><span class="dv">2</span>, <span class="at">position=</span><span class="st">"identity"</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">alpha=</span>.<span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>This plot is still pretty bad though. This method of plotting is better when the histograms are quite distinctive from one another and there isn’t much overlap in the distributions.</p>
+<p>Choosing two colors that contrast more strongly than the default colors can help. Here, we are using hexcodes to pick a gray and a mustard yellow color. We manually define our fill colors using <code>+  scale_fill_manual(values = c("#999999", "#E69F00"))</code>. To change the colors, just change the hexcodes to different ones or the names of colors you’d like. Just make sure that you have the same number of colors as groups in your data. Here, we have two groups (1952 and 2007) so we need two colors. Also, notice that it says <code>scale_fill_manual</code> and not <code>scale_color_manual</code>. Because we are dealing with the inside color - this is considered to be a <strong>fill</strong> in ggplot2 terms. We used <code>fill=year</code> inside <code>aes()</code> so we need to match that with <code>fill</code> when manually choosing colors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(life, <span class="fu">aes</span>(<span class="at">x=</span>lifeExp, <span class="at">fill=</span>year)) <span class="sc">+</span>  </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>( <span class="at">binwidth=</span><span class="dv">2</span>, <span class="at">position=</span><span class="st">"identity"</span>, <span class="at">color=</span><span class="st">"black"</span>, <span class="at">alpha=</span>.<span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#999999"</span>, <span class="st">"#E69F00"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p><strong>Overlaid Density Plots</strong></p>
+<p>Comparing distributions can also be done with <code>geom_density</code>. This is usually simpler to compare than overlaid histograms.</p>
+<p>The default plot for this would be to include <code>fill=year</code> inside the <code>aes()</code> code, as the <code>year</code> column contains the data that we wish to make separate plots for.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(life, <span class="fu">aes</span>(<span class="at">x=</span>lifeExp, <span class="at">fill=</span>year)) <span class="sc">+</span>  </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>We can add a custom fill colors with <code>+ scale_fill_manual(values = c("#999999", "#E69F00"))</code> and a custom theme with <code>+ theme_classic()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(life, <span class="fu">aes</span>(<span class="at">x=</span>lifeExp, <span class="at">fill=</span>year)) <span class="sc">+</span>  </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">fill =</span> year), <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#999999"</span>, <span class="st">"#E69F00"</span>))  <span class="sc">+</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="histograms_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>This plot is now very easy to interpret. It’s clear that in 2007 most countries had life expectancies of over 70, with a tail towards younger life expectancies. In 1952, the opposite pattern is found with most countries having life expectancies around 40 with the tail going towards older countries.</p>
+<p><br></p>
+</section>
+<section id="stem-and-leaf-plots" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="stem-and-leaf-plots"><span class="header-section-number">4.4</span> Stem-and-Leaf Plots</h2>
+<p>Stem-and-leaf plots are a simplistic version of histograms. Before the advent of computers, this kind of plot would sometimes be easier to make than a histogram. Their heyday was quite a few decades ago! In fact, nowadays, these types of plots are almost never made by researchers or data scientists in the real world. They are pretty much exclusive to introductory statistics courses. This is a bit of a shame because we think they are pretty cute.</p>
+<p>Here is an example. Imagine we have the following numbers in a distribution. They may represent temperatures:</p>
+<p><code>20, 20, 23, 28, 29, 31, 32, 39, 40, 41, 42, 44, 44, 45, 48, 49, 55, 55, 56, 58, 59, 61, 62, 65, 66, 67, 70, 71, 75, 82, 86</code></p>
+<p>We can represent these in a stem-and-leaf plot as below. The first column represents the “tens” and the second column represents the “ones”. So the “6” in the last row in the second column represents a temperature of 86. We put the second column data in ascending order. The heights of these bars represent a kind of histogram of sorts.</p>
+<p><img src="img/sl1.png" class="img-fluid"></p>
+<p>The columns do not have to be tens and ones. For instance, if our data had been seconds, and the distribution was <code>2.0, 2.0, 2.3, 2.8....... 7.5, 8.2, 8.6</code> we could have done the same stem-and-leaf plot.</p>
+<p>There isn’t a simple ggplot way of making stem-and-leaf plots, but there is a built-in function called <code>stem()</code> that can make them.</p>
+<p>For an example, if we return to our imdb ratings:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(film)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 x 5
+  film                     year rottentomatoes  imdb metacritic
+  &lt;chr&gt;                   &lt;dbl&gt;          &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+1 Avengers: Age of Ultron  2015             74   7.8         66
+2 Cinderella               2015             85   7.1         67
+3 Ant-Man                  2015             80   7.8         64
+4 Do You Believe?          2015             18   5.4         22
+5 Hot Tub Time Machine 2   2015             14   5.1         29
+6 The Water Diviner        2015             63   7.2         50</code></pre>
+</div>
+</div>
+<p>We can make a stem-and-leaf plot of the <code>imdb</code> column like this. The <code>scale=0.6</code> parameter dictates how long the stem-and-leaf plot should be. You can adjust it to your liking. Lower numbers make the plot shorter:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stem</span>(film<span class="sc">$</span>imdb, <span class="at">scale=</span><span class="fl">0.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  The decimal point is at the |
+
+  4 | 0234
+  4 | 6699
+  5 | 01224444
+  5 | 555556678999
+  6 | 0011112333333333444444
+  6 | 5555666666666777777789999999
+  7 | 0000111111122222222223333344444444
+  7 | 555555666777788888888899
+  8 | 012222344
+  8 | 6</code></pre>
+</div>
+</div>
+<p>Here, the lowest rating we have is 4.0, and the highest is 8.6.</p>
+<p><br><br><br></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
