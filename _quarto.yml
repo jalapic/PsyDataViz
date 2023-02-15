@@ -12,6 +12,8 @@ book:
     - intro.qmd
     - scatterplots.qmd
     - lines.qmd
+    - histograms.qmd
+    - distributionsgroups.qmd
     - heatmaps.qmd
     - summary.qmd
     - references.qmd
