@@ -1,7 +1,173 @@
 # Scatterplots
 
-In summary, this book has no content whatsoever.
 
-```{r}
-1 + 1
+In the introduction to `ggplot2`, we already demonstrated how to make a scatterplot. Here we will show a few extra features of these plots. Scatterplots plot continuous variables on the x- and y-axes, and can be very useful to examine the association between the two continuous variables. We use them a lot when plotting data related to correlation.
+
+As we showed earlier, `geom_point` is used to add datapoints to scatter plots. We'll do this for the `cheese.csv` dataset, that contains nutritional information about various cheeses:
+
+
+
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+cheese <- read_csv("data_raw/cheese.csv")
+head(cheese)
 ```
+
+We'll start with a simple scatterplot looking at the association between saturated fat on the x-axis and cholesterol on the y-axis intake. 
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(cheese, aes(x=sat_fat, y=chol) ) + 
+  geom_point()
+```
+
+
+
+We can change the color of the points by adding a color inside of `geom_point` - making sure that the color name is in quotes:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(cheese, aes(x=sat_fat, y=chol) ) + 
+  geom_point(color = "purple")
+```
+
+
+To add a straight trendline through the data we use  `+ stat_smooth(method = "lm")`. The `stat_smooth` bit tells it to add a trendline, and the `method="lm"` bit in the middle is telling it to make the straight line:
+
+```{r, fig.width = 5, fig.height = 3, message=FALSE, warning=FALSE}
+ggplot(cheese, aes(x=sat_fat, y=chol) ) + 
+  geom_point(color = "purple") +
+ stat_smooth(method = "lm")
+```
+Here you can see it automatically puts a shaded area around your trendline, which represents a confidence interval around the trendline. There is a way to remove it by adding `se = FALSE` or `se = F` inside of `stat_smooth()`: 
+
+```{r, fig.width = 5, fig.height = 3, message=FALSE, warning=FALSE}
+ggplot(cheese, aes(x=sat_fat, y=chol) ) + 
+  geom_point(color = "purple") +
+ stat_smooth(method = "lm", se = FALSE)
+```
+
+
+You can also change the color of the trendline, by adding to `stat_smooth`
+
+```{r, fig.width = 5, fig.height = 3, message=FALSE, warning=FALSE}
+ggplot(cheese, aes(x=sat_fat, y=chol) ) + 
+  geom_point(color = "purple") +
+  stat_smooth(method = "lm", se= F, color = "black")
+```
+
+
+As with all `ggplot2` graphs, you can customize the plot. For example changing the theme, adding a title and axes titles:
+
+
+```{r, fig.width = 5, fig.height = 3, message=FALSE, warning=FALSE}
+ggplot(cheese, aes(x=sat_fat, y=chol) ) + 
+  geom_point(color = "purple") +
+  stat_smooth(method = "lm", se= F, color = "black") +
+  xlab(" Saturated Fat") +
+  ylab("Cholesterol") +
+  ggtitle("Saturated Fat vs Cholesterol") +
+  theme_minimal()
+```
+
+
+
+
+If you wish to change the color of the points based on a grouping variable, then we need to put our `color=` into the `aes()`. You then need to provide the column that has the color grouping variable. For example, to change the color of points in our plot of body mass against head size in Blue Jays based on the sex of birds:
+
+```{r, fig.width = 5, fig.height = 3}
+df <- read_csv("data_raw/BlueJays.csv")
+head(df)
+ggplot(df, aes(x=Mass, y=Head, color = KnownSex) ) + 
+  geom_point() 
+```
+
+If you wish to customize the colors of your datapoints, then you need to add `scale_color_manual()` like this:
+
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(df, aes(x=Mass, y=Head, color = KnownSex) ) + 
+  geom_point() +
+  scale_color_manual(values = c("darkorange", "steelblue2")) +
+  theme_classic()
+```
+
+
+If you have a lot of points on your scatterplot, it can get quite hard to see all the datapoints. One way to deal with this is to change the **transparency** of the points. You can do this by adjusting the `alpha` level inside of `geom_point()`. `alpha=` ranges from 0 to 1, with 0 being fully transparent and 1 being fully solid.
+
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(df, aes(x=Mass, y=Head, color = KnownSex) ) + 
+  geom_point(alpha=.4) +
+  scale_color_manual(values = c("darkorange", "steelblue2")) +
+  theme_classic()
+```
+
+
+<br>
+
+#### Multiple Groups on a Scatterplot
+
+We can add multiple trendlines to each group of datapoints plotted on a scatterplot. Let's look at the following data of the chemical components of different olive oils produced in Italy. This is what the data look like: 
+
+```{r, message=FALSE, warning=FALSE}
+olives <- read_csv("data_raw/olives.csv")
+head(olives)
+```
+
+If we use `table()`, we can see how many different regions are represented in the data. There are three unique Italian areas where the olives come from:
+
+
+```{r, message=FALSE, warning=FALSE}
+table(olives$macro.area)
+```
+
+Say we are interested in looking at how `oleic` and `linoleic` acid contents are related to each other by `macro.area`:
+
+```{r, message=FALSE, warning=FALSE, fig.width = 5, fig.height = 3}
+ggplot(olives, aes(x=oleic, y=linoleic, color=macro.area)) +
+  geom_point() +
+  theme_classic()
+```
+<br>
+
+If we wanted to add a trendline for each area, all we need to do is add our `stat_smooth(method="lm)` line to the code.  It already knows to plot these as separate trendlines for each group because inside `aes()` we have `color=macro.area`.  As long as there is a `group=` or `color=` inside `aes()` then it knows to do things like adding trendlines separately for each group:
+
+
+```{r, message=FALSE, warning=FALSE, fig.width = 5, fig.height = 3}
+ggplot(olives, aes(x=oleic, y=linoleic, color=macro.area)) +
+  geom_point() +
+  stat_smooth(method="lm", se=F) +
+  theme_classic() 
+```
+
+<br>
+
+<br>
+
+### Bubble Charts
+
+Bubble Charts are an extension to scatterplots. In scatterplots we plot two continuous variables against each other. With a bubble chart we add a third continuous variable and vary the size of our datapoints according to this variable.  For example, say we wish to also plot skull size on our Blue Jay scatterplot. We could increase the size of the points for individuals with larger skull sizes.  We do this by adding `size=Skull` into our `aes()` part:
+
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(df, aes(x=Mass, y=Head, color = KnownSex, size = Skull) ) + 
+  geom_point(alpha=.4) +
+  scale_color_manual(values = c("darkorange", "steelblue2")) +
+  theme_classic()
+```
+
+The issue with bubble charts is that they can start to look very cluttered, making it hard to actually see any patterns. They should probably be used sparingly.  One trick you can employ to make them a little easier to see is to add `scale_size()` to the plot. Here, you enter two numbers to tell it what size points to scale to. In our example below, we used `scale_size(range = c(.1, 4))` which makes our points range between sizes 0.1 and 4. This makes the plot a little less busy:
+
+
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(df, aes(x=Mass, y=Head, color = KnownSex, size = Skull) ) + 
+  geom_point(alpha=.4) +
+  scale_color_manual(values = c("darkorange", "steelblue2")) +
+  theme_classic() +
+  scale_size(range = c(.1, 4))
+```
+
+
+ 
+<br><br><br>
