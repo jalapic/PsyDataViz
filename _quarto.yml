@@ -17,6 +17,7 @@ book:
     - bar.qmd
     - smallmult.qmd
     - heatmaps.qmd
+    - areacharts.qmd
     - savingexporting.qmd
     - summary.qmd
     - references.qmd

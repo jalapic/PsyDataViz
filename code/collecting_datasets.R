@@ -9,3 +9,5 @@ head(diseases)
 schz <- season::schz
 head(schz)
 write.csv(schz,"data_raw/schz.csv", row.names=F)
+
+

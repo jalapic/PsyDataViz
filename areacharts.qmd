@@ -1,0 +1,127 @@
+# Area Charts
+
+In this section I'll discuss visualizations that describe proportions or frequencies using areas. The most common of these is the pie chart - but friends don't let friends use pie charts except in specific situations. I'll discuss those at the end.
+
+<br>
+
+## Waffle Charts
+
+Waffle charts are square grid based plots that convert frequencies or proportions to different numbers of squares. These are easier to interpret than their pie chart cousins. Let's see an example:
+
+Here we have 7 groups and associated frequencies in each group.
+
+```{r}
+set.seed(10)
+x <- round(runif(7, 1, 100),0)
+names(x) <- LETTERS[1:7]
+
+x
+ 
+```
+
+To make the basic waffle plot, we can just use the function `waffle()` on a numerical vector:
+
+```{r, message=FALSE, warning=FALSE}
+library(waffle)
+waffle(x)
+```
+
+In this default plot, `waffle` is using one square to represent each value. However, we can control this more effectively. First, we could divide our own vector by 5 such that each square represents 5. We can also specify the number of rows we wish to plot the data on:
+
+```{r}
+waffle(x/5, rows=6)
+```
+
+Digging into this a bit more. Group A has 10 squares each worth 5 which makes 50. This is 1 less than the 51 in group A. Group E only has one square (worth 5) when it's value was 9. On the other hand, group G has 5 squares worth 25, when it's value was 28. So, it can be seen that some artistic license has been made in the creation of the blocks in the waffle chart. This may be problematic in some representations of data, but may be perfectly fine in others. As an aside, I discuss the issues of aportionment (determining how to deal with left overs of fractions when grouping variables) [in a blog post here](https://jamescurley.blog/posts/2020-10-16-apportionment-methods/).
+
+
+The function `waffle()` also has some other functionality such as user-defining the colors to be used and the legend position:
+
+```{r}
+waffle(x/5, rows = 6,
+       colors = c("#f9f988","#f6be68","#e1875e","#ba585c",
+                           "#853357","#491b49","#0a0431"
+       ),
+       legend_pos = "bottom")
+```
+
+
+<br>
+
+### geom_waffle()
+
+There are a lot of other interesting functionalities in the `waffle` package. Notably, we can use the function `geom_waffle()` in conjunction with other `ggplot2` functions to create elegant plots. Note, that I have sometimes found that you need to install the developmental version of `waffle` directly from GitHub to get some of these to work.
+
+```{r}
+#remotes::install_github("hrbrmstr/waffle")
+library(waffle)
+```
+
+
+
+insert waffle examples here - 
+
+  -small multiples
+  -alpha transparency
+  -changing borders and sizes
+
+
+
+
+
+### Practical Example - waffle charts
+
+This practical example of how to use waffle charts is taken directly from [Bob Rudis's](https://rud.is/rpubs/building-waffle-charts.html) guide on waffle charts. It uses the `storms` dataset which is available in the `dplyr` package. It describes the frequencies of different types of storm across different years.
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+
+storms_df <- storms %>%
+  filter(year >= 2010) %>%
+  count(year, status) 
+
+storms_df
+```
+
+
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=5}
+
+library(waffle)
+library(ggthemes)
+
+ggplot(storms_df, aes(fill = status, values = n)) +
+  geom_waffle(color = "white", size = .25, n_rows = 10, flip = TRUE) +
+  facet_wrap(~year, nrow = 1, strip.position = "bottom") +
+  scale_x_discrete() +
+  scale_y_continuous(labels = function(x) x * 10, # make this multiplyer the same as n_rows
+                     expand = c(0,0)) +
+  ggthemes::scale_fill_tableau(name=NULL) +
+  coord_equal() +
+  labs(
+    title = "Faceted Waffle Bar Chart",
+    subtitle = "{dplyr} storms data",
+    x = "Year",
+    y = "Count"
+  ) +
+  theme_minimal(base_family = "Roboto Condensed") +
+  theme(panel.grid = element_blank(), axis.ticks.y = element_line()) +
+  guides(fill = guide_legend(reverse = TRUE))
+```
+
+
+
+
+<br>
+
+## Pie Charts
+
+Why are pie charts bad? Basically humans are very bad at estimating quantities based on angles - and pie charts (and donut charts) use slices. This can lead to situations in which we perceive groups to have equivalent areas, but they do not. This is particularly a problem when we are plotting data including more than 2 groups. Much more often, we can represent the data more efficiently using a bar graph.
+
+For example,
+
+insert bad pie chart example and bar graph improvement.
+
+### Pie charts with two groups
+
+The one exception to the "pie charts are bad" rule may be if we are representing proportions between two groups, especially when we wish to compare across a number of different subjects. For example (include example):
