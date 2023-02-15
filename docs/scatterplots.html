@@ -93,7 +93,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./heatmaps.html" rel="next">
+<link href="./lines.html" rel="next">
 <link href="./intro.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -173,12 +173,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heatmaps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Heatmaps</span></a>
+  <a href="./lines.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Line Graphs</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./heatmaps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Heatmaps</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Summary</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -195,8 +200,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#multiple-groups-on-a-scatterplot" id="toc-multiple-groups-on-a-scatterplot" class="nav-link active" data-scroll-target="#multiple-groups-on-a-scatterplot"><span class="toc-section-number">2.1</span>  Multiple Groups on a Scatterplot</a></li>
-  <li><a href="#bubble-charts" id="toc-bubble-charts" class="nav-link" data-scroll-target="#bubble-charts"><span class="toc-section-number">2.2</span>  Bubble Charts</a></li>
+  <li><a href="#basic-scatterplots" id="toc-basic-scatterplots" class="nav-link active" data-scroll-target="#basic-scatterplots"><span class="toc-section-number">2.1</span>  Basic Scatterplots</a></li>
+  <li><a href="#multiple-groups-on-a-scatterplot" id="toc-multiple-groups-on-a-scatterplot" class="nav-link" data-scroll-target="#multiple-groups-on-a-scatterplot"><span class="toc-section-number">2.2</span>  Multiple Groups on a Scatterplot</a></li>
+  <li><a href="#bubble-charts" id="toc-bubble-charts" class="nav-link" data-scroll-target="#bubble-charts"><span class="toc-section-number">2.3</span>  Bubble Charts</a></li>
   </ul>
 </nav>
     </div>
@@ -221,6 +227,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <p>In the introduction to <code>ggplot2</code>, we already demonstrated how to make a scatterplot. Here we will show a few extra features of these plots. Scatterplots plot continuous variables on the x- and y-axes, and can be very useful to examine the association between the two continuous variables. We use them a lot when plotting data related to correlation.</p>
+<p><br></p>
+<section id="basic-scatterplots" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="basic-scatterplots"><span class="header-section-number">2.1</span> Basic Scatterplots</h2>
 <p>As we showed earlier, <code>geom_point</code> is used to add datapoints to scatter plots. We’ll do this for the <code>cheese.csv</code> dataset, that contains nutritional information about various cheeses:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -346,8 +355,9 @@ i Specify the column types or set `show_col_types = FALSE` to quiet this message
 </div>
 </div>
 <p><br></p>
-<section id="multiple-groups-on-a-scatterplot" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="multiple-groups-on-a-scatterplot"><span class="header-section-number">2.1</span> Multiple Groups on a Scatterplot</h2>
+</section>
+<section id="multiple-groups-on-a-scatterplot" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="multiple-groups-on-a-scatterplot"><span class="header-section-number">2.2</span> Multiple Groups on a Scatterplot</h2>
 <p>We can add multiple trendlines to each group of datapoints plotted on a scatterplot. Let’s look at the following data of the chemical components of different olive oils produced in Italy. This is what the data look like:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>olives <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data_raw/olives.csv"</span>)</span>
@@ -398,8 +408,8 @@ Centre.North     Sardinia        South
 <p><br></p>
 <p><br></p>
 </section>
-<section id="bubble-charts" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="bubble-charts"><span class="header-section-number">2.2</span> Bubble Charts</h2>
+<section id="bubble-charts" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="bubble-charts"><span class="header-section-number">2.3</span> Bubble Charts</h2>
 <p>Bubble Charts are an extension to scatterplots. In scatterplots we plot two continuous variables against each other. With a bubble chart we add a third continuous variable and vary the size of our datapoints according to this variable. For example, say we wish to also plot skull size on our Blue Jay scatterplot. We could increase the size of the points for individuals with larger skull sizes. We do this by adding <code>size=Skull</code> into our <code>aes()</code> part:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>Mass, <span class="at">y=</span>Head, <span class="at">color =</span> KnownSex, <span class="at">size =</span> Skull) ) <span class="sc">+</span> </span>
@@ -567,8 +577,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./heatmaps.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Heatmaps</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lines.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Line Graphs</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

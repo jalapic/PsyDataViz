@@ -11,6 +11,7 @@ book:
     - index.qmd
     - intro.qmd
     - scatterplots.qmd
+    - lines.qmd
     - heatmaps.qmd
     - summary.qmd
     - references.qmd

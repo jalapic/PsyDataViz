@@ -1,0 +1,151 @@
+# Line Graphs
+
+Line graphs connect continuous values on the y-axis over time on the x-axis.  They are very useful for show patterns of change over time.
+
+<br>
+
+## Basic Line Graphs
+
+Let's look at the `jennifer.csv` dataset:
+
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+jennifer <- read_csv("data_raw/jennifer.csv")
+head(jennifer)
+```
+
+
+This dataset shows the number `n` of children born each year (`year`) in the United States with the name Jennifer. In 1916 there were five children born with the name Jennifer.  In 1917 there were 0. In 1923 there were 9. 
+
+This dataset goes up to 2017 where there were 1052 children born with the name Jennifer:
+
+```{r}
+tail(jennifer)
+```
+
+Therefore, we have a continuous variable (`n`) and a time variable (`year`). We can plot these as we would plot a scatterplot by supplying `year` to our x-axis and `n` to our y-axis.  We could then add datapoints with `geom_point()` essentially making a scatterplot:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jennifer, aes(x=year, y=n) ) + geom_point() 
+```
+
+
+
+But, we aren't dealing with just a scatterplot. These datapoints can be connected to each other as they are ordered in time. Instead of using `geom_point()` we can use `geom_line()` to draw a line instead:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jennifer, aes(x=year, y=n) ) + geom_line()
+```
+
+
+If you so desired, you could plot both the points and lines together:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jennifer, aes(x=year, y=n) ) + 
+  geom_point() +  
+  geom_line() 
+```
+
+You can adjust the colors of the lines and the points independently by supplying `color=` inside of each geom:
+
+e.g. Changing the color of the line, but *not* the points:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jennifer, aes(x=year, y=n) ) + 
+  geom_point() +
+  geom_line(color = "purple") 
+```
+
+Changing the color of both the points and the line:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jennifer, aes(x=year, y=n) ) + 
+  geom_point(color = "violet") +
+  geom_line(color = "purple") 
+```
+
+You can also change the width of lines by adding `lwd=` to `geom_line()`:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jennifer, aes(x=year, y=n) ) + 
+  geom_line(color = "purple", lwd=2)
+```
+
+
+
+There are also several different styles of lines. You can change these by adjusting the number you provide to `lty=` inside of `geom_line()`. Here are a few examples:
+
+```{r, fig.width = 3, fig.height = 2}
+ggplot(jennifer, aes(x=year, y=n) ) + geom_line(lty=2)
+```
+
+```{r, fig.width = 3, fig.height = 2}
+ggplot(jennifer, aes(x=year, y=n) ) + geom_line(lty=3)
+```
+
+This illustration shows some of the linetype options:
+
+![](img/lty.png)
+
+
+
+Just a quick reminder:  Please only connect datapoints into a line if it is meaningful to do so! This is almost always when your x-axis is some measure of time.  
+
+<br>
+
+## Multiple Line Graphs
+
+Often we wish to compare the patterns over time of different groups. We can do that by plotting *multiple* lines on the same graph.
+
+Let's look at this example dataset. 
+
+```{r, message=FALSE, warning=FALSE}
+jenlinda <- read_csv("data_raw/jenlinda.csv")
+tail(jenlinda)
+```
+
+Here, we have data in **long** format. We still have our continuous outcome variable of `n` in one column. We also have `year` in another column. So we can plot these two against each other. Importantly, we can split our lines based on our grouping variable, which is the `name` column. In that column we have two different groups - Jennifer and Linda.
+
+To plot separate lines based on the `name` column, we need to add `group=name` to our `aes()`. We've also added some custom labels, titles and a theme.
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jenlinda, aes(x=year, y=n, group=name)) + 
+  geom_line()+
+  xlab("Year") +
+  ylab("Number of Children Born") +
+  ggtitle("Popularity of Names Jennifer & Linda in USA") +
+  theme_minimal()
+```
+
+
+You may notice that both lines are the same color!  To make the lines have different colors, we insert `color=name` into the `aes()` instead of `group=name`:
+
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jenlinda, aes(x=year, y=n, color=name)) + 
+  geom_line()+
+  xlab("Year") +
+  ylab("Number of Children Born") +
+  ggtitle("Popularity of Names Jennifer & Linda in USA") +
+  theme_minimal()
+```
+
+
+Again, we could customize these colors if we did not like them with `scale_color_manual()` like this:
+
+```{r, fig.width = 5, fig.height = 3}
+ggplot(jenlinda, aes(x=year, y=n, color=name)) + 
+  geom_line()+
+  xlab("Year") +
+  ylab("Number of Children Born") +
+  ggtitle("Popularity of Names Jennifer & Linda in USA") +
+  theme_classic() +
+  scale_color_manual(values=c("#ffadf3", "#800f4f"))
+```
+
+Just insert your favorite colors, and make sure you provide the same number of colors as you have separate groups/lines.
+
+
+
+<br><br><br>
