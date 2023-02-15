@@ -5,13 +5,13 @@ project:
 
 book:
   title: "PsyDataViz"
-  author: "Jane Doe"
+  author: "James Curley"
   date: "2/13/2023"
   chapters:
     - index.qmd
     - intro.qmd
-    - heatmaps.qmd
     - scatterplots.qmd
+    - heatmaps.qmd
     - summary.qmd
     - references.qmd
 
