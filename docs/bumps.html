@@ -236,11 +236,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#basic-bump-chart-in-ggplot" id="toc-basic-bump-chart-in-ggplot" class="nav-link active" data-scroll-target="#basic-bump-chart-in-ggplot"><span class="toc-section-number">10.1</span>  Basic Bump Chart in ggplot()</a></li>
-  <li><a href="#practical-example---olympics-medal-counts" id="toc-practical-example---olympics-medal-counts" class="nav-link" data-scroll-target="#practical-example---olympics-medal-counts"><span class="toc-section-number">10.2</span>  Practical Example - Olympics Medal Counts</a></li>
-  <li><a href="#practical-example---babynames-popularity-over-time" id="toc-practical-example---babynames-popularity-over-time" class="nav-link" data-scroll-target="#practical-example---babynames-popularity-over-time"><span class="toc-section-number">10.3</span>  Practical Example - Babynames popularity over time</a></li>
-  <li><a href="#ggbump-package" id="toc-ggbump-package" class="nav-link" data-scroll-target="#ggbump-package"><span class="toc-section-number">10.4</span>  ggbump() package</a>
+  <li><a href="#ggbump-package" id="toc-ggbump-package" class="nav-link" data-scroll-target="#ggbump-package"><span class="toc-section-number">10.2</span>  ggbump() package</a>
   <ul class="collapse">
-  <li><a href="#epl-soccer-example" id="toc-epl-soccer-example" class="nav-link" data-scroll-target="#epl-soccer-example"><span class="toc-section-number">10.4.1</span>  EPL soccer example ?</a></li>
+  <li><a href="#practical-example---babyname-popularity-over-time." id="toc-practical-example---babyname-popularity-over-time." class="nav-link" data-scroll-target="#practical-example---babyname-popularity-over-time."><span class="toc-section-number">10.2.1</span>  Practical Example - Babyname Popularity Over Time.</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -265,7 +263,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>Bump charts are useful for looking at how rankings of a set of observations change over time. They are named (I think) after the visualizations of changes in rankings of Oxford and Cambridge college rowing crews would achieve during annual ‘bumps’ rowing races. Those charts look something like this:</p>
+<p>Bump charts are useful for looking at how rankings of a set of observations change over time. They are named (I think) after the visualizations of changes in rankings of Oxford and Cambridge college rowing crews during boat races. Because the river wasn’t wide enough to accommodate all the boats at once, they would start their races at different points on the river and their goal was to “bump” the boat in front. This would mean that they went up in ranking. This was visualized in charts like the one below. When lines cross, this means that the boats bumped and the boats switched rankings:</p>
 <p><img src="img/bumps.png" class="img-fluid"></p>
 <p><br></p>
 <section id="basic-bump-chart-in-ggplot" class="level2" data-number="10.1">
@@ -285,7 +283,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 3 Balliol            3     4     4     5     6     7     8
 4 Corpus Christi     4     3     2     2     2     3     3
 5 Pembroke           5     5     6     7     8     9     9
-6 Trinity            6     7     7     6     5     4     3</code></pre>
+6 Trinity            6     7     7     6     5     4     5</code></pre>
 </div>
 </div>
 <p>We have 12 rows of data. Each row is a college team. There are eight columns with the last seven being the ranking of each college on that day. To turn the data into a plottable format, we need to have a long data frame with columns <code>team</code>, <code>day</code> and <code>rank</code>.</p>
@@ -386,21 +384,55 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="bumps_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
-</section>
-<section id="practical-example---olympics-medal-counts" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="practical-example---olympics-medal-counts"><span class="header-section-number">10.2</span> Practical Example - Olympics Medal Counts</h2>
-<p>https://dominikkoch.github.io/Bump-Chart/</p>
 <p><br></p>
 </section>
-<section id="practical-example---babynames-popularity-over-time" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="practical-example---babynames-popularity-over-time"><span class="header-section-number">10.3</span> Practical Example - Babynames popularity over time</h2>
-<p><br></p>
-</section>
-<section id="ggbump-package" class="level2" data-number="10.4">
-<h2 data-number="10.4" class="anchored" data-anchor-id="ggbump-package"><span class="header-section-number">10.4</span> ggbump() package</h2>
+<section id="ggbump-package" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="ggbump-package"><span class="header-section-number">10.2</span> ggbump() package</h2>
 <p>I like the classic angular lines aesthetic of bump charts. However, there may be use cases where we wish to have curved lines joining points. This can be done effectively with the <a href="https://github.com/davidsjoberg/ggbump">ggbump package</a>.</p>
-<section id="epl-soccer-example" class="level3" data-number="10.4.1">
-<h3 data-number="10.4.1" class="anchored" data-anchor-id="epl-soccer-example"><span class="header-section-number">10.4.1</span> EPL soccer example ?</h3>
+<p>The below code creates the generic plot for the college bumps dataset above. I’ve kept the <code>scale_y_reverse()</code> in the code so that we have the highest ranked team (i.e.&nbsp;1) at the top of the y-axis, and the lowest ranked at the bottom. The <code>geom_bump()</code> function adds a curved line rather than straight line for each subject across time. The other difference is that I have made the <code>day</code> column numeric by using <code>as.numeric(factor(day))</code> rather than just <code>day</code>. Although <code>geom_bump()</code> should work with characters, I have found that converting them to numeric variables works best.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggbump)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dfl, <span class="fu">aes</span>(<span class="fu">as.numeric</span>(<span class="fu">factor</span>(day)), rank, <span class="at">color =</span> Team)) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bump</span>(<span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_reverse</span>(<span class="at">breaks=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="bumps_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Below I have customized this plot with some additional code. I have decided to create a palette of 12 colors using the <code>viridis</code> palette, though having 12 separate colors for a discrete category is probably pushing the limits of what is easily interpretable. These colors would be added in alphabetical order as a default as the <code>Team</code> variable is a character. This would mean that Balliol would have the darkest purple color and Wadham the lightest yellow. A better way of assigning color would be by initial or final rank. I decided to assign here by initial rank. Therefore I converted the <code>Team</code> variable to a factor and made the levels the order of ranks on the first day. The easiest way to do this was to use <code>unique(dfl$Team)</code> as they appear in rank order of the first day in the dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis) <span class="co">#for color scale</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#refactor Team to be in rank order (same as order appears in dataset)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>dfl<span class="sc">$</span>Team <span class="ot">&lt;-</span> <span class="fu">factor</span>(dfl<span class="sc">$</span>Team, <span class="at">levels =</span> <span class="fu">unique</span>(dfl<span class="sc">$</span>Team))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dfl, <span class="fu">aes</span>(<span class="fu">as.numeric</span>(<span class="fu">factor</span>(day)), rank, <span class="at">color =</span> Team)) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bump</span>(<span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"#FFFFFF"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>(<span class="at">breaks=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">labels =</span> df<span class="sc">$</span>Team) <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">viridis</span>(<span class="dv">12</span>,<span class="at">option=</span><span class="st">"C"</span>)) <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Day"</span>) <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Rank"</span>) <span class="sc">+</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Day"</span>) <span class="sc">+</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.line.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">1.5</span>)),</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="bumps_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<section id="practical-example---babyname-popularity-over-time." class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="practical-example---babyname-popularity-over-time."><span class="header-section-number">10.2.1</span> Practical Example - Babyname Popularity Over Time.</h3>
+<p>https://github.com/steodose/Tidy-Tuesday/blob/master/Week%2028_2022.R</p>
 
 
 </section>

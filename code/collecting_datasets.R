@@ -11,3 +11,9 @@ head(schz)
 write.csv(schz,"data_raw/schz.csv", row.names=F)
 
 
+#EPL bump chart
+x <- read.csv("https://raw.githubusercontent.com/jalapic/jalapic.github.io/master/soccer1.csv")
+head(x)
+library(tidyverse)
+x <- x %>% select(team,gameno,rank,finalrank)
+write.csv(x, "data_raw/epl.csv", row.names = F)

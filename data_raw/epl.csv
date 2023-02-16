@@ -1,0 +1,761 @@
+"team","gameno","rank","finalrank"
+"Chelsea",1,1,1
+"Manchester City",1,2,2
+"Arsenal",1,3,3
+"Manchester United",1,14,4
+"Tottenham Hotspur",1,8,5
+"Liverpool",1,4,6
+"Southampton",1,15,7
+"Swansea City",1,5,8
+"Stoke City",1,17,9
+"Crystal Palace",1,13,10
+"Everton",1,9,11
+"West Ham United",1,18,12
+"West Bromwich Albion",1,12,13
+"Leicester City",1,10,14
+"Newcastle United",1,20,15
+"Sunderland",1,11,16
+"Aston Villa",1,6,17
+"Hull City",1,7,18
+"Burnley",1,19,19
+"Queens Park Rangers",1,16,20
+"Chelsea",2,3,1
+"Manchester City",2,2,2
+"Arsenal",2,5,3
+"Manchester United",2,13,4
+"Tottenham Hotspur",2,1,5
+"Liverpool",2,9,6
+"Southampton",2,15,7
+"Swansea City",2,4,8
+"Stoke City",2,14,9
+"Crystal Palace",2,18,10
+"Everton",2,10,11
+"West Ham United",2,8,12
+"West Bromwich Albion",2,12,13
+"Leicester City",2,16,14
+"Newcastle United",2,17,15
+"Sunderland",2,11,16
+"Aston Villa",2,7,17
+"Hull City",2,6,18
+"Burnley",2,19,19
+"Queens Park Rangers",2,20,20
+"Chelsea",3,1,1
+"Manchester City",3,4,2
+"Arsenal",3,7,3
+"Manchester United",3,13,4
+"Tottenham Hotspur",3,6,5
+"Liverpool",3,5,6
+"Southampton",3,8,7
+"Swansea City",3,2,8
+"Stoke City",3,10,9
+"Crystal Palace",3,19,10
+"Everton",3,17,11
+"West Ham United",3,11,12
+"West Bromwich Albion",3,18,13
+"Leicester City",3,16,14
+"Newcastle United",3,15,15
+"Sunderland",3,14,16
+"Aston Villa",3,3,17
+"Hull City",3,9,18
+"Burnley",3,20,19
+"Queens Park Rangers",3,12,20
+"Chelsea",4,1,1
+"Manchester City",4,5,2
+"Arsenal",4,7,3
+"Manchester United",4,9,4
+"Tottenham Hotspur",4,6,5
+"Liverpool",4,8,6
+"Southampton",4,4,7
+"Swansea City",4,3,8
+"Stoke City",4,14,9
+"Crystal Palace",4,18,10
+"Everton",4,11,11
+"West Ham United",4,13,12
+"West Bromwich Albion",4,19,13
+"Leicester City",4,12,14
+"Newcastle United",4,20,15
+"Sunderland",4,15,16
+"Aston Villa",4,2,17
+"Hull City",4,10,18
+"Burnley",4,17,19
+"Queens Park Rangers",4,16,20
+"Chelsea",5,1,1
+"Manchester City",5,6,2
+"Arsenal",5,4,3
+"Manchester United",5,12,4
+"Tottenham Hotspur",5,9,5
+"Liverpool",5,11,6
+"Southampton",5,2,7
+"Swansea City",5,5,8
+"Stoke City",5,13,9
+"Crystal Palace",5,14,10
+"Everton",5,15,11
+"West Ham United",5,8,12
+"West Bromwich Albion",5,16,13
+"Leicester City",5,7,14
+"Newcastle United",5,20,15
+"Sunderland",5,17,16
+"Aston Villa",5,3,17
+"Hull City",5,10,18
+"Burnley",5,19,19
+"Queens Park Rangers",5,18,20
+"Chelsea",6,1,1
+"Manchester City",6,3,2
+"Arsenal",6,4,3
+"Manchester United",6,7,4
+"Tottenham Hotspur",6,8,5
+"Liverpool",6,14,6
+"Southampton",6,2,7
+"Swansea City",6,5,8
+"Stoke City",6,11,9
+"Crystal Palace",6,10,10
+"Everton",6,16,11
+"West Ham United",6,13,12
+"West Bromwich Albion",6,9,13
+"Leicester City",6,12,14
+"Newcastle United",6,20,15
+"Sunderland",6,17,16
+"Aston Villa",6,6,17
+"Hull City",6,15,18
+"Burnley",6,19,19
+"Queens Park Rangers",6,18,20
+"Chelsea",7,1,1
+"Manchester City",7,2,2
+"Arsenal",7,8,3
+"Manchester United",7,4,4
+"Tottenham Hotspur",7,6,5
+"Liverpool",7,9,6
+"Southampton",7,3,7
+"Swansea City",7,5,8
+"Stoke City",7,15,9
+"Crystal Palace",7,16,10
+"Everton",7,17,11
+"West Ham United",7,7,12
+"West Bromwich Albion",7,14,13
+"Leicester City",7,12,14
+"Newcastle United",7,19,15
+"Sunderland",7,13,16
+"Aston Villa",7,10,17
+"Hull City",7,11,18
+"Burnley",7,18,19
+"Queens Park Rangers",7,20,20
+"Chelsea",8,1,1
+"Manchester City",8,2,2
+"Arsenal",8,7,3
+"Manchester United",8,6,4
+"Tottenham Hotspur",8,10,5
+"Liverpool",8,5,6
+"Southampton",8,3,7
+"Swansea City",8,8,8
+"Stoke City",8,9,9
+"Crystal Palace",8,16,10
+"Everton",8,13,11
+"West Ham United",8,4,12
+"West Bromwich Albion",8,14,13
+"Leicester City",8,15,14
+"Newcastle United",8,18,15
+"Sunderland",8,17,16
+"Aston Villa",8,12,17
+"Hull City",8,11,18
+"Burnley",8,19,19
+"Queens Park Rangers",8,20,20
+"Chelsea",9,1,1
+"Manchester City",9,3,2
+"Arsenal",9,5,3
+"Manchester United",9,8,4
+"Tottenham Hotspur",9,11,5
+"Liverpool",9,7,6
+"Southampton",9,2,7
+"Swansea City",9,6,8
+"Stoke City",9,12,9
+"Crystal Palace",9,16,10
+"Everton",9,9,11
+"West Ham United",9,4,12
+"West Bromwich Albion",9,13,13
+"Leicester City",9,17,14
+"Newcastle United",9,14,15
+"Sunderland",9,18,16
+"Aston Villa",9,15,17
+"Hull City",9,10,18
+"Burnley",9,20,19
+"Queens Park Rangers",9,19,20
+"Chelsea",10,1,1
+"Manchester City",10,3,2
+"Arsenal",10,4,3
+"Manchester United",10,10,4
+"Tottenham Hotspur",10,8,5
+"Liverpool",10,7,6
+"Southampton",10,2,7
+"Swansea City",10,6,8
+"Stoke City",10,13,9
+"Crystal Palace",10,17,10
+"Everton",10,9,11
+"West Ham United",10,5,12
+"West Bromwich Albion",10,11,13
+"Leicester City",10,18,14
+"Newcastle United",10,12,15
+"Sunderland",10,15,16
+"Aston Villa",10,16,17
+"Hull City",10,14,18
+"Burnley",10,20,19
+"Queens Park Rangers",10,19,20
+"Chelsea",11,1,1
+"Manchester City",11,3,2
+"Arsenal",11,6,3
+"Manchester United",11,7,4
+"Tottenham Hotspur",11,12,5
+"Liverpool",11,11,6
+"Southampton",11,2,7
+"Swansea City",11,5,8
+"Stoke City",11,9,9
+"Crystal Palace",11,17,10
+"Everton",11,10,11
+"West Ham United",11,4,12
+"West Bromwich Albion",11,13,13
+"Leicester City",11,18,14
+"Newcastle United",11,8,15
+"Sunderland",11,14,16
+"Aston Villa",11,16,17
+"Hull City",11,15,18
+"Burnley",11,20,19
+"Queens Park Rangers",11,19,20
+"Chelsea",12,1,1
+"Manchester City",12,3,2
+"Arsenal",12,8,3
+"Manchester United",12,4,4
+"Tottenham Hotspur",12,10,5
+"Liverpool",12,12,6
+"Southampton",12,2,7
+"Swansea City",12,7,8
+"Stoke City",12,11,9
+"Crystal Palace",12,15,10
+"Everton",12,9,11
+"West Ham United",12,6,12
+"West Bromwich Albion",12,13,13
+"Leicester City",12,18,14
+"Newcastle United",12,5,15
+"Sunderland",12,14,16
+"Aston Villa",12,16,17
+"Hull City",12,17,18
+"Burnley",12,19,19
+"Queens Park Rangers",12,20,20
+"Chelsea",13,1,1
+"Manchester City",13,2,2
+"Arsenal",13,6,3
+"Manchester United",13,4,4
+"Tottenham Hotspur",13,7,5
+"Liverpool",13,11,6
+"Southampton",13,3,7
+"Swansea City",13,8,8
+"Stoke City",13,12,9
+"Crystal Palace",13,14,10
+"Everton",13,10,11
+"West Ham United",13,5,12
+"West Bromwich Albion",13,15,13
+"Leicester City",13,20,14
+"Newcastle United",13,9,15
+"Sunderland",13,13,16
+"Aston Villa",13,16,17
+"Hull City",13,17,18
+"Burnley",13,19,19
+"Queens Park Rangers",13,18,20
+"Chelsea",14,1,1
+"Manchester City",14,2,2
+"Arsenal",14,6,3
+"Manchester United",14,4,4
+"Tottenham Hotspur",14,10,5
+"Liverpool",14,8,6
+"Southampton",14,3,7
+"Swansea City",14,7,8
+"Stoke City",14,13,9
+"Crystal Palace",14,15,10
+"Everton",14,11,11
+"West Ham United",14,5,12
+"West Bromwich Albion",14,16,13
+"Leicester City",14,20,14
+"Newcastle United",14,9,15
+"Sunderland",14,14,16
+"Aston Villa",14,12,17
+"Hull City",14,17,18
+"Burnley",14,18,19
+"Queens Park Rangers",14,19,20
+"Chelsea",15,1,1
+"Manchester City",15,2,2
+"Arsenal",15,6,3
+"Manchester United",15,3,4
+"Tottenham Hotspur",15,10,5
+"Liverpool",15,9,6
+"Southampton",15,5,7
+"Swansea City",15,8,8
+"Stoke City",15,13,9
+"Crystal Palace",15,15,10
+"Everton",15,12,11
+"West Ham United",15,4,12
+"West Bromwich Albion",15,16,13
+"Leicester City",15,20,14
+"Newcastle United",15,7,15
+"Sunderland",15,14,16
+"Aston Villa",15,11,17
+"Hull City",15,18,18
+"Burnley",15,19,19
+"Queens Park Rangers",15,17,20
+"Chelsea",16,1,1
+"Manchester City",16,2,2
+"Arsenal",16,6,3
+"Manchester United",16,3,4
+"Tottenham Hotspur",16,7,5
+"Liverpool",16,11,6
+"Southampton",16,5,7
+"Swansea City",16,9,8
+"Stoke City",16,12,9
+"Crystal Palace",16,16,10
+"Everton",16,10,11
+"West Ham United",16,4,12
+"West Bromwich Albion",16,14,13
+"Leicester City",16,20,14
+"Newcastle United",16,8,15
+"Sunderland",16,15,16
+"Aston Villa",16,13,17
+"Hull City",16,19,18
+"Burnley",16,17,19
+"Queens Park Rangers",16,18,20
+"Chelsea",17,1,1
+"Manchester City",17,2,2
+"Arsenal",17,6,3
+"Manchester United",17,3,4
+"Tottenham Hotspur",17,7,5
+"Liverpool",17,10,6
+"Southampton",17,5,7
+"Swansea City",17,8,8
+"Stoke City",17,13,9
+"Crystal Palace",17,17,10
+"Everton",17,11,11
+"West Ham United",17,4,12
+"West Bromwich Albion",17,15,13
+"Leicester City",17,20,14
+"Newcastle United",17,9,15
+"Sunderland",17,14,16
+"Aston Villa",17,12,17
+"Hull City",17,19,18
+"Burnley",17,18,19
+"Queens Park Rangers",17,16,20
+"Chelsea",18,1,1
+"Manchester City",18,2,2
+"Arsenal",18,6,3
+"Manchester United",18,3,4
+"Tottenham Hotspur",18,7,5
+"Liverpool",18,9,6
+"Southampton",18,4,7
+"Swansea City",18,8,8
+"Stoke City",18,11,9
+"Crystal Palace",18,18,10
+"Everton",18,12,11
+"West Ham United",18,5,12
+"West Bromwich Albion",18,15,13
+"Leicester City",18,20,14
+"Newcastle United",18,10,15
+"Sunderland",18,14,16
+"Aston Villa",18,13,17
+"Hull City",18,17,18
+"Burnley",18,19,19
+"Queens Park Rangers",18,16,20
+"Chelsea",19,1,1
+"Manchester City",19,2,2
+"Arsenal",19,5,3
+"Manchester United",19,3,4
+"Tottenham Hotspur",19,7,5
+"Liverpool",19,8,6
+"Southampton",19,4,7
+"Swansea City",19,9,8
+"Stoke City",19,11,9
+"Crystal Palace",19,18,10
+"Everton",19,12,11
+"West Ham United",19,6,12
+"West Bromwich Albion",19,16,13
+"Leicester City",19,20,14
+"Newcastle United",19,10,15
+"Sunderland",19,14,16
+"Aston Villa",19,13,17
+"Hull City",19,17,18
+"Burnley",19,19,19
+"Queens Park Rangers",19,15,20
+"Chelsea",20,1,1
+"Manchester City",20,2,2
+"Arsenal",20,6,3
+"Manchester United",20,3,4
+"Tottenham Hotspur",20,5,5
+"Liverpool",20,8,6
+"Southampton",20,4,7
+"Swansea City",20,9,8
+"Stoke City",20,11,9
+"Crystal Palace",20,18,10
+"Everton",20,13,11
+"West Ham United",20,7,12
+"West Bromwich Albion",20,17,13
+"Leicester City",20,20,14
+"Newcastle United",20,10,15
+"Sunderland",20,14,16
+"Aston Villa",20,12,17
+"Hull City",20,15,18
+"Burnley",20,19,19
+"Queens Park Rangers",20,16,20
+"Chelsea",21,1,1
+"Manchester City",21,2,2
+"Arsenal",21,5,3
+"Manchester United",21,4,4
+"Tottenham Hotspur",21,6,5
+"Liverpool",21,8,6
+"Southampton",21,3,7
+"Swansea City",21,9,8
+"Stoke City",21,11,9
+"Crystal Palace",21,15,10
+"Everton",21,12,11
+"West Ham United",21,7,12
+"West Bromwich Albion",21,14,13
+"Leicester City",21,20,14
+"Newcastle United",21,10,15
+"Sunderland",21,16,16
+"Aston Villa",21,13,17
+"Hull City",21,18,18
+"Burnley",21,17,19
+"Queens Park Rangers",21,19,20
+"Chelsea",22,1,1
+"Manchester City",22,2,2
+"Arsenal",22,5,3
+"Manchester United",22,4,4
+"Tottenham Hotspur",22,6,5
+"Liverpool",22,8,6
+"Southampton",22,3,7
+"Swansea City",22,9,8
+"Stoke City",22,10,9
+"Crystal Palace",22,13,10
+"Everton",22,12,11
+"West Ham United",22,7,12
+"West Bromwich Albion",22,14,13
+"Leicester City",22,20,14
+"Newcastle United",22,11,15
+"Sunderland",22,16,16
+"Aston Villa",22,15,17
+"Hull City",22,18,18
+"Burnley",22,17,19
+"Queens Park Rangers",22,19,20
+"Chelsea",23,1,1
+"Manchester City",23,2,2
+"Arsenal",23,5,3
+"Manchester United",23,3,4
+"Tottenham Hotspur",23,6,5
+"Liverpool",23,7,6
+"Southampton",23,4,7
+"Swansea City",23,9,8
+"Stoke City",23,10,9
+"Crystal Palace",23,13,10
+"Everton",23,12,11
+"West Ham United",23,8,12
+"West Bromwich Albion",23,15,13
+"Leicester City",23,20,14
+"Newcastle United",23,11,15
+"Sunderland",23,14,16
+"Aston Villa",23,16,17
+"Hull City",23,18,18
+"Burnley",23,17,19
+"Queens Park Rangers",23,19,20
+"Chelsea",24,1,1
+"Manchester City",24,2,2
+"Arsenal",24,6,3
+"Manchester United",24,4,4
+"Tottenham Hotspur",24,5,5
+"Liverpool",24,7,6
+"Southampton",24,3,7
+"Swansea City",24,9,8
+"Stoke City",24,10,9
+"Crystal Palace",24,13,10
+"Everton",24,12,11
+"West Ham United",24,8,12
+"West Bromwich Albion",24,15,13
+"Leicester City",24,20,14
+"Newcastle United",24,11,15
+"Sunderland",24,14,16
+"Aston Villa",24,16,17
+"Hull City",24,18,18
+"Burnley",24,17,19
+"Queens Park Rangers",24,19,20
+"Chelsea",25,1,1
+"Manchester City",25,2,2
+"Arsenal",25,5,3
+"Manchester United",25,3,4
+"Tottenham Hotspur",25,6,5
+"Liverpool",25,7,6
+"Southampton",25,4,7
+"Swansea City",25,9,8
+"Stoke City",25,10,9
+"Crystal Palace",25,13,10
+"Everton",25,12,11
+"West Ham United",25,8,12
+"West Bromwich Albion",25,14,13
+"Leicester City",25,20,14
+"Newcastle United",25,11,15
+"Sunderland",25,15,16
+"Aston Villa",25,18,17
+"Hull City",25,16,18
+"Burnley",25,19,19
+"Queens Park Rangers",25,17,20
+"Chelsea",26,1,1
+"Manchester City",26,2,2
+"Arsenal",26,3,3
+"Manchester United",26,4,4
+"Tottenham Hotspur",26,7,5
+"Liverpool",26,6,6
+"Southampton",26,5,7
+"Swansea City",26,9,8
+"Stoke City",26,10,9
+"Crystal Palace",26,13,10
+"Everton",26,12,11
+"West Ham United",26,8,12
+"West Bromwich Albion",26,14,13
+"Leicester City",26,20,14
+"Newcastle United",26,11,15
+"Sunderland",26,16,16
+"Aston Villa",26,19,17
+"Hull City",26,15,18
+"Burnley",26,18,19
+"Queens Park Rangers",26,17,20
+"Chelsea",27,1,1
+"Manchester City",27,2,2
+"Arsenal",27,3,3
+"Manchester United",27,4,4
+"Tottenham Hotspur",27,6,5
+"Liverpool",27,5,6
+"Southampton",27,7,7
+"Swansea City",27,8,8
+"Stoke City",27,10,9
+"Crystal Palace",27,12,10
+"Everton",27,14,11
+"West Ham United",27,9,12
+"West Bromwich Albion",27,13,13
+"Leicester City",27,20,14
+"Newcastle United",27,11,15
+"Sunderland",27,16,16
+"Aston Villa",27,19,17
+"Hull City",27,15,18
+"Burnley",27,18,19
+"Queens Park Rangers",27,17,20
+"Chelsea",28,1,1
+"Manchester City",28,2,2
+"Arsenal",28,3,3
+"Manchester United",28,4,4
+"Tottenham Hotspur",28,6,5
+"Liverpool",28,5,6
+"Southampton",28,7,7
+"Swansea City",28,9,8
+"Stoke City",28,8,9
+"Crystal Palace",28,12,10
+"Everton",28,14,11
+"West Ham United",28,10,12
+"West Bromwich Albion",28,13,13
+"Leicester City",28,20,14
+"Newcastle United",28,11,15
+"Sunderland",28,16,16
+"Aston Villa",28,17,17
+"Hull City",28,15,18
+"Burnley",28,19,19
+"Queens Park Rangers",28,18,20
+"Chelsea",29,1,1
+"Manchester City",29,2,2
+"Arsenal",29,3,3
+"Manchester United",29,4,4
+"Tottenham Hotspur",29,7,5
+"Liverpool",29,5,6
+"Southampton",29,6,7
+"Swansea City",29,9,8
+"Stoke City",29,8,9
+"Crystal Palace",29,12,10
+"Everton",29,14,11
+"West Ham United",29,10,12
+"West Bromwich Albion",29,13,13
+"Leicester City",29,20,14
+"Newcastle United",29,11,15
+"Sunderland",29,17,16
+"Aston Villa",29,16,17
+"Hull City",29,15,18
+"Burnley",29,18,19
+"Queens Park Rangers",29,19,20
+"Chelsea",30,1,1
+"Manchester City",30,2,2
+"Arsenal",30,3,3
+"Manchester United",30,4,4
+"Tottenham Hotspur",30,7,5
+"Liverpool",30,5,6
+"Southampton",30,6,7
+"Swansea City",30,8,8
+"Stoke City",30,10,9
+"Crystal Palace",30,11,10
+"Everton",30,13,11
+"West Ham United",30,9,12
+"West Bromwich Albion",30,14,13
+"Leicester City",30,19,14
+"Newcastle United",30,12,15
+"Sunderland",30,17,16
+"Aston Villa",30,16,17
+"Hull City",30,15,18
+"Burnley",30,18,19
+"Queens Park Rangers",30,20,20
+"Chelsea",31,1,1
+"Manchester City",31,4,2
+"Arsenal",31,2,3
+"Manchester United",31,3,4
+"Tottenham Hotspur",31,6,5
+"Liverpool",31,5,6
+"Southampton",31,7,7
+"Swansea City",31,8,8
+"Stoke City",31,10,9
+"Crystal Palace",31,11,10
+"Everton",31,12,11
+"West Ham United",31,9,12
+"West Bromwich Albion",31,14,13
+"Leicester City",31,19,14
+"Newcastle United",31,13,15
+"Sunderland",31,15,16
+"Aston Villa",31,17,17
+"Hull City",31,16,18
+"Burnley",31,18,19
+"Queens Park Rangers",31,20,20
+"Chelsea",32,1,1
+"Manchester City",32,4,2
+"Arsenal",32,2,3
+"Manchester United",32,3,4
+"Tottenham Hotspur",32,7,5
+"Liverpool",32,5,6
+"Southampton",32,6,7
+"Swansea City",32,8,8
+"Stoke City",32,10,9
+"Crystal Palace",32,11,10
+"Everton",32,12,11
+"West Ham United",32,9,12
+"West Bromwich Albion",32,14,13
+"Leicester City",32,18,14
+"Newcastle United",32,13,15
+"Sunderland",32,16,16
+"Aston Villa",32,15,17
+"Hull City",32,17,18
+"Burnley",32,20,19
+"Queens Park Rangers",32,19,20
+"Chelsea",33,1,1
+"Manchester City",33,4,2
+"Arsenal",33,2,3
+"Manchester United",33,3,4
+"Tottenham Hotspur",33,6,5
+"Liverpool",33,5,6
+"Southampton",33,7,7
+"Swansea City",33,8,8
+"Stoke City",33,9,9
+"Crystal Palace",33,11,10
+"Everton",33,12,11
+"West Ham United",33,10,12
+"West Bromwich Albion",33,13,13
+"Leicester City",33,17,14
+"Newcastle United",33,14,15
+"Sunderland",33,18,16
+"Aston Villa",33,15,17
+"Hull City",33,16,18
+"Burnley",33,20,19
+"Queens Park Rangers",33,19,20
+"Chelsea",34,1,1
+"Manchester City",34,3,2
+"Arsenal",34,2,3
+"Manchester United",34,4,4
+"Tottenham Hotspur",34,6,5
+"Liverpool",34,5,6
+"Southampton",34,7,7
+"Swansea City",34,8,8
+"Stoke City",34,9,9
+"Crystal Palace",34,12,10
+"Everton",34,10,11
+"West Ham United",34,11,12
+"West Bromwich Albion",34,13,13
+"Leicester City",34,18,14
+"Newcastle United",34,14,15
+"Sunderland",34,16,16
+"Aston Villa",34,17,17
+"Hull City",34,15,18
+"Burnley",34,20,19
+"Queens Park Rangers",34,19,20
+"Chelsea",35,1,1
+"Manchester City",35,2,2
+"Arsenal",35,3,3
+"Manchester United",35,4,4
+"Tottenham Hotspur",35,6,5
+"Liverpool",35,5,6
+"Southampton",35,7,7
+"Swansea City",35,8,8
+"Stoke City",35,10,9
+"Crystal Palace",35,12,10
+"Everton",35,11,11
+"West Ham United",35,9,12
+"West Bromwich Albion",35,13,13
+"Leicester City",35,17,14
+"Newcastle United",35,16,15
+"Sunderland",35,14,16
+"Aston Villa",35,15,17
+"Hull City",35,18,18
+"Burnley",35,20,19
+"Queens Park Rangers",35,19,20
+"Chelsea",36,1,1
+"Manchester City",36,2,2
+"Arsenal",36,3,3
+"Manchester United",36,4,4
+"Tottenham Hotspur",36,6,5
+"Liverpool",36,5,6
+"Southampton",36,7,7
+"Swansea City",36,8,8
+"Stoke City",36,9,9
+"Crystal Palace",36,12,10
+"Everton",36,11,11
+"West Ham United",36,10,12
+"West Bromwich Albion",36,13,13
+"Leicester City",36,15,14
+"Newcastle United",36,17,15
+"Sunderland",36,16,16
+"Aston Villa",36,14,17
+"Hull City",36,18,18
+"Burnley",36,19,19
+"Queens Park Rangers",36,20,20
+"Chelsea",37,1,1
+"Manchester City",37,2,2
+"Arsenal",37,3,3
+"Manchester United",37,4,4
+"Tottenham Hotspur",37,6,5
+"Liverpool",37,5,6
+"Southampton",37,7,7
+"Swansea City",37,8,8
+"Stoke City",37,9,9
+"Crystal Palace",37,12,10
+"Everton",37,10,11
+"West Ham United",37,11,12
+"West Bromwich Albion",37,13,13
+"Leicester City",37,14,14
+"Newcastle United",37,17,15
+"Sunderland",37,15,16
+"Aston Villa",37,16,17
+"Hull City",37,18,18
+"Burnley",37,19,19
+"Queens Park Rangers",37,20,20
+"Chelsea",38,1,1
+"Manchester City",38,2,2
+"Arsenal",38,3,3
+"Manchester United",38,4,4
+"Tottenham Hotspur",38,5,5
+"Liverpool",38,6,6
+"Southampton",38,7,7
+"Swansea City",38,8,8
+"Stoke City",38,9,9
+"Crystal Palace",38,10,10
+"Everton",38,11,11
+"West Ham United",38,12,12
+"West Bromwich Albion",38,13,13
+"Leicester City",38,14,14
+"Newcastle United",38,15,15
+"Sunderland",38,16,16
+"Aston Villa",38,17,17
+"Hull City",38,18,18
+"Burnley",38,19,19
+"Queens Park Rangers",38,20,20

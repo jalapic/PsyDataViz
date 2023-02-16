@@ -1,6 +1,6 @@
 # Bump charts
 
-Bump charts are useful for looking at how rankings of a set of observations change over time. They are named (I think) after the visualizations of changes in rankings of Oxford and Cambridge college rowing crews would achieve during annual 'bumps' rowing races. Those charts look something like this:
+Bump charts are useful for looking at how rankings of a set of observations change over time. They are named (I think) after the visualizations of changes in rankings of Oxford and Cambridge college rowing crews during boat races. Because the river wasn't wide enough to accommodate all the boats at once, they would start their races at different points on the river and their goal was to "bump" the boat in front. This would mean that they went up in ranking. This was visualized in charts like the one below. When lines cross, this means that the boats bumped and the boats switched rankings:
 
 ![](img/bumps.png)
 
@@ -105,18 +105,58 @@ ggplot(dfl, aes(x = day, y = rank, group = Team)) +
         )
 ```
 
-## Practical Example - Olympics Medal Counts
-
-https://dominikkoch.github.io/Bump-Chart/
-
-<br>
-
-## Practical Example - Babynames popularity over time
-
 <br>
 
 ## ggbump() package
 
 I like the classic angular lines aesthetic of bump charts. However, there may be use cases where we wish to have curved lines joining points. This can be done effectively with the [ggbump package](https://github.com/davidsjoberg/ggbump).
 
-### EPL soccer example ?
+The below code creates the generic plot for the college bumps dataset above. I've kept the `scale_y_reverse()` in the code so that we have the highest ranked team (i.e. 1) at the top of the y-axis, and the lowest ranked at the bottom. The `geom_bump()` function adds a curved line rather than straight line for each subject across time. The other difference is that I have made the `day` column numeric by using `as.numeric(factor(day))` rather than just `day`. Although `geom_bump()` should work with characters, I have found that converting them to numeric variables works best.
+
+```{r, message=FALSE, warning=FALSE, fig.width=5, fig.height=5}
+library(ggbump)
+
+ggplot(dfl, aes(as.numeric(factor(day)), rank, color = Team)) +
+    geom_bump(size=1) +
+    scale_y_reverse(breaks=1:12) 
+
+
+```
+
+Below I have customized this plot with some additional code. I have decided to create a palette of 12 colors using the `viridis` palette, though having 12 separate colors for a discrete category is probably pushing the limits of what is easily interpretable. These colors would be added in alphabetical order as a default as the `Team` variable is a character. This would mean that Balliol would have the darkest purple color and Wadham the lightest yellow. A better way of assigning color would be by initial or final rank. I decided to assign here by initial rank. Therefore I converted the `Team` variable to a factor and made the levels the order of ranks on the first day. The easiest way to do this was to use `unique(dfl$Team)` as they appear in rank order of the first day in the dataset.
+
+```{r, fig.width=5, fig.height=5, message=FALSE, warning=FALSE}
+
+library(viridis) #for color scale
+
+#refactor Team to be in rank order (same as order appears in dataset)
+dfl$Team <- factor(dfl$Team, levels = unique(dfl$Team))
+
+ggplot(dfl, aes(as.numeric(factor(day)), rank, color = Team)) +
+  geom_bump(size=1) +
+  geom_point(size=4) +
+  geom_point(color = "#FFFFFF", size = 2) +
+  scale_x_continuous(breaks=1:7) +
+  scale_y_reverse(breaks=1:12, labels = df$Team) +
+  scale_color_manual(values=viridis(12,option="C")) +
+  xlab("Day") +
+  ylab("Rank") +
+  theme_classic() +
+  xlab("Day") +
+  ylab("") +
+  theme_classic() +
+  theme(
+    axis.ticks.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.text.y = element_text(size = rel(1.5)),
+    legend.position = "none"
+  )
+
+
+```
+
+      
+
+### Practical Example - Babyname Popularity Over Time.
+
+https://github.com/steodose/Tidy-Tuesday/blob/master/Week%2028_2022.R
