@@ -155,8 +155,6 @@ ggplot(dfl, aes(as.numeric(factor(day)), rank, color = Team)) +
 
 ```
 
-      
-
 ### Practical Example - Babyname Popularity Over Time.
 
 https://github.com/steodose/Tidy-Tuesday/blob/master/Week%2028_2022.R
