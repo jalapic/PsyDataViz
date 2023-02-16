@@ -1,0 +1,27 @@
+# Bump charts
+
+Bump charts are useful for looking at how rankings of a set of observations change over time. They are named (I think) after the visualizations of changes in rankings of Oxford and Cambridge college rowing crews would achieve during annual 'bumps' rowing races. Those charts look something like this:
+
+![](img/bumps.png){height="50%"}
+
+## Basic Bump Chart in ggplot()
+
+(do above rowing chart)
+
+<br>
+
+## Practical Example - Olympics Medal Counts
+
+https://dominikkoch.github.io/Bump-Chart/
+
+<br>
+
+## Practical Example - Babynames popularity over time
+
+<br>
+
+## ggbump() package
+
+I like the classic angular lines aesthetic of bump charts. However, there may be use cases where we wish to have curved lines joining points. This can be done effectively with the [ggbump package](https://github.com/davidsjoberg/ggbump).
+
+### EPL soccer example ?

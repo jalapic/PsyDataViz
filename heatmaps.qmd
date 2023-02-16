@@ -389,7 +389,7 @@ Each row of this dataset contains information on the incidence of schizophrenia 
 
 We plot the data below using similar code to above. In addition, we are using `scale_fill_viridis()` from the `viridis` R package to fill our tiles from a gradient of dark purple (low risk) to bright yellow (high risk). We are using option D, one of four colorblind friendly palettes available in this package. Within `theme()` most of the lines are making the background panel and borders a dark gray color (`gray10`), and adjusting the placement of text labels.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 
 library(viridis)
 

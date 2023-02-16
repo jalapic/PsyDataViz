@@ -1,23 +1,22 @@
 # Saving and Exporting Plots
 
-How do we save the nice plots that we have made using ggplot2?  There are some quite advanced ways of saving high resolution images.  Here, we'll just run through some quick and easy options.
+How do we save the nice plots that we have made using ggplot2? There are some quite advanced ways of saving high resolution images. Here, we'll just run through some quick and easy options.
 
-First, you could just hit `zoom` in RStudio to make your plot bigger. Resize the window to your preferred graph size and then take a screenshot. Paste your screenshot into a program such as paint and crop away.  This is a very crude method - but it's fast and reliable if you just want to have an image to insert into some other program.
+First, you could just hit `zoom` in RStudio to make your plot bigger. Resize the window to your preferred graph size and then take a screenshot. Paste your screenshot into a program such as paint and crop away. This is a very crude method - but it's fast and reliable if you just want to have an image to insert into some other program.
 
-![](img/zoom.png){width=50%}
-
+![](img/zoom.png){width="50%"}
 
 A second option is after you have made your plot, you can hit the 'export' tab on the plot viewer. Choose either "Save as Image" or "Save as PDF" and then choose how and where you want to save the image.
 
-![](img/zoom2.png){width=50%}
+![](img/zoom2.png){width="50%"}
 
 <br>
 
 ## ggsave()
 
-A more premium option is to use a function from ggplot called `ggsave()`.  The first step you should do is to assign your plot to an object name. In the code below, we are making a scatterplot that we save to the object `plot1`:
+A more premium option is to use a function from ggplot called `ggsave()`. The first step you should do is to assign your plot to an object name. In the code below, we are making a scatterplot that we save to the object `plot1`:
 
-```{r, fig.width=5, fig.height=4}
+```{r, fig.width=5, fig.height=4, warning=FALSE, message=FALSE}
 library(tidyverse)
 
 cheese <- read_csv("data_raw/cheese.csv")
@@ -32,15 +31,13 @@ plot1 <- ggplot(cheese, aes(x = chol, y = kcal)) +
 plot1
 ```
 
-Next, run a line of code that will save your plot.  You type `ggsave()`. The first thing you put inside this is the location where you want your plot to be stored. You need to write a location on your computer. If you are using an Rproject such as with this course, you could put your plot in a folder called `img`.  Remember to type the file extension `.png` or `.pdf` after the name of your new plot.  The second thing you need to write is the name of the graph object you wish to save. Here our graph is called `plot1`.
+Next, run a line of code that will save your plot. You type `ggsave()`. The first thing you put inside this is the location where you want your plot to be stored. You need to write a location on your computer. If you are using an Rproject such as with this course, you could put your plot in a folder called `img`. Remember to type the file extension `.png` or `.pdf` after the name of your new plot. The second thing you need to write is the name of the graph object you wish to save. Here our graph is called `plot1`.
 
 ```{r, eval=FALSE}
 ggsave("img/cheese_plot.png", plot1)  # save as a png
 
 ggsave("img/cheese_plot.pdf", plot1)  # save as a pdf
 ```
-
-
 
 You can also play around with the width and height of your saved image. You probably need to trial and error this a few times to get the proportions that you really like. Here we are making an image that is 10 inches wide and 8 inches high.
 

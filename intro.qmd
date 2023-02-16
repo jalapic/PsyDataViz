@@ -10,7 +10,7 @@ In this chapter, I shall introduce `ggplot2` to make an initial graph and how we
 
 The first thing to do when we want to make a visualization with `ggplot2` is to load the tidyverse:
 
-```{r, message = FALSE}
+```{r, message = FALSE, warning=FALSE}
 library(tidyverse)
 ```
 
