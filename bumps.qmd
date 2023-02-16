@@ -2,13 +2,108 @@
 
 Bump charts are useful for looking at how rankings of a set of observations change over time. They are named (I think) after the visualizations of changes in rankings of Oxford and Cambridge college rowing crews would achieve during annual 'bumps' rowing races. Those charts look something like this:
 
-![](img/bumps.png){height="50%"}
+![](img/bumps.png)
+
+<br>
 
 ## Basic Bump Chart in ggplot()
 
-(do above rowing chart)
+We can look at how to make a bump chart using basic `ggplot2` syntax. We'll recreate the above chart. Let's import the data:
 
-<br>
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+df <- read_csv("data_raw/torpids.csv")
+head(df)
+```
+
+We have 12 rows of data. Each row is a college team. There are eight columns with the last seven being the ranking of each college on that day. To turn the data into a plottable format, we need to have a long data frame with columns `team`, `day` and `rank`.
+
+```{r}
+dfl <- df %>%
+  pivot_longer(cols=2:8, names_to = "day", values_to = "rank")
+head(dfl)
+```
+
+We can now plot day against rank using a combination of `geom_line()` and `geom_plot()`. First we will create a plot color with a legend depicting each college. We use `scale_y_reverse()` to plot the rankings on the y-axis from highest rank at the top of the plot to lowest ranking at the bottom.
+
+```{r, fig.width=5, fig.height=5}
+ggplot(dfl, aes(x = day, y = rank, color = Team, group = Team)) +
+  geom_line(lwd=1) +
+  geom_point(size=4) +
+  xlab("")+
+  scale_y_reverse(breaks=1:12) +
+  theme_classic()
+```
+
+However, I think this plot is a little too colorful. Alternatively, we could create the plot in one color and add labels on the y-axis that have the names of the original ranks of teams. This would be more similar to the original plot:
+
+```{r, fig.width=5, fig.height=5}
+ggplot(dfl, aes(x = day, y = rank, group = Team)) +
+  geom_line(lwd=1) +
+  geom_point(size=4) +
+  xlab("")+
+  scale_y_reverse(breaks=1:12, labels = df$Team) +
+  theme_classic()
+```
+
+There are probably several stylistic changes we could make to this plot to make it more visually appealing. It's often nice with bump charts to have the dots be empty circles. We can do this by adding smaller white points on top of the points that we already plotted:
+
+```{r, fig.width=5, fig.height=5}
+ggplot(dfl, aes(x = day, y = rank, group = Team)) +
+  geom_line(lwd=1) +
+  geom_point(size=4) +
+  geom_point(color = "#FFFFFF", size = 2) +
+  scale_y_reverse(breaks=1:12, labels = df$Team) +
+  xlab("") +
+  ylab("") +
+  theme_classic() 
+  
+```
+
+In this plot, I have used the `theme()` function to remove the y axis line and tick marks and to make the text larger.
+
+```{r, fig.width=5, fig.height=5}
+ggplot(dfl, aes(x = day, y = rank, group = Team)) +
+  geom_line(lwd=1) +
+  geom_point(size=4) +
+  geom_point(color = "#FFFFFF", size = 2) +
+  scale_y_reverse(breaks=1:12, labels = df$Team) +
+  xlab("") +
+  ylab("") +
+  theme_classic() +
+  theme(
+        axis.ticks.y = element_blank(),
+        axis.line.y = element_blank(),
+        axis.text.y = element_text(size = rel(1.5))
+        )
+
+```
+
+**Highlighting Individual Groups**
+
+Another thing that is often beneficial in bump charts is to highlight individual groups of interest. This is particularly useful if there are lots of subjects. For example, let's say we are interested in the change in ranking of the Trinity boat over time. What we would like to do is make the other lines more transparent and to make Trinity's line bolder. To do this, we use `alpha()` to set the transparencies of the other crews and I also made their colors grayer. Then I create a dataframe that only includes Trinity's data to plot over the top of our plot, and change the color of their points and lines and thicken their line to emphasize it.
+
+```{r, fig.width=5, fig.height=5}
+
+Trinity <- dfl %>% filter(Team=="Trinity")
+
+ggplot(dfl, aes(x = day, y = rank, group = Team)) +
+  geom_line(lwd=1, color="gray50", alpha=.3) +
+  geom_point(size=4, color="gray50", alpha=.3) +
+  geom_line(data=Trinity, lwd=2, color="#710909") +
+  geom_point(data=Trinity, size=4, color="#710909") +
+  geom_point(color = "#FFFFFF", size = 2) +
+  scale_y_reverse(breaks=1:12, labels = df$Team) +
+  xlab("") +
+  ylab("") +
+  theme_classic() +
+  theme(
+        axis.ticks.y = element_blank(),
+        axis.line.y = element_blank(),
+        axis.text.y = element_text(size = rel(1.5))
+        )
+```
 
 ## Practical Example - Olympics Medal Counts
 
