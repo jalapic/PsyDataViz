@@ -157,4 +157,114 @@ ggplot(dfl, aes(as.numeric(factor(day)), rank, color = Team)) +
 
 ### Practical Example - Babyname Popularity Over Time.
 
-https://github.com/steodose/Tidy-Tuesday/blob/master/Week%2028_2022.R
+Below is an example of using the `ggbump` package to plot changing trends of babyname popularity over time. The code for this was inspired by a plot of European Flight traffic made by [Stephan Teodosescu](https://github.com/steodose/Tidy-Tuesday/blob/master/Week%2028_2022.R).
+
+Essentially what we want to do is find the rankings in popularity of different babynames between two timepoints. We will plot the top 12 names at the final timepoint and track their evolution in popularity from the first timepoint. By only including these names, we avoid too much clutter in the chart and we are able to see how stable or otherwise the rankings are. I chose to look at the popularity of male names between 2012 and 2017.
+
+We first get the ranking of all male names between 2012 and 2017. The data come from the `babynames` package:
+
+```{r, warning=FALSE, message=FALSE}
+library(babynames)
+
+baby_year <- babynames %>%
+  filter(sex=="M") %>%
+  filter(year>=2012, year<=2017) %>%
+  select(year, name, total = n) %>%
+  group_by(year) %>%
+  mutate(
+    rank = row_number(desc(total))
+  ) %>%
+  ungroup() %>%
+  arrange(rank, year)
+
+baby_year
+```
+
+We can see that for the years 2012-2017, the names "Jacob", "Noah" and "Liam" were the most popular.
+
+To limit our chart to just the 12 most popular names in 2017, we can collect those names by filtering for rank and year and using `pull()` to grab the names:
+
+```{r}
+
+baby_top <- baby_year %>%
+  filter(year == 2017, rank <= 12) %>%
+  pull(name)
+
+baby_top
+```
+
+Always a difficulty with 12 discrete groups is what colors to assign to each in the chart. Here, I create a vector of colors using the `pals` color palette package:
+
+```{r}
+baby_colors <- pals::tol(12)
+names(baby_colors)<-baby_top
+baby_colors
+```
+
+Now for the actual plot. The use of `geom_point()`, `geom_bump()`, `scale_y_reverse()`, and `scale_color_manual()` are similar to how we have used them before. Notably in `scale_y_reverse()` we make the breaks go from 80 to -2. This is to ensure that Oliver gets plotted in 2012 as it's ranking was just inside that value then. The -2 is to ensure that we can annotate the 2012 and 2017 at the top of the plot.
+
+The `coord_cartesian()` is used to make sure that our plot stretches across the canvas appropriately. 
+
+Next, the theme elements dictate the color of the plot background and the positioning of the title. The x-axis and y-axis titles are removed with `labs()` and the title's name is added.
+
+Finally, we add text to the plot.  The rankings and names of each line are positioned using `geom_text()` from the `ggtext` package, and the labels "2012" and "2017" are manually positioned using `annotate()`.
+
+
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
+
+library(ggtext)
+
+baby_year %>%
+  filter(name %in% baby_top) %>%
+  ggplot(aes(year, rank, col = name)) +
+  geom_point(size = 2) +
+  geom_bump(size = 1) +
+  scale_y_reverse(position = "right", breaks = seq(80, -2, -2)) +
+  scale_color_manual(values = baby_colors) +
+  coord_cartesian(xlim = c(2010, 2017.5), ylim = c(80, -1.25), expand = F) +
+  theme_void() +
+  theme(
+    legend.position = "none",
+    plot.background = element_rect(fill = "floralwhite", color = "floralwhite"),
+    plot.title = element_text(
+      margin = margin(t = 3, b = 4, unit = "mm"),
+      hjust = 0.5
+    ),
+    plot.margin = margin(0,1,1.5,1.2, "cm")
+  ) +
+  labs(
+    x = "",
+    y = "",
+    title = "Popularity of Selected Boy's Names in USA 2012-2017"
+  )+
+  geom_text(
+    data = baby_year %>%
+    filter(year == 2012, name %in% baby_top),
+    aes(label = name),
+    hjust = 1,
+    nudge_x = -0.1,
+    fontface = "bold"
+  ) +
+  geom_text(
+    data = baby_year %>%
+      filter(year == 2017, name %in% baby_top),
+    aes(label = rank),
+    hjust = 0,
+    nudge_x = 0.1,
+    size = 4,
+    fontface = "bold"
+  ) +
+  annotate(
+    "text",
+    x = c(2011.75, 2016.75),
+    y = c(-0.75, -0.75),
+    label = c(2012, 2017),
+    hjust = c(0, 0),
+    vjust = 1,
+    size = 4,
+    fontface = "bold"
+  )
+```
+
+
+![](img/babybump1.png)

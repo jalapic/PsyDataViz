@@ -432,7 +432,125 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <section id="practical-example---babyname-popularity-over-time." class="level3" data-number="10.2.1">
 <h3 data-number="10.2.1" class="anchored" data-anchor-id="practical-example---babyname-popularity-over-time."><span class="header-section-number">10.2.1</span> Practical Example - Babyname Popularity Over Time.</h3>
-<p>https://github.com/steodose/Tidy-Tuesday/blob/master/Week%2028_2022.R</p>
+<p>Below is an example of using the <code>ggbump</code> package to plot changing trends of babyname popularity over time. The code for this was inspired by a plot of European Flight traffic made by <a href="https://github.com/steodose/Tidy-Tuesday/blob/master/Week%2028_2022.R">Stephan Teodosescu</a>.</p>
+<p>Essentially what we want to do is find the rankings in popularity of different babynames between two timepoints. We will plot the top 12 names at the final timepoint and track their evolution in popularity from the first timepoint. By only including these names, we avoid too much clutter in the chart and we are able to see how stable or otherwise the rankings are. I chose to look at the popularity of male names between 2012 and 2017.</p>
+<p>We first get the ranking of all male names between 2012 and 2017. The data come from the <code>babynames</code> package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(babynames)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>baby_year <span class="ot">&lt;-</span> babynames <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex<span class="sc">==</span><span class="st">"M"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year<span class="sc">&gt;=</span><span class="dv">2012</span>, year<span class="sc">&lt;=</span><span class="dv">2017</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, name, <span class="at">total =</span> n) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">rank =</span> <span class="fu">row_number</span>(<span class="fu">desc</span>(total))</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(rank, year)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>baby_year</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 84,665 x 4
+    year name  total  rank
+   &lt;dbl&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt;
+ 1  2012 Jacob 19069     1
+ 2  2013 Noah  18241     1
+ 3  2014 Noah  19286     1
+ 4  2015 Noah  19613     1
+ 5  2016 Noah  19082     1
+ 6  2017 Liam  18728     1
+ 7  2012 Mason 18964     2
+ 8  2013 Jacob 18148     2
+ 9  2014 Liam  18451     2
+10  2015 Liam  18355     2
+# ... with 84,655 more rows</code></pre>
+</div>
+</div>
+<p>We can see that for the years 2012-2017, the names “Jacob”, “Noah” and “Liam” were the most popular.</p>
+<p>To limit our chart to just the 12 most popular names in 2017, we can collect those names by filtering for rank and year and using <code>pull()</code> to grab the names:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>baby_top <span class="ot">&lt;-</span> baby_year <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2017</span>, rank <span class="sc">&lt;=</span> <span class="dv">12</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(name)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>baby_top</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Liam"     "Noah"     "William"  "James"    "Logan"    "Benjamin"
+ [7] "Mason"    "Elijah"   "Oliver"   "Jacob"    "Lucas"    "Michael" </code></pre>
+</div>
+</div>
+<p>Always a difficulty with 12 discrete groups is what colors to assign to each in the chart. Here, I create a vector of colors using the <code>pals</code> color palette package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>baby_colors <span class="ot">&lt;-</span> pals<span class="sc">::</span><span class="fu">tol</span>(<span class="dv">12</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(baby_colors)<span class="ot">&lt;-</span>baby_top</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>baby_colors</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Liam      Noah   William     James     Logan  Benjamin     Mason    Elijah 
+"#332288" "#6699CC" "#88CCEE" "#44AA99" "#117733" "#999933" "#DDCC77" "#661100" 
+   Oliver     Jacob     Lucas   Michael 
+"#CC6677" "#AA4466" "#882255" "#AA4499" </code></pre>
+</div>
+</div>
+<p>Now for the actual plot. The use of <code>geom_point()</code>, <code>geom_bump()</code>, <code>scale_y_reverse()</code>, and <code>scale_color_manual()</code> are similar to how we have used them before. Notably in <code>scale_y_reverse()</code> we make the breaks go from 80 to -2. This is to ensure that Oliver gets plotted in 2012 as it’s ranking was just inside that value then. The -2 is to ensure that we can annotate the 2012 and 2017 at the top of the plot.</p>
+<p>The <code>coord_cartesian()</code> is used to make sure that our plot stretches across the canvas appropriately.</p>
+<p>Next, the theme elements dictate the color of the plot background and the positioning of the title. The x-axis and y-axis titles are removed with <code>labs()</code> and the title’s name is added.</p>
+<p>Finally, we add text to the plot. The rankings and names of each line are positioned using <code>geom_text()</code> from the <code>ggtext</code> package, and the labels “2012” and “2017” are manually positioned using <code>annotate()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtext)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>baby_year <span class="sc">%&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">%in%</span> baby_top) <span class="sc">%&gt;%</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(year, rank, <span class="at">col =</span> name)) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bump</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>(<span class="at">position =</span> <span class="st">"right"</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">80</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> baby_colors) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">2010</span>, <span class="fl">2017.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="sc">-</span><span class="fl">1.25</span>), <span class="at">expand =</span> F) <span class="sc">+</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"floralwhite"</span>, <span class="at">color =</span> <span class="st">"floralwhite"</span>),</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">3</span>, <span class="at">b =</span> <span class="dv">4</span>, <span class="at">unit =</span> <span class="st">"mm"</span>),</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust =</span> <span class="fl">0.5</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">1.5</span>,<span class="fl">1.2</span>, <span class="st">"cm"</span>)</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">""</span>,</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Popularity of Selected Boy's Names in USA 2012-2017"</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">+</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> baby_year <span class="sc">%&gt;%</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2012</span>, name <span class="sc">%in%</span> baby_top),</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> name),</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="dv">1</span>,</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">nudge_x =</span> <span class="sc">-</span><span class="fl">0.1</span>,</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontface =</span> <span class="st">"bold"</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> baby_year <span class="sc">%&gt;%</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2017</span>, name <span class="sc">%in%</span> baby_top),</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> rank),</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">nudge_x =</span> <span class="fl">0.1</span>,</span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontface =</span> <span class="st">"bold"</span></span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">c</span>(<span class="fl">2011.75</span>, <span class="fl">2016.75</span>),</span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.75</span>, <span class="sc">-</span><span class="fl">0.75</span>),</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">c</span>(<span class="dv">2012</span>, <span class="dv">2017</span>),</span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust =</span> <span class="dv">1</span>,</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontface =</span> <span class="st">"bold"</span></span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="img/babybump1.png" class="img-fluid"></p>
 
 
 </section>

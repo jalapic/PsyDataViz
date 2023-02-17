@@ -49,7 +49,7 @@ p<-baby_year %>%
   labs(
     x = "",
     y = "",
-    title = "Popularity of Selected Boy's Names in USA 2012-2017"
+    title = "Popularity of Selected Boys' Names in USA 2012-2017"
   )+
   geom_text(
     data = baby_year %>%
