@@ -1,0 +1,254 @@
+# Slope Charts
+
+Slope charts are useful in demonstrating the difference in values of subjects or groups over two or more timepoints.
+
+To make a slope chart we need to put our data into long format in three columns. A subject variable, the numeric value and the grouping variable. Below is an example of this data:
+
+```{r}
+set.seed(131) 
+before = abs(rnorm(10,2,1.))
+after = abs(rnorm(10,3,1))
+Subject <- rep(paste0('S',seq(1:10)), 2)
+Data <- data.frame(Value = matrix(c(before,after),ncol=1))
+beforeAfter <- rep(c('Before', 'After'), each = length(before))
+df <- cbind(Subject, Data, beforeAfter)
+df
+```
+
+The key to making a slope chart in `ggplot2` is to add `group=Subject`, so the 'before' and 'after' scores are linked by a line made with `geom_line()`.
+
+```{r, fig.width=4, fig.height=5, warning=FALSE, message=FALSE}
+library(tidyverse)
+
+ggplot(df, aes(x=beforeAfter, y=Value, group=Subject)) +
+  geom_line()
+
+```
+
+The obvious problem here is that the order of the x-axis is in alphabetical rather than the order we want them. We need to refactor the levels and plot again:
+
+```{r, fig.width=4, fig.height=5}
+df$beforeAfter <- factor(df$beforeAfter, levels=c("Before","After"))
+
+ggplot(df, aes(x=beforeAfter, y=Value, group=Subject)) +
+  geom_line()
+
+```
+
+As ever with `ggplot2` we can heavily customize this plot to make it look a bit nicer.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=5}
+
+ggplot(df, aes(x=beforeAfter, y=Value, group=Subject)) +
+  geom_line(lwd=1, color="#123abc", alpha=.7) +
+  xlab("") +
+  ylab("Value") +
+  theme_classic() +
+  theme(
+    axis.text = element_text(size = rel(1.1)),
+    axis.title = element_text(size = rel(1.2))
+  ) 
+```
+
+Below are some other common adjustments made to slope charts.
+
+**Adding points**
+
+Here I add points to the start and end of the lines by adding two different `geom_points()`. A smaller one filled with white and a larger one filled with the same color as the line, but without the transparency.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=5}
+
+ggplot(df, aes(x=beforeAfter, y=Value, group=Subject)) +
+  geom_line(lwd=1, color="#123abc", alpha=.7) +
+  geom_point(size=4, color="#123abc") +
+  geom_point(size=2, color="#ffffff") +
+  xlab("") +
+  ylab("Value") +
+  theme_classic() +
+  theme(
+    axis.text = element_text(size = rel(1.1)),
+    axis.title = element_text(size = rel(1.2))
+  ) 
+```
+
+**Highlight lines going in different directions**
+
+Sometimes it's good to show which lines are going up or down. To do this, I add a fourth column stating if the data are going up or down. I make the data wide, add the column and then make the data long again. This also requires reorder the levels of the columns `beforeAfter` again:
+
+```{r}
+df <- df %>% 
+  pivot_wider(values_from = Value, names_from = beforeAfter) %>%
+  mutate(diff = After - Before, 
+         diffgrp = ifelse(diff<0,"down","up")) %>%
+  pivot_longer(cols=2:3, names_to = "beforeAfter") 
+
+df$beforeAfter <- factor(df$beforeAfter, levels=c("Before","After"))
+
+df
+```
+
+Here we color by the up or down group:
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=5}
+
+ggplot(df, aes(x=beforeAfter, y=value, group=Subject, color=diffgrp)) +
+  geom_line(lwd=1, alpha=.7) +
+  scale_color_manual(values=c("#cb0123", "#123abc"))+
+  xlab("") +
+  ylab("Value") +
+  theme_classic() +
+  theme(
+    axis.text = element_text(size = rel(1.1)),
+    axis.title = element_text(size = rel(1.2)),
+    legend.position = "none"
+  ) 
+```
+
+**Add summary statistic information to slopechart**
+
+```{r}
+df.sum <- df %>% 
+ group_by(beforeAfter) %>%
+  summarise(means = mean(value),
+            medians = median(value),
+            lq = quantile(value,.25),
+            uq = quantile(value,.75),
+            ) 
+
+df.sum$beforeAfter <- factor(df.sum$beforeAfter, levels=levels(df$beforeAfter))
+
+df.sum
+```
+
+To plot the change in means over this slopechart, I make each subject's lines become much more transparent by increasing the `alpha` level in `geom_line()`. We then add a second `geom_line()` where we feed in the summary data including the means. We make that line bolder and darker. We also need to add `group=1` to this to ensure that it knows to group the two rows of that dataset together.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=5}
+
+ggplot(df, aes(x=beforeAfter, y=value, group=Subject)) +
+  geom_line(color="dodgerblue", alpha=.4) +
+  geom_line(data=df.sum, 
+            aes(x=beforeAfter, y=means, group=1), 
+            lwd=2, color="#123abc")+
+  xlab("") +
+  ylab("Value") +
+  theme_classic() +
+  theme(
+    axis.text = element_text(size = rel(1.1)),
+    axis.title = element_text(size = rel(1.2))
+  ) 
+```
+
+Here I am adding a ribbon of the quartile ranges with `geom_ribbon()`. The line in the middle of the ribbon is the median. These two elements plus the lines of the subjects are all added separately in the plot below.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=5}
+
+ggplot() +
+  geom_ribbon(data = df.sum,
+              aes(x=beforeAfter,
+                  ymin = lq, 
+                  ymax = uq,
+                  group=1), 
+              fill = "cornflowerblue",
+              alpha=.1) +
+  geom_line(data = df, 
+            aes(x=beforeAfter, y=value, group=Subject),
+           color="gray54", alpha=.3) +
+   geom_line(data=df.sum, 
+            aes(x=beforeAfter, y=medians, group=1), 
+            lwd=2, color="#123abc",alpha=.5)+
+  xlab("") +
+  ylab("Value") +
+  theme_classic() +
+  theme(
+    axis.text = element_text(size = rel(1.1)),
+    axis.title = element_text(size = rel(1.2))
+  ) 
+
+
+```
+
+<br>
+
+**Slopecharts for more than two groups**
+
+Slopecharts can also be used form more than two groups. Here we compare the change in value on the y-axis for 15 subjects over four timepoints.
+
+Generating random data:
+
+```{r}
+set.seed(10) 
+day1 = abs(rnorm(15,2,1.))
+day2 = abs(rnorm(15,3,1))
+day3 = abs(rnorm(15,3.5,1))
+day4 = abs(rnorm(15,4,1))
+Subject <- rep(paste0('S',seq(1:15)), 4)
+Data <- data.frame(Value = matrix(c(day1,day2,day3,day4),ncol=1))
+day <- rep(c('Day1','Day2','Day3','Day4'), each = length(day1))
+ddf <- cbind(Subject, Data, day)
+head(ddf)
+```
+
+Here is one way of plotting these data, coloring the points by day.
+
+```{r,warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
+
+ggplot(ddf, aes(x=day, y=Value, group=Subject)) +
+  geom_line(alpha=.7, color="gray77", alpha=.3) +
+  geom_point(size=4, aes(color = day)) +
+  geom_point(size=2, color="#ffffff") +
+  xlab("") +
+  ylab("Value") +
+  theme_classic() +
+  theme(
+    axis.text = element_text(size = rel(1.1)),
+    axis.title = element_text(size = rel(1.2)),
+    legend.position = 'none'
+  ) +
+  scale_color_manual(
+    values =  c('#abcdac', '#abcdcc', '#abcdec', '#abcdfc')
+    )
+```
+
+<br>
+
+### Slope charts with smCSF package
+
+There are also some R packages that build slopegraphs using ggplot in the background. One that might be useful is the `smCSF` package.
+
+```{r, eval = F}
+devtools::install_github('smin95/smplot2', force = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(smplot2)
+```
+
+With this package, we can use the function `sm_slope()` to add both points and lines. The coloring of points is done using the `fill` argument.
+
+```{r,warning=FALSE, message=FALSE, fig.width=4, fig.height=5}
+ggplot(data = df, aes(x = beforeAfter, y = value, fill = beforeAfter)) +
+  sm_slope(group = Subject,
+           labels = c('Before', 'After')) +
+  scale_fill_manual(values =  sm_color('blue','orange'))
+```
+
+There is much more fine tuning that can be done, including adding summary statistics. This can be found in the [online tutorial](https://smin95.github.io/dataviz/slope-charts-point-plots-bland-altman-forests-rainclouds-histograms-part-2.html).
+
+```{r,warning=FALSE, message=FALSE, fig.width=4, fig.height=5}
+ggplot(data = df, aes(x = beforeAfter, y = value)) +
+  sm_slope(group = Subject,
+           show_mean = TRUE,
+           labels = c('Before', 'After'),
+           point.params = list(fill = sm_color('blue'),
+                               color = 'white',
+                               size = 2.2,
+                               stroke = 0.65,
+                               shape = 21,
+                               alpha = 0.3),
+           line.params = list(color = sm_color('skyblue'),
+                              alpha = 0.3),
+            avgPoint.params = list(color='transparent', shape = 21,
+                                  size = 4, fill = sm_color('blue')),
+           avgLine.params = list(size = 1, color = sm_color('blue'))
+           )
+```
