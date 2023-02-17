@@ -1,7 +1,11 @@
 # Preface {.unnumbered}
 
-This is a Quarto book.
+I am James Curley, Associate Professor in the Psychology Department, UT Austin.
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+This guide to using `ggplot2` to make graphs is aimed primarily at Psychology students, but could be used by anyone interested in improving their data visualization skills.
 
-Maybe I should add a pretty picture in here ?
+I have adapted many different visualizations from many different authors. I have tried to acknowledge everyone as I have gone along.
+
+The book is very much in progress - I am just adding bits and pieces as I go along. More will be added all the time.
+
+You can reach me at curley AT utexas DOT edu.
