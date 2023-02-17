@@ -211,9 +211,9 @@ ggplot(ddf, aes(x=day, y=Value, group=Subject)) +
 
 <br>
 
-### Slope charts with smCSF package
+### Slope charts with smplot2 package
 
-There are also some R packages that build slopegraphs using ggplot in the background. One that might be useful is the `smCSF` package.
+There are also some R packages that build slopegraphs using ggplot in the background. One that might be useful is the `smplot2` package.
 
 ```{r, eval = F}
 devtools::install_github('smin95/smplot2', force = TRUE)

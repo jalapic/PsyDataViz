@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>PsyDataViz - 7&nbsp; Small Multiples</title>
+<title>PsyDataViz - 8&nbsp; Small Multiples</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -94,7 +94,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./heatmaps.html" rel="next">
-<link href="./bar.html" rel="prev">
+<link href="./slopes.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -133,7 +133,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Small Multiples</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Small Multiples</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -193,32 +193,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./smallmult.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Small Multiples</span></a>
+  <a href="./slopes.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Slope Charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heatmaps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Heatmaps</span></a>
+  <a href="./smallmult.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Small Multiples</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./areacharts.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Area Charts</span></a>
+  <a href="./heatmaps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Heatmaps</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bumps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Bump charts</span></a>
+  <a href="./areacharts.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Area Charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./savingexporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Saving and Exporting Plots</span></a>
+  <a href="./bumps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Bump charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./savingexporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Saving and Exporting Plots</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Summary</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -235,8 +240,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#scatterplot-small-multiple" id="toc-scatterplot-small-multiple" class="nav-link active" data-scroll-target="#scatterplot-small-multiple"><span class="toc-section-number">7.1</span>  <strong>Scatterplot small multiple</strong></a></li>
-  <li><a href="#line-graph-small-multiple" id="toc-line-graph-small-multiple" class="nav-link" data-scroll-target="#line-graph-small-multiple"><span class="toc-section-number">7.2</span>  <strong>Line graph small multiple</strong></a></li>
+  <li><a href="#scatterplot-small-multiple" id="toc-scatterplot-small-multiple" class="nav-link active" data-scroll-target="#scatterplot-small-multiple"><span class="toc-section-number">8.1</span>  <strong>Scatterplot small multiple</strong></a></li>
+  <li><a href="#line-graph-small-multiple" id="toc-line-graph-small-multiple" class="nav-link" data-scroll-target="#line-graph-small-multiple"><span class="toc-section-number">8.2</span>  <strong>Line graph small multiple</strong></a></li>
   </ul>
 </nav>
     </div>
@@ -245,7 +250,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Small Multiples</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Small Multiples</span></h1>
 </div>
 
 
@@ -261,8 +266,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <p>Often we want to compare graphs across multiple categories. One good strategy to do this is to make <strong>small multiples</strong>, which is essentially replicating the same graph for each group several times in different panels. This is probably best explained by doing an example.</p>
-<section id="scatterplot-small-multiple" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="scatterplot-small-multiple"><span class="header-section-number">7.1</span> <strong>Scatterplot small multiple</strong></h2>
+<section id="scatterplot-small-multiple" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="scatterplot-small-multiple"><span class="header-section-number">8.1</span> <strong>Scatterplot small multiple</strong></h2>
 <p>Here, we load in the <code>penguins.csv</code> dataset. This data shows the size of various penguins culmen (the beak) and flippers:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -323,8 +328,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p><br></p>
 </section>
-<section id="line-graph-small-multiple" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="line-graph-small-multiple"><span class="header-section-number">7.2</span> <strong>Line graph small multiple</strong></h2>
+<section id="line-graph-small-multiple" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="line-graph-small-multiple"><span class="header-section-number">8.2</span> <strong>Line graph small multiple</strong></h2>
 <p>We can also make small multiples for line graphs. Let’s illustrate this using the <code>lifeexp_all.csv</code> dataset.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>le <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data_raw/lifeexp_all.csv"</span>)</span>
@@ -515,13 +520,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./bar.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bar graphs</span></span>
+      <a href="./slopes.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Slope Charts</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./heatmaps.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Heatmaps</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Heatmaps</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>PsyDataViz - 9&nbsp; Area Charts</title>
+<title>PsyDataViz - 10&nbsp; Area Charts</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -133,7 +133,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Area Charts</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Area Charts</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -193,32 +193,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./smallmult.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Small Multiples</span></a>
+  <a href="./slopes.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Slope Charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heatmaps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Heatmaps</span></a>
+  <a href="./smallmult.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Small Multiples</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./areacharts.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Area Charts</span></a>
+  <a href="./heatmaps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Heatmaps</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bumps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Bump charts</span></a>
+  <a href="./areacharts.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Area Charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./savingexporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Saving and Exporting Plots</span></a>
+  <a href="./bumps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Bump charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./savingexporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Saving and Exporting Plots</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Summary</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -235,15 +240,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#waffle-charts" id="toc-waffle-charts" class="nav-link active" data-scroll-target="#waffle-charts"><span class="toc-section-number">9.1</span>  Waffle Charts</a>
+  <li><a href="#waffle-charts" id="toc-waffle-charts" class="nav-link active" data-scroll-target="#waffle-charts"><span class="toc-section-number">10.1</span>  Waffle Charts</a>
   <ul class="collapse">
-  <li><a href="#geom_waffle" id="toc-geom_waffle" class="nav-link" data-scroll-target="#geom_waffle"><span class="toc-section-number">9.1.1</span>  geom_waffle()</a></li>
-  <li><a href="#combining-waffles-with-pictograms" id="toc-combining-waffles-with-pictograms" class="nav-link" data-scroll-target="#combining-waffles-with-pictograms"><span class="toc-section-number">9.1.2</span>  Combining waffles with pictograms</a></li>
-  <li><a href="#practical-example---waffle-charts" id="toc-practical-example---waffle-charts" class="nav-link" data-scroll-target="#practical-example---waffle-charts"><span class="toc-section-number">9.1.3</span>  Practical Example - waffle charts</a></li>
+  <li><a href="#geom_waffle" id="toc-geom_waffle" class="nav-link" data-scroll-target="#geom_waffle"><span class="toc-section-number">10.1.1</span>  geom_waffle()</a></li>
+  <li><a href="#combining-waffles-with-pictograms" id="toc-combining-waffles-with-pictograms" class="nav-link" data-scroll-target="#combining-waffles-with-pictograms"><span class="toc-section-number">10.1.2</span>  Combining waffles with pictograms</a></li>
+  <li><a href="#practical-example---waffle-charts" id="toc-practical-example---waffle-charts" class="nav-link" data-scroll-target="#practical-example---waffle-charts"><span class="toc-section-number">10.1.3</span>  Practical Example - waffle charts</a></li>
   </ul></li>
-  <li><a href="#pie-charts" id="toc-pie-charts" class="nav-link" data-scroll-target="#pie-charts"><span class="toc-section-number">9.2</span>  Pie Charts</a>
+  <li><a href="#pie-charts" id="toc-pie-charts" class="nav-link" data-scroll-target="#pie-charts"><span class="toc-section-number">10.2</span>  Pie Charts</a>
   <ul class="collapse">
-  <li><a href="#pie-charts-with-two-groups" id="toc-pie-charts-with-two-groups" class="nav-link" data-scroll-target="#pie-charts-with-two-groups"><span class="toc-section-number">9.2.1</span>  Pie charts with two groups</a></li>
+  <li><a href="#pie-charts-with-two-groups" id="toc-pie-charts-with-two-groups" class="nav-link" data-scroll-target="#pie-charts-with-two-groups"><span class="toc-section-number">10.2.1</span>  Pie charts with two groups</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -253,7 +258,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Area Charts</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Area Charts</span></h1>
 </div>
 
 
@@ -270,8 +275,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <p>In this section I’ll discuss visualizations that describe proportions or frequencies using areas. The most common of these is the pie chart - but friends don’t let friends use pie charts except in specific situations. I’ll discuss those at the end.</p>
 <p><br></p>
-<section id="waffle-charts" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="waffle-charts"><span class="header-section-number">9.1</span> Waffle Charts</h2>
+<section id="waffle-charts" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="waffle-charts"><span class="header-section-number">10.1</span> Waffle Charts</h2>
 <p>Waffle charts are square grid based plots that convert frequencies or proportions to different numbers of squares. These are easier to interpret than their pie chart cousins. Let’s see an example:</p>
 <p>Here we have 7 groups and associated frequencies in each group.</p>
 <div class="cell">
@@ -313,8 +318,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <p><br></p>
-<section id="geom_waffle" class="level3" data-number="9.1.1">
-<h3 data-number="9.1.1" class="anchored" data-anchor-id="geom_waffle"><span class="header-section-number">9.1.1</span> geom_waffle()</h3>
+<section id="geom_waffle" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="geom_waffle"><span class="header-section-number">10.1.1</span> geom_waffle()</h3>
 <p>There are a lot of other interesting functionalities in the <code>waffle</code> package. Notably, we can use the function <code>geom_waffle()</code> in conjunction with other <code>ggplot2</code> functions to create elegant plots. Note, that I have sometimes found that you need to install the developmental version of <code>waffle</code> directly from GitHub to get some of these to work.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#remotes::install_github("hrbrmstr/waffle")</span></span>
@@ -324,8 +329,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>-small multiples -alpha transparency -changing borders and sizes</p>
 <p><br></p>
 </section>
-<section id="combining-waffles-with-pictograms" class="level3" data-number="9.1.2">
-<h3 data-number="9.1.2" class="anchored" data-anchor-id="combining-waffles-with-pictograms"><span class="header-section-number">9.1.2</span> Combining waffles with pictograms</h3>
+<section id="combining-waffles-with-pictograms" class="level3" data-number="10.1.2">
+<h3 data-number="10.1.2" class="anchored" data-anchor-id="combining-waffles-with-pictograms"><span class="header-section-number">10.1.2</span> Combining waffles with pictograms</h3>
 <p>Sometimes a fun way to represent data in a waffle chart is to use some pictogram instead of a square. Below are a few examples.</p>
 <p><strong>Waffles + Icons</strong></p>
 <p>There are a few ways to add icons to waffles.</p>
@@ -342,8 +347,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="img/elephant.png" class="img-fluid"></p>
 <p><br></p>
 </section>
-<section id="practical-example---waffle-charts" class="level3" data-number="9.1.3">
-<h3 data-number="9.1.3" class="anchored" data-anchor-id="practical-example---waffle-charts"><span class="header-section-number">9.1.3</span> Practical Example - waffle charts</h3>
+<section id="practical-example---waffle-charts" class="level3" data-number="10.1.3">
+<h3 data-number="10.1.3" class="anchored" data-anchor-id="practical-example---waffle-charts"><span class="header-section-number">10.1.3</span> Practical Example - waffle charts</h3>
 <p>This practical example of how to use waffle charts is taken directly from <a href="https://rud.is/rpubs/building-waffle-charts.html">Bob Rudis’s</a> guide on waffle charts. It uses the <code>storms</code> dataset which is available in the <code>dplyr</code> package. It describes the frequencies of different types of storm across different years.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -398,13 +403,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><br></p>
 </section>
 </section>
-<section id="pie-charts" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="pie-charts"><span class="header-section-number">9.2</span> Pie Charts</h2>
+<section id="pie-charts" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="pie-charts"><span class="header-section-number">10.2</span> Pie Charts</h2>
 <p>Why are pie charts bad? Basically humans are very bad at estimating quantities based on angles - and pie charts (and donut charts) use slices. This can lead to situations in which we perceive groups to have equivalent areas, but they do not. This is particularly a problem when we are plotting data including more than 2 groups. Much more often, we can represent the data more efficiently using a bar graph.</p>
 <p>For example,</p>
 <p>insert bad pie chart example and bar graph improvement.</p>
-<section id="pie-charts-with-two-groups" class="level3" data-number="9.2.1">
-<h3 data-number="9.2.1" class="anchored" data-anchor-id="pie-charts-with-two-groups"><span class="header-section-number">9.2.1</span> Pie charts with two groups</h3>
+<section id="pie-charts-with-two-groups" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="pie-charts-with-two-groups"><span class="header-section-number">10.2.1</span> Pie charts with two groups</h3>
 <p>The one exception to the “pie charts are bad” rule may be if we are representing proportions between two groups, especially when we wish to compare across a number of different subjects. For example (include example):</p>
 
 
@@ -548,12 +553,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./heatmaps.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Heatmaps</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Heatmaps</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./bumps.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Bump charts</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Bump charts</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
