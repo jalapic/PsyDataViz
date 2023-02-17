@@ -23,23 +23,12 @@ baby_top <- baby_year %>%
 
 baby_top
 
-baby_colors <- c(
-  "Liam" = "#012169",
-  "Noah" = "#DD0000",
-  "William" = "#F1BF00",
-  "James" = "#002654",
-  "Logan" = "#008C45",
-  "Benjamin" = "#C8102E",
-  "Mason" = "#BA0C2F",
-  "Elijah" = "#F36C21",
-  "Oliver" = "#046A38",
-  "Jacob" = "#DA291C",
-  "Lucas" = "#DC143C",
-  "Michael" = "#001489"
-)
+#baby_colors <- c("#006ddb","#004949","#b66dff","#6db6ff","#920000","#924900","#db6d00","#000000","#b6dbff" ,"#009292","#ff6db6","#490092")
 
+baby_colors <- pals::tol(12)
+names(baby_colors)<-baby_top
 
-baby_year %>%
+p<-baby_year %>%
   filter(name %in% baby_top) %>%
   ggplot(aes(year, rank, col = name)) +
   geom_point(size = 2) +
@@ -90,7 +79,8 @@ baby_year %>%
     fontface = "bold"
   ) 
 
-
+p
+ggsave("img/babybump.png", p, height=12, width=6)
 
 
 
