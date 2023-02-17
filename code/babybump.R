@@ -1,30 +1,27 @@
 library(babynames)
-
 library(ggtext)
+library(tidyverse)
+library(ggbump)
 
-
-baby_flights_by_year <- babynames %>%
+baby_year <- babynames %>%
   filter(sex=="M") %>%
   filter(year>=2012, year<=2017) %>%
-  select(year, state = name, flights = n) %>%
-  group_by(year, state) %>%
-  summarise(flights = sum(flights))
-
-baby_rank_by_year <- baby_flights_by_year %>%
+  select(year, name, total = n) %>%
   group_by(year) %>%
   mutate(
-    rank = row_number(desc(flights))
+    rank = row_number(desc(total))
   ) %>%
   ungroup() %>%
   arrange(rank, year)
 
-max_rank <- 12
+baby_year
 
-baby_todays_top <- baby_rank_by_year %>%
-  filter(year == 2017, rank <= max_rank) %>%
-  pull(state)
 
-baby_todays_top
+baby_top <- baby_year %>%
+  filter(year == 2017, rank <= 12) %>%
+  pull(name)
+
+baby_top
 
 baby_colors <- c(
   "Liam" = "#012169",
@@ -41,13 +38,10 @@ baby_colors <- c(
   "Michael" = "#001489"
 )
 
-description_color <- "grey40"
 
-
-
-baby_rank_by_year %>%
-  filter(state %in% baby_todays_top) %>%
-  ggplot(aes(year, rank, col = state)) +
+baby_year %>%
+  filter(name %in% baby_top) %>%
+  ggplot(aes(year, rank, col = name)) +
   geom_point(size = 2) +
   geom_bump(size = 1) +
   scale_y_reverse(position = "right", breaks = seq(80, -2, -2)) +
@@ -69,16 +63,16 @@ baby_rank_by_year %>%
     title = "Popularity of Selected Boy's Names in USA 2012-2017"
   )+
   geom_text(
-    data = baby_rank_by_year %>%
-    filter(year == 2012, state %in% baby_todays_top),
-    aes(label = state),
+    data = baby_year %>%
+    filter(year == 2012, name %in% baby_top),
+    aes(label = name),
     hjust = 1,
     nudge_x = -0.1,
     fontface = "bold"
   ) +
   geom_text(
-    data = baby_rank_by_year %>%
-      filter(year == 2017, state %in% baby_todays_top),
+    data = baby_year %>%
+      filter(year == 2017, name %in% baby_top),
     aes(label = rank),
     hjust = 0,
     nudge_x = 0.1,
