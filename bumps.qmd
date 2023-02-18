@@ -203,12 +203,11 @@ baby_colors
 
 Now for the actual plot. The use of `geom_point()`, `geom_bump()`, `scale_y_reverse()`, and `scale_color_manual()` are similar to how we have used them before. Notably in `scale_y_reverse()` we make the breaks go from 80 to -2. This is to ensure that Oliver gets plotted in 2012 as it's ranking was just inside that value then. The -2 is to ensure that we can annotate the 2012 and 2017 at the top of the plot.
 
-The `coord_cartesian()` is used to make sure that our plot stretches across the canvas appropriately. 
+The `coord_cartesian()` is used to make sure that our plot stretches across the canvas appropriately.
 
 Next, the theme elements dictate the color of the plot background and the positioning of the title. The x-axis and y-axis titles are removed with `labs()` and the title's name is added.
 
-Finally, we add text to the plot.  The rankings and names of each line are positioned using `geom_text()` from the `ggtext` package, and the labels "2012" and "2017" are manually positioned using `annotate()`.
-
+Finally, we add text to the plot. The rankings and names of each line are positioned using `geom_text()` from the `ggtext` package, and the labels "2012" and "2017" are manually positioned using `annotate()`.
 
 ```{r, warning=FALSE, message=FALSE, eval=FALSE}
 
@@ -265,6 +264,5 @@ baby_year %>%
     fontface = "bold"
   )
 ```
-
 
 ![](img/babybump1.png)

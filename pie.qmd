@@ -1,0 +1,139 @@
+# Pie Charts
+
+Friends don't let friends use pie charts except in specific situations. I'll discuss those at the end. But why are pie charts bad? Basically humans are very bad at estimating quantities based on angles - and pie charts (and donut charts) use slices. This can lead to situations in which we perceive groups to have equivalent areas, but they do not. This is particularly a problem when we are plotting data including more than 2 groups. Much more often, we can represent the data more efficiently using a bar graph.
+
+![](img/pie.png)
+
+Image credit: [wikimedia](https://commons.wikimedia.org/wiki/File:Piecharts.svg)
+
+But, for the sake of completeness, let's look at how pie charts could be coded in `ggplot2`. But, please, don't ever make them.
+
+**Pie charts with coord_polar()**
+
+Here are some data showing the proportion of Australia's population in each state or territory:
+
+```{r}
+aus <- data.frame(
+  state = c("NSW","Vic","Qld","WA","SA","Tas","ACT","NT"),
+  prop = c(32,26,20,10,7,2,2,1)
+)
+
+aus
+```
+
+And here is some `ggplot2` code to make a pie chart. The trick is to make a bar graph that gets turned into a circle with `coord_polar`.
+
+```{r}
+ggplot(aus, aes(x="", y=prop, fill=state)) +
+  geom_bar(stat="identity") +
+  coord_polar("y") +
+  theme_void()
+```
+
+I think it looks horrendous. It's also plotted it in alphabetical order, so we could tell it to plot from highest to lowest proportion using `reorder`. I'm also editing the legend title using `labs`.
+
+```{r}
+ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
+  geom_bar(stat="identity") +
+  coord_polar("y") +
+  theme_void() +
+  labs(fill="State")
+```
+
+It's still awful. Below I'm adjusting the colors using the `parula` palette from the R package `pals`. I'm also adding the size of each area with `geom_text()`.
+
+```{r}
+ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  theme_void() +
+  labs(fill="State") +
+  geom_text(aes(label = prop), position = position_stack(vjust = 0.5)) +
+  scale_fill_manual(values=pals::parula(nrow(aus)))
+
+```
+
+As can be seen from the above, it can actually be quite painstaking to add the text in the right place - especially if there are lots of small segments.
+
+One way I have found around this is to use the code below to calculate the starting position of where labels should go and then to use `geom_text_repel()` to wiggle the labels.
+
+Calculate starting positions:
+
+```{r}
+aus <- aus %>% 
+  arrange(-prop) %>%
+  mutate(pos = (cumsum(c(0, aus$prop)) + c(aus$prop / 2, .01))[1:nrow(aus)])
+
+aus 
+
+```
+
+Adding labels which convey the proportions with `label=prop` inside `geom_text_repel()`:
+
+```{r}
+library(ggrepel)
+
+ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  theme_void() +
+  labs(fill="State") +
+  scale_fill_manual(values=pals::parula(nrow(aus))) +
+  geom_text_repel(aes(x = 1.4, y = pos, label = prop), 
+                    nudge_x = .3, 
+                    segment.size = .7, 
+                    show.legend = FALSE) 
+```
+
+Alternatively, we can ditch the legend and use the labels to add the categories. Despite me writing all this code - we shouldn't be bothering with adding numbers to pie chart segments, we should just be making bar graphs where you can actually see how much is in each group. Nonetheless, this time with category labels with `label=state`:
+
+```{r}
+library(ggrepel)
+
+ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  theme_void() +
+  labs(fill="State") +
+  scale_fill_manual(values=pals::parula(nrow(aus))) +
+  geom_text_repel(aes(x = 1.4, y = pos, label = state), 
+                    nudge_x = .3, 
+                    segment.size = .7, 
+                    show.legend = FALSE) +
+  theme(legend.position = 'none')
+```
+
+One final tweak - we can make the segments more pronounced by adding a line color and a linewidth to the `geom_bar()` . I also add a title in `labs()` and position it in the center with the `plot.title` theme element and `hjust = 0.5`.
+
+```{r}
+ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
+  geom_bar(stat="identity", width=1, linewidth=.75, color='black') +
+  coord_polar("y", start=0) +
+  theme_void() +
+  labs(fill="State", 
+       title = "I don't like pie charts") +
+  scale_fill_manual(values=pals::parula(nrow(aus))) +
+  geom_text_repel(aes(x = 1.4, y = pos, label = state), 
+                    nudge_x = .3, 
+                    segment.size = .7, 
+                    show.legend = FALSE) +
+  theme(legend.position = 'none',
+        plot.title = element_text(hjust = 0.5)) 
+
+
+
+```
+
+<br>
+
+**Pie charts with geom_arc_bar()**
+
+The best way to do this is to calculate the angles and add text ourselves. Below are some examples of how to do this using `geom_arc_bar()`.
+
+All of this is to say - just make an actual bar graph/.
+
+ad pie chart example and bar graph improvement.
+
+### Pie charts with two groups
+
+The one exception to the "pie charts are bad" rule may be if we are representing proportions between two groups, especially when we wish to compare across a number of different subjects. For example (include example):

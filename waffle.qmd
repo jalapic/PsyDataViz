@@ -1,10 +1,4 @@
-# Area Charts
-
-In this section I'll discuss visualizations that describe proportions or frequencies using areas. The most common of these is the pie chart - but friends don't let friends use pie charts except in specific situations. I'll discuss those at the end.
-
-<br>
-
-## Waffle Charts
+# Waffle Charts
 
 Waffle charts are square grid based plots that convert frequencies or proportions to different numbers of squares. These are easier to interpret than their pie chart cousins. Let's see an example:
 
@@ -130,13 +124,9 @@ ggplot(storms_df, aes(fill = status, values = n)) +
 
 <br>
 
-## Pie Charts
+All of this is to say - just make an actual bar graph/.
 
-Why are pie charts bad? Basically humans are very bad at estimating quantities based on angles - and pie charts (and donut charts) use slices. This can lead to situations in which we perceive groups to have equivalent areas, but they do not. This is particularly a problem when we are plotting data including more than 2 groups. Much more often, we can represent the data more efficiently using a bar graph.
-
-For example,
-
-insert bad pie chart example and bar graph improvement.
+ad pie chart example and bar graph improvement.
 
 ### Pie charts with two groups
 
