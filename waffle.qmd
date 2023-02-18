@@ -98,7 +98,7 @@ storms_df <- storms %>%
 storms_df
 ```
 
-```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=5}
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=5,eval=FALSE}
 
 library(waffle)
 library(ggthemes)
@@ -122,12 +122,5 @@ ggplot(storms_df, aes(fill = status, values = n)) +
   guides(fill = guide_legend(reverse = TRUE))
 ```
 
+![](img/waf.png)
 <br>
-
-All of this is to say - just make an actual bar graph/.
-
-ad pie chart example and bar graph improvement.
-
-### Pie charts with two groups
-
-The one exception to the "pie charts are bad" rule may be if we are representing proportions between two groups, especially when we wish to compare across a number of different subjects. For example (include example):

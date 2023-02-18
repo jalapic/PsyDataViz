@@ -213,7 +213,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, enhanced, frame hidden, boxrule=0pt, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, breakable, frame hidden, borderline west={3pt}{0pt}{shadecolor}, interior hidden, sharp corners, enhanced]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -229,12 +229,20 @@
 
 \markboth{Preface}{Preface}
 
-This is a Quarto book.
+I am James Curley, Associate Professor in the Psychology Department, UT
+Austin.
 
-To learn more about Quarto books visit
-\url{https://quarto.org/docs/books}.
+This guide to using \texttt{ggplot2} to make graphs is aimed primarily
+at Psychology students, but could be used by anyone interested in
+improving their data visualization skills.
 
-Maybe I should add a pretty picture in here ?
+I have adapted many different visualizations from many different
+authors. I have tried to acknowledge everyone as I have gone along.
+
+The book is very much in progress - I am just adding bits and pieces as
+I go along. More will be added all the time.
+
+You can reach me at curley AT utexas DOT edu.
 
 \bookmarksetup{startatroot}
 
@@ -1302,11 +1310,6 @@ You can also change the width of lines by adding \texttt{lwd=} to
   \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"purple"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-i Please use `linewidth` instead.
-\end{verbatim}
 
 \begin{figure}[H]
 
@@ -3082,6 +3085,464 @@ to read and compare bars.
 
 \bookmarksetup{startatroot}
 
+\hypertarget{slope-charts}{%
+\chapter{Slope Charts}\label{slope-charts}}
+
+Slope charts are useful in demonstrating the difference in values of
+subjects or groups over two or more timepoints.
+
+To make a slope chart we need to put our data into long format in three
+columns. A subject variable, the numeric value and the grouping
+variable. Below is an example of this data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{131}\NormalTok{) }
+\NormalTok{before }\OtherTok{=} \FunctionTok{abs}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{10}\NormalTok{,}\DecValTok{2}\NormalTok{,}\FloatTok{1.}\NormalTok{))}
+\NormalTok{after }\OtherTok{=} \FunctionTok{abs}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{10}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\NormalTok{Subject }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}S\textquotesingle{}}\NormalTok{,}\FunctionTok{seq}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{10}\NormalTok{)), }\DecValTok{2}\NormalTok{)}
+\NormalTok{Data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Value =} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(before,after),}\AttributeTok{ncol=}\DecValTok{1}\NormalTok{))}
+\NormalTok{beforeAfter }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}Before\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}After\textquotesingle{}}\NormalTok{), }\AttributeTok{each =} \FunctionTok{length}\NormalTok{(before))}
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(Subject, Data, beforeAfter)}
+\NormalTok{df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   Subject     Value beforeAfter
+1       S1 1.1811534      Before
+2       S2 1.4561524      Before
+3       S3 3.0208905      Before
+4       S4 2.0467039      Before
+5       S5 1.5498971      Before
+6       S6 1.7884993      Before
+7       S7 3.1037737      Before
+8       S8 2.0579823      Before
+9       S9 0.2305498      Before
+10     S10 2.7528265      Before
+11      S1 2.2078164       After
+12      S2 3.3197308       After
+13      S3 3.2088026       After
+14      S4 4.4037762       After
+15      S5 3.7996981       After
+16      S6 2.2889395       After
+17      S7 1.4994040       After
+18      S8 2.6701071       After
+19      S9 3.2430087       After
+20     S10 2.5050661       After
+\end{verbatim}
+
+The key to making a slope chart in \texttt{ggplot2} is to add
+\texttt{group=Subject}, so the `before' and `after' scores are linked by
+a line made with \texttt{geom\_line()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{Value, }\AttributeTok{group=}\NormalTok{Subject)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-2-1.pdf}
+
+}
+
+\end{figure}
+
+The obvious problem here is that the order of the x-axis is in
+alphabetical rather than the order we want them. We need to refactor the
+levels and plot again:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df}\SpecialCharTok{$}\NormalTok{beforeAfter }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{beforeAfter, }\AttributeTok{levels=}\FunctionTok{c}\NormalTok{(}\StringTok{"Before"}\NormalTok{,}\StringTok{"After"}\NormalTok{))}
+
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{Value, }\AttributeTok{group=}\NormalTok{Subject)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-3-1.pdf}
+
+}
+
+\end{figure}
+
+As ever with \texttt{ggplot2} we can heavily customize this plot to make
+it look a bit nicer.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{Value, }\AttributeTok{group=}\NormalTok{Subject)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{lwd=}\DecValTok{1}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#123abc"}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{7}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Value"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.1}\NormalTok{)),}
+    \AttributeTok{axis.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.2}\NormalTok{))}
+\NormalTok{  ) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-4-1.pdf}
+
+}
+
+\end{figure}
+
+Below are some other common adjustments made to slope charts.
+
+\textbf{Adding points}
+
+Here I add points to the start and end of the lines by adding two
+different \texttt{geom\_points()}. A smaller one filled with white and a
+larger one filled with the same color as the line, but without the
+transparency.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{Value, }\AttributeTok{group=}\NormalTok{Subject)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{lwd=}\DecValTok{1}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#123abc"}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{7}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#123abc"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{2}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#ffffff"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Value"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.1}\NormalTok{)),}
+    \AttributeTok{axis.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.2}\NormalTok{))}
+\NormalTok{  ) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-5-1.pdf}
+
+}
+
+\end{figure}
+
+\textbf{Highlight lines going in different directions}
+
+Sometimes it's good to show which lines are going up or down. To do
+this, I add a fourth column stating if the data are going up or down. I
+make the data wide, add the column and then make the data long again.
+This also requires reorder the levels of the columns
+\texttt{beforeAfter} again:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{values\_from =}\NormalTok{ Value, }\AttributeTok{names\_from =}\NormalTok{ beforeAfter) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{diff =}\NormalTok{ After }\SpecialCharTok{{-}}\NormalTok{ Before, }
+         \AttributeTok{diffgrp =} \FunctionTok{ifelse}\NormalTok{(diff}\SpecialCharTok{\textless{}}\DecValTok{0}\NormalTok{,}\StringTok{"down"}\NormalTok{,}\StringTok{"up"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols=}\DecValTok{2}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{names\_to =} \StringTok{"beforeAfter"}\NormalTok{) }
+
+\NormalTok{df}\SpecialCharTok{$}\NormalTok{beforeAfter }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{beforeAfter, }\AttributeTok{levels=}\FunctionTok{c}\NormalTok{(}\StringTok{"Before"}\NormalTok{,}\StringTok{"After"}\NormalTok{))}
+
+\NormalTok{df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 20 x 5
+   Subject   diff diffgrp beforeAfter value
+   <chr>    <dbl> <chr>   <fct>       <dbl>
+ 1 S1       1.03  up      Before      1.18 
+ 2 S1       1.03  up      After       2.21 
+ 3 S2       1.86  up      Before      1.46 
+ 4 S2       1.86  up      After       3.32 
+ 5 S3       0.188 up      Before      3.02 
+ 6 S3       0.188 up      After       3.21 
+ 7 S4       2.36  up      Before      2.05 
+ 8 S4       2.36  up      After       4.40 
+ 9 S5       2.25  up      Before      1.55 
+10 S5       2.25  up      After       3.80 
+11 S6       0.500 up      Before      1.79 
+12 S6       0.500 up      After       2.29 
+13 S7      -1.60  down    Before      3.10 
+14 S7      -1.60  down    After       1.50 
+15 S8       0.612 up      Before      2.06 
+16 S8       0.612 up      After       2.67 
+17 S9       3.01  up      Before      0.231
+18 S9       3.01  up      After       3.24 
+19 S10     -0.248 down    Before      2.75 
+20 S10     -0.248 down    After       2.51 
+\end{verbatim}
+
+Here we color by the up or down group:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{value, }\AttributeTok{group=}\NormalTok{Subject, }\AttributeTok{color=}\NormalTok{diffgrp)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{lwd=}\DecValTok{1}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{7}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"\#cb0123"}\NormalTok{, }\StringTok{"\#123abc"}\NormalTok{))}\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Value"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.1}\NormalTok{)),}
+    \AttributeTok{axis.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.2}\NormalTok{)),}
+    \AttributeTok{legend.position =} \StringTok{"none"}
+\NormalTok{  ) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-7-1.pdf}
+
+}
+
+\end{figure}
+
+\textbf{Add summary statistic information to slopechart}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df.sum }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%} 
+ \FunctionTok{group\_by}\NormalTok{(beforeAfter) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{means =} \FunctionTok{mean}\NormalTok{(value),}
+            \AttributeTok{medians =} \FunctionTok{median}\NormalTok{(value),}
+            \AttributeTok{lq =} \FunctionTok{quantile}\NormalTok{(value,.}\DecValTok{25}\NormalTok{),}
+            \AttributeTok{uq =} \FunctionTok{quantile}\NormalTok{(value,.}\DecValTok{75}\NormalTok{),}
+\NormalTok{            ) }
+
+\NormalTok{df.sum}\SpecialCharTok{$}\NormalTok{beforeAfter }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(df.sum}\SpecialCharTok{$}\NormalTok{beforeAfter, }\AttributeTok{levels=}\FunctionTok{levels}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{beforeAfter))}
+
+\NormalTok{df.sum}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 2 x 5
+  beforeAfter means medians    lq    uq
+  <fct>       <dbl>   <dbl> <dbl> <dbl>
+1 Before       1.92    1.92  1.48  2.58
+2 After        2.91    2.94  2.34  3.30
+\end{verbatim}
+
+To plot the change in means over this slopechart, I make each subject's
+lines become much more transparent by increasing the \texttt{alpha}
+level in \texttt{geom\_line()}. We then add a second
+\texttt{geom\_line()} where we feed in the summary data including the
+means. We make that line bolder and darker. We also need to add
+\texttt{group=1} to this to ensure that it knows to group the two rows
+of that dataset together.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{value, }\AttributeTok{group=}\NormalTok{Subject)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color=}\StringTok{"dodgerblue"}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{4}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{data=}\NormalTok{df.sum, }
+            \FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{means, }\AttributeTok{group=}\DecValTok{1}\NormalTok{), }
+            \AttributeTok{lwd=}\DecValTok{2}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#123abc"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Value"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.1}\NormalTok{)),}
+    \AttributeTok{axis.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.2}\NormalTok{))}
+\NormalTok{  ) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-9-1.pdf}
+
+}
+
+\end{figure}
+
+Here I am adding a ribbon of the quartile ranges with
+\texttt{geom\_ribbon()}. The line in the middle of the ribbon is the
+median. These two elements plus the lines of the subjects are all added
+separately in the plot below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_ribbon}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df.sum,}
+              \FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter,}
+                  \AttributeTok{ymin =}\NormalTok{ lq, }
+                  \AttributeTok{ymax =}\NormalTok{ uq,}
+                  \AttributeTok{group=}\DecValTok{1}\NormalTok{), }
+              \AttributeTok{fill =} \StringTok{"cornflowerblue"}\NormalTok{,}
+              \AttributeTok{alpha=}\NormalTok{.}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df, }
+            \FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{value, }\AttributeTok{group=}\NormalTok{Subject),}
+           \AttributeTok{color=}\StringTok{"gray54"}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+   \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{data=}\NormalTok{df.sum, }
+            \FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{beforeAfter, }\AttributeTok{y=}\NormalTok{medians, }\AttributeTok{group=}\DecValTok{1}\NormalTok{), }
+            \AttributeTok{lwd=}\DecValTok{2}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#123abc"}\NormalTok{,}\AttributeTok{alpha=}\NormalTok{.}\DecValTok{5}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Value"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.1}\NormalTok{)),}
+    \AttributeTok{axis.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.2}\NormalTok{))}
+\NormalTok{  ) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-10-1.pdf}
+
+}
+
+\end{figure}
+
+\textbf{Slopecharts for more than two groups}
+
+Slopecharts can also be used form more than two groups. Here we compare
+the change in value on the y-axis for 15 subjects over four timepoints.
+
+Generating random data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{10}\NormalTok{) }
+\NormalTok{day1 }\OtherTok{=} \FunctionTok{abs}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{15}\NormalTok{,}\DecValTok{2}\NormalTok{,}\FloatTok{1.}\NormalTok{))}
+\NormalTok{day2 }\OtherTok{=} \FunctionTok{abs}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{15}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\NormalTok{day3 }\OtherTok{=} \FunctionTok{abs}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{15}\NormalTok{,}\FloatTok{3.5}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\NormalTok{day4 }\OtherTok{=} \FunctionTok{abs}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{15}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\NormalTok{Subject }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{\textquotesingle{}S\textquotesingle{}}\NormalTok{,}\FunctionTok{seq}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{15}\NormalTok{)), }\DecValTok{4}\NormalTok{)}
+\NormalTok{Data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Value =} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(day1,day2,day3,day4),}\AttributeTok{ncol=}\DecValTok{1}\NormalTok{))}
+\NormalTok{day }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}Day1\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}Day2\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}Day3\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}Day4\textquotesingle{}}\NormalTok{), }\AttributeTok{each =} \FunctionTok{length}\NormalTok{(day1))}
+\NormalTok{ddf }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(Subject, Data, day)}
+\FunctionTok{head}\NormalTok{(ddf)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  Subject     Value  day
+1      S1 2.0187462 Day1
+2      S2 1.8157475 Day1
+3      S3 0.6286695 Day1
+4      S4 1.4008323 Day1
+5      S5 2.2945451 Day1
+6      S6 2.3897943 Day1
+\end{verbatim}
+
+Here is one way of plotting these data, coloring the points by day.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(ddf, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{day, }\AttributeTok{y=}\NormalTok{Value, }\AttributeTok{group=}\NormalTok{Subject)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{alpha=}\NormalTok{.}\DecValTok{7}\NormalTok{, }\AttributeTok{color=}\StringTok{"gray77"}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{color =}\NormalTok{ day)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{2}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#ffffff"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Value"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.1}\NormalTok{)),}
+    \AttributeTok{axis.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.2}\NormalTok{)),}
+    \AttributeTok{legend.position =} \StringTok{\textquotesingle{}none\textquotesingle{}}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}
+    \AttributeTok{values =}  \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}\#abcdac\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#abcdcc\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#abcdec\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#abcdfc\textquotesingle{}}\NormalTok{)}
+\NormalTok{    )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-12-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{slope-charts-with-smplot2-package}{%
+\subsection{Slope charts with smplot2
+package}\label{slope-charts-with-smplot2-package}}
+
+There are also some R packages that build slopegraphs using ggplot in
+the background. One that might be useful is the \texttt{smplot2}
+package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{devtools}\SpecialCharTok{::}\FunctionTok{install\_github}\NormalTok{(}\StringTok{\textquotesingle{}smin95/smplot2\textquotesingle{}}\NormalTok{, }\AttributeTok{force =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(smplot2)}
+\end{Highlighting}
+\end{Shaded}
+
+With this package, we can use the function \texttt{sm\_slope()} to add
+both points and lines. The coloring of points is done using the
+\texttt{fill} argument.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ beforeAfter, }\AttributeTok{y =}\NormalTok{ value, }\AttributeTok{fill =}\NormalTok{ beforeAfter)) }\SpecialCharTok{+}
+  \FunctionTok{sm\_slope}\NormalTok{(}\AttributeTok{group =}\NormalTok{ Subject,}
+           \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}Before\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}After\textquotesingle{}}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =}  \FunctionTok{sm\_color}\NormalTok{(}\StringTok{\textquotesingle{}blue\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}orange\textquotesingle{}}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-15-1.pdf}
+
+}
+
+\end{figure}
+
+There is much more fine tuning that can be done, including adding
+summary statistics. This can be found in the
+\href{https://smin95.github.io/dataviz/slope-charts-point-plots-bland-altman-forests-rainclouds-histograms-part-2.html}{online
+tutorial}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(}\AttributeTok{data =}\NormalTok{ df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ beforeAfter, }\AttributeTok{y =}\NormalTok{ value)) }\SpecialCharTok{+}
+  \FunctionTok{sm\_slope}\NormalTok{(}\AttributeTok{group =}\NormalTok{ Subject,}
+           \AttributeTok{show\_mean =} \ConstantTok{TRUE}\NormalTok{,}
+           \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}Before\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}After\textquotesingle{}}\NormalTok{),}
+           \AttributeTok{point.params =} \FunctionTok{list}\NormalTok{(}\AttributeTok{fill =} \FunctionTok{sm\_color}\NormalTok{(}\StringTok{\textquotesingle{}blue\textquotesingle{}}\NormalTok{),}
+                               \AttributeTok{color =} \StringTok{\textquotesingle{}white\textquotesingle{}}\NormalTok{,}
+                               \AttributeTok{size =} \FloatTok{2.2}\NormalTok{,}
+                               \AttributeTok{stroke =} \FloatTok{0.65}\NormalTok{,}
+                               \AttributeTok{shape =} \DecValTok{21}\NormalTok{,}
+                               \AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{),}
+           \AttributeTok{line.params =} \FunctionTok{list}\NormalTok{(}\AttributeTok{color =} \FunctionTok{sm\_color}\NormalTok{(}\StringTok{\textquotesingle{}skyblue\textquotesingle{}}\NormalTok{),}
+                              \AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{),}
+            \AttributeTok{avgPoint.params =} \FunctionTok{list}\NormalTok{(}\AttributeTok{color=}\StringTok{\textquotesingle{}transparent\textquotesingle{}}\NormalTok{, }\AttributeTok{shape =} \DecValTok{21}\NormalTok{,}
+                                  \AttributeTok{size =} \DecValTok{4}\NormalTok{, }\AttributeTok{fill =} \FunctionTok{sm\_color}\NormalTok{(}\StringTok{\textquotesingle{}blue\textquotesingle{}}\NormalTok{)),}
+           \AttributeTok{avgLine.params =} \FunctionTok{list}\NormalTok{(}\AttributeTok{size =} \DecValTok{1}\NormalTok{, }\AttributeTok{color =} \FunctionTok{sm\_color}\NormalTok{(}\StringTok{\textquotesingle{}blue\textquotesingle{}}\NormalTok{))}
+\NormalTok{           )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./slopes_files/figure-pdf/unnamed-chunk-16-1.pdf}
+
+}
+
+\end{figure}
+
+\bookmarksetup{startatroot}
+
 \hypertarget{small-multiples}{%
 \chapter{Small Multiples}\label{small-multiples}}
 
@@ -4089,15 +4550,7 @@ labels.
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(viridis)}
-\end{Highlighting}
-\end{Shaded}
 
-\begin{verbatim}
-Loading required package: viridisLite
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \FunctionTok{ggplot}\NormalTok{(schz, }\FunctionTok{aes}\NormalTok{(year, month, }\AttributeTok{fill =}\NormalTok{ SczBroad)) }\SpecialCharTok{+} 
   \FunctionTok{geom\_tile}\NormalTok{(}\AttributeTok{colour=}\StringTok{"gray10"}\NormalTok{, }\AttributeTok{linewidth=}\FloatTok{1.1}\NormalTok{) }\SpecialCharTok{+} 
   \FunctionTok{coord\_equal}\NormalTok{() }\SpecialCharTok{+}
@@ -4330,6 +4783,1087 @@ discrete group, we could also use a palette of 7 colors by using the
 
 \bookmarksetup{startatroot}
 
+\hypertarget{bump-charts}{%
+\chapter{Bump charts}\label{bump-charts}}
+
+Bump charts are useful for looking at how rankings of a set of
+observations change over time. They are named (I think) after the
+visualizations of changes in rankings of Oxford and Cambridge college
+rowing crews during boat races. Because the river wasn't wide enough to
+accommodate all the boats at once, they would start their races at
+different points on the river and their goal was to ``bump'' the boat in
+front. This would mean that they went up in ranking. This was visualized
+in charts like the one below. When lines cross, this means that the
+boats bumped and the boats switched rankings:
+
+\includegraphics{./img/bumps.png}
+
+\hypertarget{basic-bump-chart-in-ggplot}{%
+\section{Basic Bump Chart in
+ggplot()}\label{basic-bump-chart-in-ggplot}}
+
+We can look at how to make a bump chart using basic \texttt{ggplot2}
+syntax. We'll recreate the above chart. Let's import the data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data\_raw/torpids.csv"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 6 x 8
+  Team            Day1  Day2  Day3  Day4  Day5  Day6  Day7
+  <chr>          <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+1 Exeter             1     2     3     3     4     5     4
+2 Brasenose          2     1     1     1     1     1     1
+3 Balliol            3     4     4     5     6     7     8
+4 Corpus Christi     4     3     2     2     2     3     3
+5 Pembroke           5     5     6     7     8     9     9
+6 Trinity            6     7     7     6     5     4     5
+\end{verbatim}
+
+We have 12 rows of data. Each row is a college team. There are eight
+columns with the last seven being the ranking of each college on that
+day. To turn the data into a plottable format, we need to have a long
+data frame with columns \texttt{team}, \texttt{day} and \texttt{rank}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dfl }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols=}\DecValTok{2}\SpecialCharTok{:}\DecValTok{8}\NormalTok{, }\AttributeTok{names\_to =} \StringTok{"day"}\NormalTok{, }\AttributeTok{values\_to =} \StringTok{"rank"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(dfl)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 6 x 3
+  Team   day    rank
+  <chr>  <chr> <dbl>
+1 Exeter Day1      1
+2 Exeter Day2      2
+3 Exeter Day3      3
+4 Exeter Day4      3
+5 Exeter Day5      4
+6 Exeter Day6      5
+\end{verbatim}
+
+We can now plot day against rank using a combination of
+\texttt{geom\_line()} and \texttt{geom\_plot()}. First we will create a
+plot color with a legend depicting each college. We use
+\texttt{scale\_y\_reverse()} to plot the rankings on the y-axis from
+highest rank at the top of the plot to lowest ranking at the bottom.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(dfl, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ day, }\AttributeTok{y =}\NormalTok{ rank, }\AttributeTok{color =}\NormalTok{ Team, }\AttributeTok{group =}\NormalTok{ Team)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{lwd=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./bumps_files/figure-pdf/unnamed-chunk-3-1.pdf}
+
+}
+
+\end{figure}
+
+However, I think this plot is a little too colorful. Alternatively, we
+could create the plot in one color and add labels on the y-axis that
+have the names of the original ranks of teams. This would be more
+similar to the original plot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(dfl, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ day, }\AttributeTok{y =}\NormalTok{ rank, }\AttributeTok{group =}\NormalTok{ Team)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{lwd=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{, }\AttributeTok{labels =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Team) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./bumps_files/figure-pdf/unnamed-chunk-4-1.pdf}
+
+}
+
+\end{figure}
+
+There are probably several stylistic changes we could make to this plot
+to make it more visually appealing. It's often nice with bump charts to
+have the dots be empty circles. We can do this by adding smaller white
+points on top of the points that we already plotted:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(dfl, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ day, }\AttributeTok{y =}\NormalTok{ rank, }\AttributeTok{group =}\NormalTok{ Team)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{lwd=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"\#FFFFFF"}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{, }\AttributeTok{labels =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Team) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./bumps_files/figure-pdf/unnamed-chunk-5-1.pdf}
+
+}
+
+\end{figure}
+
+In this plot, I have used the \texttt{theme()} function to remove the y
+axis line and tick marks and to make the text larger.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(dfl, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ day, }\AttributeTok{y =}\NormalTok{ rank, }\AttributeTok{group =}\NormalTok{ Team)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{lwd=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"\#FFFFFF"}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{, }\AttributeTok{labels =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Team) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+        \AttributeTok{axis.ticks.y =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{axis.line.y =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{axis.text.y =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.5}\NormalTok{))}
+\NormalTok{        )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./bumps_files/figure-pdf/unnamed-chunk-6-1.pdf}
+
+}
+
+\end{figure}
+
+\textbf{Highlighting Individual Groups}
+
+Another thing that is often beneficial in bump charts is to highlight
+individual groups of interest. This is particularly useful if there are
+lots of subjects. For example, let's say we are interested in the change
+in ranking of the Trinity boat over time. What we would like to do is
+make the other lines more transparent and to make Trinity's line bolder.
+To do this, we use \texttt{alpha()} to set the transparencies of the
+other crews and I also made their colors grayer. Then I create a
+dataframe that only includes Trinity's data to plot over the top of our
+plot, and change the color of their points and lines and thicken their
+line to emphasize it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Trinity }\OtherTok{\textless{}{-}}\NormalTok{ dfl }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Team}\SpecialCharTok{==}\StringTok{"Trinity"}\NormalTok{)}
+
+\FunctionTok{ggplot}\NormalTok{(dfl, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ day, }\AttributeTok{y =}\NormalTok{ rank, }\AttributeTok{group =}\NormalTok{ Team)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{lwd=}\DecValTok{1}\NormalTok{, }\AttributeTok{color=}\StringTok{"gray50"}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{, }\AttributeTok{color=}\StringTok{"gray50"}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{data=}\NormalTok{Trinity, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#710909"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{data=}\NormalTok{Trinity, }\AttributeTok{size=}\DecValTok{4}\NormalTok{, }\AttributeTok{color=}\StringTok{"\#710909"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"\#FFFFFF"}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{, }\AttributeTok{labels =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Team) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+        \AttributeTok{axis.ticks.y =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{axis.line.y =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{axis.text.y =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.5}\NormalTok{))}
+\NormalTok{        )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./bumps_files/figure-pdf/unnamed-chunk-7-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{ggbump-package}{%
+\section{ggbump() package}\label{ggbump-package}}
+
+I like the classic angular lines aesthetic of bump charts. However,
+there may be use cases where we wish to have curved lines joining
+points. This can be done effectively with the
+\href{https://github.com/davidsjoberg/ggbump}{ggbump package}.
+
+The below code creates the generic plot for the college bumps dataset
+above. I've kept the \texttt{scale\_y\_reverse()} in the code so that we
+have the highest ranked team (i.e.~1) at the top of the y-axis, and the
+lowest ranked at the bottom. The \texttt{geom\_bump()} function adds a
+curved line rather than straight line for each subject across time. The
+other difference is that I have made the \texttt{day} column numeric by
+using \texttt{as.numeric(factor(day))} rather than just \texttt{day}.
+Although \texttt{geom\_bump()} should work with characters, I have found
+that converting them to numeric variables works best.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggbump)}
+
+\FunctionTok{ggplot}\NormalTok{(dfl, }\FunctionTok{aes}\NormalTok{(}\FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{factor}\NormalTok{(day)), rank, }\AttributeTok{color =}\NormalTok{ Team)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_bump}\NormalTok{(}\AttributeTok{size=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{scale\_y\_reverse}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./bumps_files/figure-pdf/unnamed-chunk-8-1.pdf}
+
+}
+
+\end{figure}
+
+Below I have customized this plot with some additional code. I have
+decided to create a palette of 12 colors using the \texttt{viridis}
+palette, though having 12 separate colors for a discrete category is
+probably pushing the limits of what is easily interpretable. These
+colors would be added in alphabetical order as a default as the
+\texttt{Team} variable is a character. This would mean that Balliol
+would have the darkest purple color and Wadham the lightest yellow. A
+better way of assigning color would be by initial or final rank. I
+decided to assign here by initial rank. Therefore I converted the
+\texttt{Team} variable to a factor and made the levels the order of
+ranks on the first day. The easiest way to do this was to use
+\texttt{unique(dfl\$Team)} as they appear in rank order of the first day
+in the dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(viridis) }\CommentTok{\#for color scale}
+
+\CommentTok{\#refactor Team to be in rank order (same as order appears in dataset)}
+\NormalTok{dfl}\SpecialCharTok{$}\NormalTok{Team }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(dfl}\SpecialCharTok{$}\NormalTok{Team, }\AttributeTok{levels =} \FunctionTok{unique}\NormalTok{(dfl}\SpecialCharTok{$}\NormalTok{Team))}
+
+\FunctionTok{ggplot}\NormalTok{(dfl, }\FunctionTok{aes}\NormalTok{(}\FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{factor}\NormalTok{(day)), rank, }\AttributeTok{color =}\NormalTok{ Team)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bump}\NormalTok{(}\AttributeTok{size=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"\#FFFFFF"}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{7}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{, }\AttributeTok{labels =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Team) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{viridis}\NormalTok{(}\DecValTok{12}\NormalTok{,}\AttributeTok{option=}\StringTok{"C"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Day"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Rank"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Day"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{axis.ticks.y =} \FunctionTok{element\_blank}\NormalTok{(),}
+    \AttributeTok{axis.line.y =} \FunctionTok{element\_blank}\NormalTok{(),}
+    \AttributeTok{axis.text.y =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \FunctionTok{rel}\NormalTok{(}\FloatTok{1.5}\NormalTok{)),}
+    \AttributeTok{legend.position =} \StringTok{"none"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./bumps_files/figure-pdf/unnamed-chunk-9-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{practical-example---babyname-popularity-over-time.}{%
+\subsection{Practical Example - Babyname Popularity Over
+Time.}\label{practical-example---babyname-popularity-over-time.}}
+
+Below is an example of using the \texttt{ggbump} package to plot
+changing trends of babyname popularity over time. The code for this was
+inspired by a plot of European Flight traffic made by
+\href{https://github.com/steodose/Tidy-Tuesday/blob/master/Week\%2028_2022.R}{Stephan
+Teodosescu}.
+
+Essentially what we want to do is find the rankings in popularity of
+different babynames between two timepoints. We will plot the top 12
+names at the final timepoint and track their evolution in popularity
+from the first timepoint. By only including these names, we avoid too
+much clutter in the chart and we are able to see how stable or otherwise
+the rankings are. I chose to look at the popularity of male names
+between 2012 and 2017.
+
+We first get the ranking of all male names between 2012 and 2017. The
+data come from the \texttt{babynames} package:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(babynames)}
+
+\NormalTok{baby\_year }\OtherTok{\textless{}{-}}\NormalTok{ babynames }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(sex}\SpecialCharTok{==}\StringTok{"M"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(year}\SpecialCharTok{\textgreater{}=}\DecValTok{2012}\NormalTok{, year}\SpecialCharTok{\textless{}=}\DecValTok{2017}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(year, name, }\AttributeTok{total =}\NormalTok{ n) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(year) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{rank =} \FunctionTok{row\_number}\NormalTok{(}\FunctionTok{desc}\NormalTok{(total))}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(rank, year)}
+
+\NormalTok{baby\_year}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 84,665 x 4
+    year name  total  rank
+   <dbl> <chr> <int> <int>
+ 1  2012 Jacob 19069     1
+ 2  2013 Noah  18241     1
+ 3  2014 Noah  19286     1
+ 4  2015 Noah  19613     1
+ 5  2016 Noah  19082     1
+ 6  2017 Liam  18728     1
+ 7  2012 Mason 18964     2
+ 8  2013 Jacob 18148     2
+ 9  2014 Liam  18451     2
+10  2015 Liam  18355     2
+# ... with 84,655 more rows
+\end{verbatim}
+
+We can see that for the years 2012-2017, the names ``Jacob'', ``Noah''
+and ``Liam'' were the most popular.
+
+To limit our chart to just the 12 most popular names in 2017, we can
+collect those names by filtering for rank and year and using
+\texttt{pull()} to grab the names:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{baby\_top }\OtherTok{\textless{}{-}}\NormalTok{ baby\_year }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2017}\NormalTok{, rank }\SpecialCharTok{\textless{}=} \DecValTok{12}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pull}\NormalTok{(name)}
+
+\NormalTok{baby\_top}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ [1] "Liam"     "Noah"     "William"  "James"    "Logan"    "Benjamin"
+ [7] "Mason"    "Elijah"   "Oliver"   "Jacob"    "Lucas"    "Michael" 
+\end{verbatim}
+
+Always a difficulty with 12 discrete groups is what colors to assign to
+each in the chart. Here, I create a vector of colors using the
+\texttt{pals} color palette package:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{baby\_colors }\OtherTok{\textless{}{-}}\NormalTok{ pals}\SpecialCharTok{::}\FunctionTok{tol}\NormalTok{(}\DecValTok{12}\NormalTok{)}
+\FunctionTok{names}\NormalTok{(baby\_colors)}\OtherTok{\textless{}{-}}\NormalTok{baby\_top}
+\NormalTok{baby\_colors}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+     Liam      Noah   William     James     Logan  Benjamin     Mason    Elijah 
+"#332288" "#6699CC" "#88CCEE" "#44AA99" "#117733" "#999933" "#DDCC77" "#661100" 
+   Oliver     Jacob     Lucas   Michael 
+"#CC6677" "#AA4466" "#882255" "#AA4499" 
+\end{verbatim}
+
+Now for the actual plot. The use of \texttt{geom\_point()},
+\texttt{geom\_bump()}, \texttt{scale\_y\_reverse()}, and
+\texttt{scale\_color\_manual()} are similar to how we have used them
+before. Notably in \texttt{scale\_y\_reverse()} we make the breaks go
+from 80 to -2. This is to ensure that Oliver gets plotted in 2012 as
+it's ranking was just inside that value then. The -2 is to ensure that
+we can annotate the 2012 and 2017 at the top of the plot.
+
+The \texttt{coord\_cartesian()} is used to make sure that our plot
+stretches across the canvas appropriately.
+
+Next, the theme elements dictate the color of the plot background and
+the positioning of the title. The x-axis and y-axis titles are removed
+with \texttt{labs()} and the title's name is added.
+
+Finally, we add text to the plot. The rankings and names of each line
+are positioned using \texttt{geom\_text()} from the \texttt{ggtext}
+package, and the labels ``2012'' and ``2017'' are manually positioned
+using \texttt{annotate()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggtext)}
+
+\NormalTok{baby\_year }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(name }\SpecialCharTok{\%in\%}\NormalTok{ baby\_top) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(year, rank, }\AttributeTok{col =}\NormalTok{ name)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bump}\NormalTok{(}\AttributeTok{size =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_reverse}\NormalTok{(}\AttributeTok{position =} \StringTok{"right"}\NormalTok{, }\AttributeTok{breaks =} \FunctionTok{seq}\NormalTok{(}\DecValTok{80}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =}\NormalTok{ baby\_colors) }\SpecialCharTok{+}
+  \FunctionTok{coord\_cartesian}\NormalTok{(}\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{2010}\NormalTok{, }\FloatTok{2017.5}\NormalTok{), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\DecValTok{80}\NormalTok{, }\SpecialCharTok{{-}}\FloatTok{1.25}\NormalTok{), }\AttributeTok{expand =}\NormalTok{ F) }\SpecialCharTok{+}
+  \FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{,}
+    \AttributeTok{plot.background =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{fill =} \StringTok{"floralwhite"}\NormalTok{, }\AttributeTok{color =} \StringTok{"floralwhite"}\NormalTok{),}
+    \AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}
+      \AttributeTok{margin =} \FunctionTok{margin}\NormalTok{(}\AttributeTok{t =} \DecValTok{3}\NormalTok{, }\AttributeTok{b =} \DecValTok{4}\NormalTok{, }\AttributeTok{unit =} \StringTok{"mm"}\NormalTok{),}
+      \AttributeTok{hjust =} \FloatTok{0.5}
+\NormalTok{    ),}
+    \AttributeTok{plot.margin =} \FunctionTok{margin}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\FloatTok{1.5}\NormalTok{,}\FloatTok{1.2}\NormalTok{, }\StringTok{"cm"}\NormalTok{)}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{x =} \StringTok{""}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{""}\NormalTok{,}
+    \AttributeTok{title =} \StringTok{"Popularity of Selected Boy\textquotesingle{}s Names in USA 2012{-}2017"}
+\NormalTok{  )}\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}
+    \AttributeTok{data =}\NormalTok{ baby\_year }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2012}\NormalTok{, name }\SpecialCharTok{\%in\%}\NormalTok{ baby\_top),}
+    \FunctionTok{aes}\NormalTok{(}\AttributeTok{label =}\NormalTok{ name),}
+    \AttributeTok{hjust =} \DecValTok{1}\NormalTok{,}
+    \AttributeTok{nudge\_x =} \SpecialCharTok{{-}}\FloatTok{0.1}\NormalTok{,}
+    \AttributeTok{fontface =} \StringTok{"bold"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}
+    \AttributeTok{data =}\NormalTok{ baby\_year }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==} \DecValTok{2017}\NormalTok{, name }\SpecialCharTok{\%in\%}\NormalTok{ baby\_top),}
+    \FunctionTok{aes}\NormalTok{(}\AttributeTok{label =}\NormalTok{ rank),}
+    \AttributeTok{hjust =} \DecValTok{0}\NormalTok{,}
+    \AttributeTok{nudge\_x =} \FloatTok{0.1}\NormalTok{,}
+    \AttributeTok{size =} \DecValTok{4}\NormalTok{,}
+    \AttributeTok{fontface =} \StringTok{"bold"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{annotate}\NormalTok{(}
+    \StringTok{"text"}\NormalTok{,}
+    \AttributeTok{x =} \FunctionTok{c}\NormalTok{(}\FloatTok{2011.75}\NormalTok{, }\FloatTok{2016.75}\NormalTok{),}
+    \AttributeTok{y =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\FloatTok{0.75}\NormalTok{, }\SpecialCharTok{{-}}\FloatTok{0.75}\NormalTok{),}
+    \AttributeTok{label =} \FunctionTok{c}\NormalTok{(}\DecValTok{2012}\NormalTok{, }\DecValTok{2017}\NormalTok{),}
+    \AttributeTok{hjust =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+    \AttributeTok{vjust =} \DecValTok{1}\NormalTok{,}
+    \AttributeTok{size =} \DecValTok{4}\NormalTok{,}
+    \AttributeTok{fontface =} \StringTok{"bold"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{./img/babybump1.png}
+
+\bookmarksetup{startatroot}
+
+\hypertarget{waffle-charts}{%
+\chapter{Waffle Charts}\label{waffle-charts}}
+
+Waffle charts are square grid based plots that convert frequencies or
+proportions to different numbers of squares. These are easier to
+interpret than their pie chart cousins. Let's see an example:
+
+Here we have 7 groups and associated frequencies in each group.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{10}\NormalTok{)}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{round}\NormalTok{(}\FunctionTok{runif}\NormalTok{(}\DecValTok{7}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{100}\NormalTok{),}\DecValTok{0}\NormalTok{)}
+\FunctionTok{names}\NormalTok{(x) }\OtherTok{\textless{}{-}}\NormalTok{ LETTERS[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{7}\NormalTok{]}
+
+\NormalTok{x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ A  B  C  D  E  F  G 
+51 31 43 70  9 23 28 
+\end{verbatim}
+
+To make the basic waffle plot, we can just use the function
+\texttt{waffle()} on a numerical vector:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(waffle)}
+\FunctionTok{waffle}\NormalTok{(x)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./waffle_files/figure-pdf/unnamed-chunk-2-1.pdf}
+
+}
+
+\end{figure}
+
+In this default plot, \texttt{waffle} is using one square to represent
+each value. However, we can control this more effectively. First, we
+could divide our own vector by 5 such that each square represents 5. We
+can also specify the number of rows we wish to plot the data on:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{waffle}\NormalTok{(x}\SpecialCharTok{/}\DecValTok{5}\NormalTok{, }\AttributeTok{rows=}\DecValTok{6}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./waffle_files/figure-pdf/unnamed-chunk-3-1.pdf}
+
+}
+
+\end{figure}
+
+Digging into this a bit more. Group A has 10 squares each worth 5 which
+makes 50. This is 1 less than the 51 in group A. Group E only has one
+square (worth 5) when it's value was 9. On the other hand, group G has 5
+squares worth 25, when it's value was 28. So, it can be seen that some
+artistic license has been made in the creation of the blocks in the
+waffle chart. This may be problematic in some representations of data,
+but may be perfectly fine in others. As an aside, I discuss the issues
+of aportionment (determining how to deal with left overs of fractions
+when grouping variables)
+\href{https://jamescurley.blog/posts/2020-10-16-apportionment-methods/}{in
+a blog post here}.
+
+The function \texttt{waffle()} also has some other functionality such as
+user-defining the colors to be used and the legend position:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{waffle}\NormalTok{(x}\SpecialCharTok{/}\DecValTok{5}\NormalTok{, }\AttributeTok{rows =} \DecValTok{6}\NormalTok{,}
+       \AttributeTok{colors =} \FunctionTok{c}\NormalTok{(}\StringTok{"\#f9f988"}\NormalTok{,}\StringTok{"\#f6be68"}\NormalTok{,}\StringTok{"\#e1875e"}\NormalTok{,}\StringTok{"\#ba585c"}\NormalTok{,}
+                           \StringTok{"\#853357"}\NormalTok{,}\StringTok{"\#491b49"}\NormalTok{,}\StringTok{"\#0a0431"}
+\NormalTok{       ),}
+       \AttributeTok{legend\_pos =} \StringTok{"bottom"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./waffle_files/figure-pdf/unnamed-chunk-4-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{geom_waffle}{%
+\subsection{geom\_waffle()}\label{geom_waffle}}
+
+There are a lot of other interesting functionalities in the
+\texttt{waffle} package. Notably, we can use the function
+\texttt{geom\_waffle()} in conjunction with other \texttt{ggplot2}
+functions to create elegant plots. Note, that I have sometimes found
+that you need to install the developmental version of \texttt{waffle}
+directly from GitHub to get some of these to work.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#remotes::install\_github("hrbrmstr/waffle")}
+\FunctionTok{library}\NormalTok{(waffle)}
+\end{Highlighting}
+\end{Shaded}
+
+insert waffle examples here -
+
+-small multiples -alpha transparency -changing borders and sizes
+
+\hypertarget{combining-waffles-with-pictograms}{%
+\subsection{Combining waffles with
+pictograms}\label{combining-waffles-with-pictograms}}
+
+Sometimes a fun way to represent data in a waffle chart is to use some
+pictogram instead of a square. Below are a few examples.
+
+\textbf{Waffles + Icons}
+
+There are a few ways to add icons to waffles.
+
+Here are some data showing the proportion of US people that have
+different eye colors.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{eyecolor }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{45}\NormalTok{,}\DecValTok{27}\NormalTok{,}\DecValTok{18}\NormalTok{,}\DecValTok{9}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\FunctionTok{names}\NormalTok{(eyecolor) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Brown"}\NormalTok{, }\StringTok{"Blue"}\NormalTok{, }\StringTok{"Hazel"}\NormalTok{, }\StringTok{"Green"}\NormalTok{,}\StringTok{"Other"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Maybe include \texttt{ggwaffle}
+\href{https://liamgilbey.github.io/ggwaffle/}{linked here}
+
+\textbf{Waffles + Phylopics}
+
+The below is an example of using the package \texttt{rphylopic} to use
+elephant images within a waffle chart. (Need to look up my code for how
+to do this):
+
+\includegraphics{./img/elephant.png}
+
+\hypertarget{practical-example---waffle-charts}{%
+\subsection{Practical Example - waffle
+charts}\label{practical-example---waffle-charts}}
+
+This practical example of how to use waffle charts is taken directly
+from \href{https://rud.is/rpubs/building-waffle-charts.html}{Bob
+Rudis's} guide on waffle charts. It uses the \texttt{storms} dataset
+which is available in the \texttt{dplyr} package. It describes the
+frequencies of different types of storm across different years.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\NormalTok{storms\_df }\OtherTok{\textless{}{-}}\NormalTok{ storms }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\textgreater{}=} \DecValTok{2010}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{count}\NormalTok{(year, status) }
+
+\NormalTok{storms\_df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 89 x 3
+    year status                     n
+   <dbl> <fct>                  <int>
+ 1  2010 disturbance                7
+ 2  2010 extratropical             52
+ 3  2010 hurricane                163
+ 4  2010 other low                152
+ 5  2010 subtropical depression     1
+ 6  2010 subtropical storm          4
+ 7  2010 tropical depression       72
+ 8  2010 tropical storm           212
+ 9  2011 disturbance               10
+10  2011 extratropical             55
+# ... with 79 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(waffle)}
+\FunctionTok{library}\NormalTok{(ggthemes)}
+
+\FunctionTok{ggplot}\NormalTok{(storms\_df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill =}\NormalTok{ status, }\AttributeTok{values =}\NormalTok{ n)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_waffle}\NormalTok{(}\AttributeTok{color =} \StringTok{"white"}\NormalTok{, }\AttributeTok{size =}\NormalTok{ .}\DecValTok{25}\NormalTok{, }\AttributeTok{n\_rows =} \DecValTok{10}\NormalTok{, }\AttributeTok{flip =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{year, }\AttributeTok{nrow =} \DecValTok{1}\NormalTok{, }\AttributeTok{strip.position =} \StringTok{"bottom"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_discrete}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =} \ControlFlowTok{function}\NormalTok{(x) x }\SpecialCharTok{*} \DecValTok{10}\NormalTok{, }\CommentTok{\# make this multiplyer the same as n\_rows}
+                     \AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{)) }\SpecialCharTok{+}
+\NormalTok{  ggthemes}\SpecialCharTok{::}\FunctionTok{scale\_fill\_tableau}\NormalTok{(}\AttributeTok{name=}\ConstantTok{NULL}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_equal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Faceted Waffle Bar Chart"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"\{dplyr\} storms data"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Year"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Count"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{(}\AttributeTok{base\_family =} \StringTok{"Roboto Condensed"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{panel.grid =} \FunctionTok{element\_blank}\NormalTok{(), }\AttributeTok{axis.ticks.y =} \FunctionTok{element\_line}\NormalTok{()) }\SpecialCharTok{+}
+  \FunctionTok{guides}\NormalTok{(}\AttributeTok{fill =} \FunctionTok{guide\_legend}\NormalTok{(}\AttributeTok{reverse =} \ConstantTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{./img/waf.png}
+
+\bookmarksetup{startatroot}
+
+\hypertarget{pie-charts}{%
+\chapter{Pie Charts}\label{pie-charts}}
+
+Friends don't let friends use pie charts except in specific situations.
+I'll discuss those at the end. But why are pie charts bad? Basically
+humans are very bad at estimating quantities based on angles - and pie
+charts (and donut charts) use slices. This can lead to situations in
+which we perceive groups to have equivalent areas, but they do not. This
+is particularly a problem when we are plotting data including more than
+2 groups. Much more often, we can represent the data more efficiently
+using a bar graph.
+
+\includegraphics{./img/pie.png}
+
+Image credit:
+\href{https://commons.wikimedia.org/wiki/File:Piecharts.svg}{wikimedia}
+
+But, for the sake of completeness, let's look at how pie charts could be
+coded in \texttt{ggplot2}. But, please, don't ever make them.
+
+\textbf{Pie charts with coord\_polar()}
+
+Here are some data showing the proportion of Australia's population in
+each state or territory:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{aus }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{state =} \FunctionTok{c}\NormalTok{(}\StringTok{"NSW"}\NormalTok{,}\StringTok{"Vic"}\NormalTok{,}\StringTok{"Qld"}\NormalTok{,}\StringTok{"WA"}\NormalTok{,}\StringTok{"SA"}\NormalTok{,}\StringTok{"Tas"}\NormalTok{,}\StringTok{"ACT"}\NormalTok{,}\StringTok{"NT"}\NormalTok{),}
+  \AttributeTok{prop =} \FunctionTok{c}\NormalTok{(}\DecValTok{32}\NormalTok{,}\DecValTok{26}\NormalTok{,}\DecValTok{20}\NormalTok{,}\DecValTok{10}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{)}
+
+\NormalTok{aus}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  state prop
+1   NSW   32
+2   Vic   26
+3   Qld   20
+4    WA   10
+5    SA    7
+6   Tas    2
+7   ACT    2
+8    NT    1
+\end{verbatim}
+
+And here is some \texttt{ggplot2} code to make a pie chart. The trick is
+to make a bar graph that gets turned into a circle with
+\texttt{coord\_polar}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\FunctionTok{ggplot}\NormalTok{(aus, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\StringTok{""}\NormalTok{, }\AttributeTok{y=}\NormalTok{prop, }\AttributeTok{fill=}\NormalTok{state)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat=}\StringTok{"identity"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_polar}\NormalTok{(}\StringTok{"y"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_void}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./pie_files/figure-pdf/unnamed-chunk-2-1.pdf}
+
+}
+
+\end{figure}
+
+I think it looks horrendous. It's also plotted it in alphabetical order,
+so we could tell it to plot from highest to lowest proportion using
+\texttt{reorder}. I'm also editing the legend title using \texttt{labs}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(aus, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\StringTok{""}\NormalTok{, }\AttributeTok{y=}\NormalTok{prop, }\AttributeTok{fill=}\FunctionTok{reorder}\NormalTok{(state,}\SpecialCharTok{{-}}\NormalTok{prop))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat=}\StringTok{"identity"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_polar}\NormalTok{(}\StringTok{"y"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{fill=}\StringTok{"State"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./pie_files/figure-pdf/unnamed-chunk-3-1.pdf}
+
+}
+
+\end{figure}
+
+It's still awful. Below I'm adjusting the colors using the
+\texttt{parula} palette from the R package \texttt{pals}. I'm also
+adding the size of each area with \texttt{geom\_text()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(aus, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\StringTok{""}\NormalTok{, }\AttributeTok{y=}\NormalTok{prop, }\AttributeTok{fill=}\FunctionTok{reorder}\NormalTok{(state,}\SpecialCharTok{{-}}\NormalTok{prop))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat=}\StringTok{"identity"}\NormalTok{, }\AttributeTok{width=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_polar}\NormalTok{(}\StringTok{"y"}\NormalTok{, }\AttributeTok{start=}\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{fill=}\StringTok{"State"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =}\NormalTok{ prop), }\AttributeTok{position =} \FunctionTok{position\_stack}\NormalTok{(}\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\NormalTok{pals}\SpecialCharTok{::}\FunctionTok{parula}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(aus)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./pie_files/figure-pdf/unnamed-chunk-4-1.pdf}
+
+}
+
+\end{figure}
+
+As can be seen from the above, it can actually be quite painstaking to
+add the text in the right place - especially if there are lots of small
+segments.
+
+One way I have found around this is to use the code below to calculate
+the starting position of where labels should go and then to use
+\texttt{geom\_text\_repel()} to wiggle the labels.
+
+Calculate starting positions:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{aus }\OtherTok{\textless{}{-}}\NormalTok{ aus }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(prop)}
+
+\NormalTok{aus}\SpecialCharTok{$}\NormalTok{pos }\OtherTok{\textless{}{-}}\NormalTok{ (}\FunctionTok{cumsum}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, aus}\SpecialCharTok{$}\NormalTok{prop)) }\SpecialCharTok{+} \FunctionTok{c}\NormalTok{(aus}\SpecialCharTok{$}\NormalTok{prop }\SpecialCharTok{/} \DecValTok{2}\NormalTok{, .}\DecValTok{01}\NormalTok{))[}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(aus)]}
+
+\NormalTok{aus }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  state prop  pos
+1    NT    1  0.5
+2   Tas    2  2.0
+3   ACT    2  4.0
+4    SA    7  8.5
+5    WA   10 17.0
+6   Qld   20 32.0
+7   Vic   26 55.0
+8   NSW   32 84.0
+\end{verbatim}
+
+Adding labels which convey the proportions with \texttt{label=prop}
+inside \texttt{geom\_text\_repel()}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggrepel)}
+
+\FunctionTok{ggplot}\NormalTok{(aus, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\StringTok{""}\NormalTok{, }\AttributeTok{y=}\NormalTok{prop, }\AttributeTok{fill=}\FunctionTok{reorder}\NormalTok{(state,}\SpecialCharTok{{-}}\NormalTok{prop))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat=}\StringTok{"identity"}\NormalTok{, }\AttributeTok{width=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_polar}\NormalTok{(}\StringTok{"y"}\NormalTok{, }\AttributeTok{start=}\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{fill=}\StringTok{"State"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\NormalTok{pals}\SpecialCharTok{::}\FunctionTok{parula}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(aus))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text\_repel}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FloatTok{1.4}\NormalTok{, }\AttributeTok{y =}\NormalTok{ pos, }\AttributeTok{label =}\NormalTok{ prop), }
+                    \AttributeTok{nudge\_x =}\NormalTok{ .}\DecValTok{3}\NormalTok{, }
+                    \AttributeTok{segment.size =}\NormalTok{ .}\DecValTok{7}\NormalTok{, }
+                    \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./pie_files/figure-pdf/unnamed-chunk-6-1.pdf}
+
+}
+
+\end{figure}
+
+Alternatively, we can ditch the legend and use the labels to add the
+categories. Despite me writing all this code - we shouldn't be bothering
+with adding numbers to pie chart segments, we should just be making bar
+graphs where you can actually see how much is in each group.
+Nonetheless, this time with category labels with \texttt{label=state}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(aus, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\StringTok{""}\NormalTok{, }\AttributeTok{y=}\NormalTok{prop, }\AttributeTok{fill=}\FunctionTok{reorder}\NormalTok{(state,}\SpecialCharTok{{-}}\NormalTok{prop))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat=}\StringTok{"identity"}\NormalTok{, }\AttributeTok{width=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_polar}\NormalTok{(}\StringTok{"y"}\NormalTok{, }\AttributeTok{start=}\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{fill=}\StringTok{"State"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\NormalTok{pals}\SpecialCharTok{::}\FunctionTok{parula}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(aus))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text\_repel}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FloatTok{1.4}\NormalTok{, }\AttributeTok{y =}\NormalTok{ pos, }\AttributeTok{label =}\NormalTok{ state), }
+                    \AttributeTok{nudge\_x =}\NormalTok{ .}\DecValTok{3}\NormalTok{, }
+                    \AttributeTok{segment.size =}\NormalTok{ .}\DecValTok{7}\NormalTok{, }
+                    \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./pie_files/figure-pdf/unnamed-chunk-7-1.pdf}
+
+}
+
+\end{figure}
+
+One final tweak - we can make the segments more pronounced by adding a
+line color and a linewidth to the \texttt{geom\_bar()} . I also add a
+title in \texttt{labs()} and position it in the center with the
+\texttt{plot.title} theme element and \texttt{hjust\ =\ 0.5}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(aus, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\StringTok{""}\NormalTok{, }\AttributeTok{y=}\NormalTok{prop, }\AttributeTok{fill=}\FunctionTok{reorder}\NormalTok{(state,}\SpecialCharTok{{-}}\NormalTok{prop))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat=}\StringTok{"identity"}\NormalTok{, }\AttributeTok{width=}\DecValTok{1}\NormalTok{, }\AttributeTok{linewidth=}\NormalTok{.}\DecValTok{75}\NormalTok{, }\AttributeTok{color=}\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_polar}\NormalTok{(}\StringTok{"y"}\NormalTok{, }\AttributeTok{start=}\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{fill=}\StringTok{"State"}\NormalTok{, }
+       \AttributeTok{title =} \StringTok{"I don\textquotesingle{}t like pie charts"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\NormalTok{pals}\SpecialCharTok{::}\FunctionTok{parula}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(aus))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text\_repel}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FloatTok{1.4}\NormalTok{, }\AttributeTok{y =}\NormalTok{ pos, }\AttributeTok{label =}\NormalTok{ state), }
+                    \AttributeTok{nudge\_x =}\NormalTok{ .}\DecValTok{3}\NormalTok{, }
+                    \AttributeTok{segment.size =}\NormalTok{ .}\DecValTok{7}\NormalTok{, }
+                    \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{,}
+        \AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{hjust =} \FloatTok{0.5}\NormalTok{)) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./pie_files/figure-pdf/unnamed-chunk-8-1.pdf}
+
+}
+
+\end{figure}
+
+With all the above being said. Here's how I would actually plot the
+above data. In a bar chart:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(aus, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\FunctionTok{reorder}\NormalTok{(state,prop), }\AttributeTok{y=}\NormalTok{prop)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{color=}\StringTok{\textquotesingle{}cornflowerblue\textquotesingle{}}\NormalTok{, }\AttributeTok{fill=}\StringTok{\textquotesingle{}cornflowerblue\textquotesingle{}}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Proportion (\%)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Proportion of Population by State in Australia"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, }\AttributeTok{size=}\FunctionTok{rel}\NormalTok{(}\FloatTok{1.2}\NormalTok{)),}
+        \AttributeTok{axis.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, }\AttributeTok{size=}\FunctionTok{rel}\NormalTok{(}\FloatTok{1.2}\NormalTok{)),}
+        \AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, }\AttributeTok{size=}\FunctionTok{rel}\NormalTok{(}\FloatTok{1.4}\NormalTok{)),) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./pie_files/figure-pdf/unnamed-chunk-9-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{pie-charts-with-two-groups}{%
+\subsection{Pie charts with two
+groups}\label{pie-charts-with-two-groups}}
+
+The one exception to the ``pie charts are bad'' rule may be if we are
+representing proportions between two groups, especially when we wish to
+compare across a number of different subjects. For example, imagine we
+were running a study where we measure the proportion of correct answers
+given by subjects on a memory task in a control group and in a treatment
+group where they are given a proposed memory enhancing drug. In such a
+dataset, we may record the proportion of correct and incorrect responses
+for each subject in a dataframe like the one below:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Generating Random Data for Example}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{71}\NormalTok{)}
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{Subject =} \FunctionTok{c}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"C"}\NormalTok{,}\DecValTok{1}\SpecialCharTok{:}\DecValTok{10}\NormalTok{),}\FunctionTok{paste0}\NormalTok{(}\StringTok{"T"}\NormalTok{,}\DecValTok{1}\SpecialCharTok{:}\DecValTok{10}\NormalTok{)),}
+  \AttributeTok{Group =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}control\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}treatment\textquotesingle{}}\NormalTok{), }\AttributeTok{each=}\DecValTok{10}\NormalTok{),}
+  \AttributeTok{Correct =} \FunctionTok{runif}\NormalTok{(}\DecValTok{20}\NormalTok{)}
+\NormalTok{)}
+
+\NormalTok{df}\SpecialCharTok{$}\NormalTok{Incorrect }\OtherTok{\textless{}{-}} \DecValTok{1} \SpecialCharTok{{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Correct}
+
+\FunctionTok{head}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  Subject   Group   Correct  Incorrect
+1      C1 control 0.3329281 0.66707194
+2      C2 control 0.5551039 0.44489613
+3      C3 control 0.3273700 0.67263004
+4      C4 control 0.2116670 0.78833304
+5      C5 control 0.3161214 0.68387864
+6      C6 control 0.9472664 0.05273357
+\end{verbatim}
+
+If you glance at the final plot a few lines below, you will notice that
+we have plotted individuals in the control group on the first row, and
+individuals from the treatment group on the second row. We have also
+plotted individuals from highest to lowest proportion of correct
+responses in each group. To do this, we need to set the levels of the
+Subject factor to be in this order. We grab these names in the
+appropriate order by using \texttt{arrange()} to sort the data (controls
+sorted by highest to lowest, then treatments sorted by highest to
+lowest), and then using \texttt{pull()} to take the names.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{subjs }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(Group,}\SpecialCharTok{{-}}\NormalTok{Correct) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pull}\NormalTok{(Subject)}
+
+\NormalTok{subjs}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ [1] "C6"  "C8"  "C7"  "C2"  "C10" "C9"  "C1"  "C3"  "C5"  "C4"  "T10" "T9" 
+[13] "T5"  "T8"  "T6"  "T4"  "T2"  "T3"  "T7"  "T1" 
+\end{verbatim}
+
+To get the data into plotting format, we need to pivot the data into
+long form using \texttt{pivot\_longer()}. Then we can set our factor
+level.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols=}\DecValTok{3}\SpecialCharTok{:}\DecValTok{4}\NormalTok{, }\AttributeTok{names\_to=}\StringTok{"choice"}\NormalTok{)}
+\NormalTok{df}\SpecialCharTok{$}\NormalTok{Subject }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Subject, }\AttributeTok{levels =}\NormalTok{ subjs)}
+
+\FunctionTok{head}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 6 x 4
+  Subject Group   choice    value
+  <fct>   <chr>   <chr>     <dbl>
+1 C1      control Correct   0.333
+2 C1      control Incorrect 0.667
+3 C2      control Correct   0.555
+4 C2      control Incorrect 0.445
+5 C3      control Correct   0.327
+6 C3      control Incorrect 0.673
+\end{verbatim}
+
+Then we use \texttt{facet\_wrap()} to plot by both \texttt{Group} and
+\texttt{Subject} so that we get the text above each pie chart. I used a
+black and white fill of the pie charts as it makes it easy to look at
+how subjects vary.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\StringTok{""}\NormalTok{, }\AttributeTok{y=}\NormalTok{value, }\AttributeTok{fill=}\NormalTok{choice)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat=}\StringTok{"identity"}\NormalTok{, }\AttributeTok{width=}\DecValTok{1}\NormalTok{, }\AttributeTok{linewidth=}\NormalTok{.}\DecValTok{75}\NormalTok{, }\AttributeTok{color=}\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_polar}\NormalTok{(}\StringTok{"y"}\NormalTok{, }\AttributeTok{start=}\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_void}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Group}\SpecialCharTok{*}\NormalTok{Subject,}\AttributeTok{nrow=}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"black"}\NormalTok{,}\StringTok{"white"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{\textquotesingle{}bottom\textquotesingle{}}\NormalTok{,}
+        \AttributeTok{legend.title =} \FunctionTok{element\_blank}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./pie_files/figure-pdf/unnamed-chunk-13-1.pdf}
+
+}
+
+\end{figure}
+
+This sort of pie chart I actually secretly quite like - and it is
+probably the only one that I would ever willfully make.
+
+\bookmarksetup{startatroot}
+
 \hypertarget{saving-and-exporting-plots}{%
 \chapter{Saving and Exporting Plots}\label{saving-and-exporting-plots}}
 
@@ -4363,39 +5897,9 @@ we save to the object \texttt{plot1}:
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(tidyverse)}
-\end{Highlighting}
-\end{Shaded}
 
-\begin{verbatim}
--- Attaching packages --------------------------------------- tidyverse 1.3.2 --
-v ggplot2 3.4.0      v purrr   1.0.1 
-v tibble  3.1.8      v dplyr   1.0.10
-v tidyr   1.2.1      v stringr 1.5.0 
-v readr   2.1.3      v forcats 0.5.2 
--- Conflicts ------------------------------------------ tidyverse_conflicts() --
-x dplyr::filter() masks stats::filter()
-x dplyr::lag()    masks stats::lag()
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \NormalTok{cheese }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data\_raw/cheese.csv"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
 
-\begin{verbatim}
-Rows: 73 Columns: 9
--- Column specification --------------------------------------------------------
-Delimiter: ","
-chr (1): type
-dbl (8): sat_fat, polysat_fat, monosat_fat, protein, carb, chol, fiber, kcal
-
-i Use `spec()` to retrieve the full column specification for this data.
-i Specify the column types or set `show_col_types = FALSE` to quiet this message.
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \NormalTok{plot1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(cheese, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ chol, }\AttributeTok{y =}\NormalTok{ kcal)) }\SpecialCharTok{+} 
      \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color=}\StringTok{\textquotesingle{}purple\textquotesingle{}}\NormalTok{, }\AttributeTok{size=}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+} 
      \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
