@@ -18,8 +18,9 @@ book:
     - slopes.qmd
     - smallmult.qmd
     - heatmaps.qmd
-    - areacharts.qmd
     - bumps.qmd
+    - waffle.qmd
+    - pie.qmd
     - savingexporting.qmd
     - summary.qmd
     - references.qmd

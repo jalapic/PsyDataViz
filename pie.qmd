@@ -24,6 +24,9 @@ aus
 And here is some `ggplot2` code to make a pie chart. The trick is to make a bar graph that gets turned into a circle with `coord_polar`.
 
 ```{r}
+
+library(tidyverse)
+
 ggplot(aus, aes(x="", y=prop, fill=state)) +
   geom_bar(stat="identity") +
   coord_polar("y") +
@@ -141,4 +144,59 @@ ggplot(aus, aes(x=reorder(state,prop), y=prop)) +
 
 ### Pie charts with two groups
 
-The one exception to the "pie charts are bad" rule may be if we are representing proportions between two groups, especially when we wish to compare across a number of different subjects. For example (include example):
+The one exception to the "pie charts are bad" rule may be if we are representing proportions between two groups, especially when we wish to compare across a number of different subjects. For example, imagine we were running a study where we measure the proportion of correct answers given by subjects on a memory task in a control group and in a treatment group where they are given a proposed memory enhancing drug. In such a dataset, we may record the proportion of correct and incorrect responses for each subject in a dataframe like the one below:
+
+```{r}
+# Generating Random Data for Example
+set.seed(71)
+df <- data.frame(
+  Subject = c(paste0("C",1:10),paste0("T",1:10)),
+  Group = rep(c('control', 'treatment'), each=10),
+  Correct = runif(20)
+)
+
+df$Incorrect <- 1 - df$Correct
+
+head(df)
+
+```
+
+If you glance at the final plot a few lines below, you will notice that we have plotted individuals in the control group on the first row, and individuals from the treatment group on the second row. We have also plotted individuals from highest to lowest proportion of correct responses in each group. To do this, we need to set the levels of the Subject factor to be in this order. We grab these names in the appropriate order by using `arrange()` to sort the data (controls sorted by highest to lowest, then treatments sorted by highest to lowest), and then using `pull()` to take the names.
+
+```{r}
+subjs <- df %>%
+  arrange(Group,-Correct) %>%
+  pull(Subject)
+
+
+```
+
+To get the data into plotting format, we need to pivot the data into long form using `pivot_longer()`. Then we can set our factor level.
+
+```{r}
+
+df <- df %>% pivot_longer(cols=3:4, names_to="choice")
+df$Subject <- factor(df$Subject, levels = subjs)
+
+head(df)
+
+
+
+```
+
+Then we use `facet_wrap()` to plot by both `Group` and `Subject` so that we get the text above each pie chart. I used a black and white fill of the pie charts as it makes it easy to look at how subjects vary.
+
+```{r}
+ggplot(df, aes(x="", y=value, fill=choice)) +
+  geom_bar(stat="identity", width=1, linewidth=.75, color='black') +
+  coord_polar("y", start=0) +
+  theme_void() +
+  facet_wrap(~Group*Subject,nrow=2) +
+  scale_fill_manual(values=c("black","white")) +
+  theme(legend.position = 'bottom',
+        legend.title = element_blank())
+
+
+```
+
+This sort of pie chart I actually secretly quite like - and it is probably the only one that I would ever willfully make.
