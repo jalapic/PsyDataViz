@@ -120,19 +120,24 @@ ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
   theme(legend.position = 'none',
         plot.title = element_text(hjust = 0.5)) 
 
+```
 
+With all the above being said. Here's how I would actually plot the above data:
 
+```{r}
+ggplot(aus, aes(x=reorder(state,prop), y=prop)) +
+  geom_col(color='cornflowerblue', fill='cornflowerblue', alpha=.6) +
+  theme_classic() +
+  coord_flip() +
+  xlab("") +
+  ylab("Proportion (%)") +
+  ggtitle("Proportion of Population by State in Australia") +
+  theme(axis.text = element_text(face='bold', size=rel(1.2)),
+        axis.title = element_text(face='bold', size=rel(1.2)),
+        plot.title = element_text(face='bold', size=rel(1.4)),) 
 ```
 
 <br>
-
-**Pie charts with geom_arc_bar()**
-
-The best way to do this is to calculate the angles and add text ourselves. Below are some examples of how to do this using `geom_arc_bar()`.
-
-All of this is to say - just make an actual bar graph/.
-
-ad pie chart example and bar graph improvement.
 
 ### Pie charts with two groups
 
