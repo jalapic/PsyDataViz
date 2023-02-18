@@ -23,7 +23,7 @@ aus
 
 And here is some `ggplot2` code to make a pie chart. The trick is to make a bar graph that gets turned into a circle with `coord_polar`.
 
-```{r}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 
 library(tidyverse)
 
@@ -35,7 +35,7 @@ ggplot(aus, aes(x="", y=prop, fill=state)) +
 
 I think it looks horrendous. It's also plotted it in alphabetical order, so we could tell it to plot from highest to lowest proportion using `reorder`. I'm also editing the legend title using `labs`.
 
-```{r}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
   geom_bar(stat="identity") +
   coord_polar("y") +
@@ -45,7 +45,7 @@ ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
 
 It's still awful. Below I'm adjusting the colors using the `parula` palette from the R package `pals`. I'm also adding the size of each area with `geom_text()`.
 
-```{r}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
   geom_bar(stat="identity", width=1) +
   coord_polar("y", start=0) +
@@ -64,8 +64,9 @@ Calculate starting positions:
 
 ```{r}
 aus <- aus %>% 
-  arrange(-prop) %>%
-  mutate(pos = (cumsum(c(0, aus$prop)) + c(aus$prop / 2, .01))[1:nrow(aus)])
+  arrange(prop)
+
+aus$pos <- (cumsum(c(0, aus$prop)) + c(aus$prop / 2, .01))[1:nrow(aus)]
 
 aus 
 
@@ -73,7 +74,7 @@ aus
 
 Adding labels which convey the proportions with `label=prop` inside `geom_text_repel()`:
 
-```{r}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 library(ggrepel)
 
 ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
@@ -90,9 +91,7 @@ ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
 
 Alternatively, we can ditch the legend and use the labels to add the categories. Despite me writing all this code - we shouldn't be bothering with adding numbers to pie chart segments, we should just be making bar graphs where you can actually see how much is in each group. Nonetheless, this time with category labels with `label=state`:
 
-```{r}
-library(ggrepel)
-
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
   geom_bar(stat="identity", width=1) +
   coord_polar("y", start=0) +
@@ -108,7 +107,7 @@ ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
 
 One final tweak - we can make the segments more pronounced by adding a line color and a linewidth to the `geom_bar()` . I also add a title in `labs()` and position it in the center with the `plot.title` theme element and `hjust = 0.5`.
 
-```{r}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
   geom_bar(stat="identity", width=1, linewidth=.75, color='black') +
   coord_polar("y", start=0) +
@@ -125,9 +124,9 @@ ggplot(aus, aes(x="", y=prop, fill=reorder(state,-prop))) +
 
 ```
 
-With all the above being said. Here's how I would actually plot the above data:
+With all the above being said. Here's how I would actually plot the above data. In a bar chart:
 
-```{r}
+```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
 ggplot(aus, aes(x=reorder(state,prop), y=prop)) +
   geom_col(color='cornflowerblue', fill='cornflowerblue', alpha=.6) +
   theme_classic() +
@@ -168,7 +167,7 @@ subjs <- df %>%
   arrange(Group,-Correct) %>%
   pull(Subject)
 
-
+subjs
 ```
 
 To get the data into plotting format, we need to pivot the data into long form using `pivot_longer()`. Then we can set our factor level.
@@ -186,7 +185,7 @@ head(df)
 
 Then we use `facet_wrap()` to plot by both `Group` and `Subject` so that we get the text above each pie chart. I used a black and white fill of the pie charts as it makes it easy to look at how subjects vary.
 
-```{r}
+```{r, warning=FALSE, message=FALSE, fig.width=7, fig.height=3}
 ggplot(df, aes(x="", y=value, fill=choice)) +
   geom_bar(stat="identity", width=1, linewidth=.75, color='black') +
   coord_polar("y", start=0) +
