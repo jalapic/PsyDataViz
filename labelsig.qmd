@@ -124,7 +124,7 @@ ggplot(df,aes(x=reorder(categ,-value,median),y=value))+
                 label=letters,
                 hjust = -1, 
                 vjust = -0.8, 
-                fontface = "bold"), vjust=0) +
+                fontface = "bold")) +
   theme_classic() +
   xlab("Category")
 
