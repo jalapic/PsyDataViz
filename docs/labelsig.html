@@ -297,6 +297,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="adding-tukeys-significance-letters" class="level2" data-number="9.3">
 <h2 data-number="9.3" class="anchored" data-anchor-id="adding-tukeys-significance-letters"><span class="header-section-number">9.3</span> Adding Tukey’s Significance Letters</h2>
+<p>Rather than denoting pairwise comparisons with stars or p-values, I prefer to use letter notation. Letters that are the same between two groups indicate no significant differences between those groups. Letters that differ between two groups indicate that those groups have significant differencess.</p>
+<p><br></p>
 <p><strong>One-Way ANOVA example</strong></p>
 <p>Let’s create some random data. We’ll make a dataframe of six groups.</p>
 <div class="cell">
@@ -411,6 +413,7 @@ attr(,"class")
 <p><img src="labelsig_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
+<p>In the above plot, we can see that Group B is not significantly different from Group C or Group F (because both share the <code>b</code> and <code>c</code> letter, but is significantly different from the other groups. Groups D and E are not significantly different from each other (they both have an <code>a</code>) but are significantly different from all other groups.</p>
 <p>We should reorder the plot though to make it more readable:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>

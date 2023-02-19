@@ -21,6 +21,10 @@ library(tidyverse)
 
 ## Adding Tukey's Significance Letters
 
+Rather than denoting pairwise comparisons with stars or p-values, I prefer to use letter notation. Letters that are the same between two groups indicate no significant differences between those groups. Letters that differ between two groups indicate that those groups have significant differencess.
+
+<br>
+
 **One-Way ANOVA example**
 
 Let's create some random data. We'll make a dataframe of six groups.
@@ -89,6 +93,8 @@ ggplot(df,aes(x=categ,y=value))+
   theme_classic() +
   xlab("Category")
 ```
+
+In the above plot, we can see that Group B is not significantly different from Group C or Group F (because both share the `b` and `c` letter, but is significantly different from the other groups. Groups D and E are not significantly different from each other (they both have an `a`) but are significantly different from all other groups.
 
 We should reorder the plot though to make it more readable:
 
