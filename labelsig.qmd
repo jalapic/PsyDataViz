@@ -1,0 +1,138 @@
+# Labeling Significance
+
+Labeling significance on plots such as boxplots or bar graphs is typically denoted using stars or letters (sometimes called Tukey's signficance letters). These are placed either above one or more of the boxplots, or are placed in between and connected via lines. There is always a danger when adding this information that it becomes cluttered and distracting, so it is important to make clear design choices. Below are some ways of labeling significance on boxplots and bar graphs.
+
+<br>
+
+## Adding stars to plots
+
+<br>
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+
+```
+
+<br>
+
+## Adding p-values to plots
+
+<br>
+
+## Adding Tukey's Significance Letters
+
+**One-Way ANOVA example**
+
+Let's create some random data. We'll make a dataframe of six groups.
+
+```{r}
+set.seed(10)
+df <- data.frame(
+  value = c(rnorm(n = 10, mean = 10, sd = 1.8),
+            rnorm(n = 12, mean = 11, sd = 1.0),
+            rnorm(n = 14, mean = 13, sd = 1.1),
+            rnorm(n = 16, mean = 15, sd = 1.2),
+            rnorm(n = 12, mean = 14, sd = 2.2),
+            rnorm(n = 10, mean = 10, sd = 1.0)),
+  categ = c(rep("A",10), rep("B",12), rep("C",14), 
+          rep("D",16), rep("E",12), rep("F",10)
+          )
+)
+
+head(df)
+```
+
+We can plot the basic boxplot of these data like this:
+
+```{r, fig.height=5, fig.width=5}
+ggplot(df, aes(x=categ, y=value)) +
+  geom_boxplot() +
+  theme_classic()
+```
+
+To compare significance differences between groups, we could run Tukey post-hoc tests using Honestly Signficant Differences. This is done using the `TukeyHSD()` function in base R, but using the `HSD.test()` function from the `agricolae` R package, we can get the letter notation we need directly.
+
+This code runs the post hoc test and the groups part of it gives us the letter notations we need:
+
+```{r, warning=FALSE, message=FALSE}
+library(agricolae)
+
+hsd <- HSD.test(aov(value ~ categ, data=df), "categ", group=T)
+hsd
+
+```
+
+To add these letters on to the plot, we need to decide where to put them. The x coordinate will be the mid point of each category (which can just be the name of the group), and the y coordinate will be above the maximum value of that group. But note that the groups in the summary output are reorganized from highest median value to lowest. I find it easiest to add these to our summary output in the appropriate order.
+
+```{r}
+df.sum <- df %>% 
+  group_by(categ) %>% 
+  summarize(maxval = max(value), 
+            med = median(value),
+            uq = quantile(value, .75)) %>% 
+  arrange(-med)
+
+df.sum$letters <- hsd$groups$groups
+
+df.sum
+
+```
+
+This code plots the letters above the boxplots at a y coordinate 0.2 higher than the max value.
+
+```{r, warning=FALSE, message=FALSE, fig.height=5, fig.width=5}
+ggplot(df,aes(x=categ,y=value))+
+  geom_boxplot()+
+  geom_text(data=df.sum,
+            aes(x=categ,y=0.2+maxval,
+                label=letters)) +
+  theme_classic() +
+  xlab("Category")
+```
+
+We should reorder the plot though to make it more readable:
+
+```{r, warning=FALSE, message=FALSE, fig.height=5, fig.width=5}
+ggplot(df,aes(x=reorder(categ,-value,median),y=value))+
+  geom_boxplot()+
+  geom_text(data=df.sum,
+            aes(x=categ,y=0.2+maxval,
+                label=letters)) +
+  theme_classic() +
+  xlab("Category")
+```
+
+Alternatively, you may wish to plot the letters to the side of the upper quartile. I don't like this very much, but it's an option. I also make the letters bold in this example using `fontface="bold"`.
+
+```{r, warning=FALSE, message=FALSE, fig.height=5, fig.width=5}
+ggplot(df,aes(x=reorder(categ,-value,median),y=value))+
+  geom_boxplot()+
+  geom_text(data=df.sum,
+            aes(x=categ,y=uq,
+                label=letters,
+                hjust = -1, 
+                vjust = -0.8, 
+                fontface = "bold")) +
+  theme_classic() +
+  xlab("Category")
+
+```
+
+Just for fun, here I'm including `aes(fill = factor(..middle..)))` and `scale_fill_brewer(palette = "Reds")` to make the colors of the boxplots a shade of red that is equivalent to their categorical position.
+
+```{r, warning=FALSE, message=FALSE, fig.height=5, fig.width=5}
+ggplot(df,aes(x=reorder(categ,-value,median),y=value))+
+  geom_boxplot(aes(fill = factor(..middle..)))+
+  geom_text(data=df.sum,
+            aes(x=categ,y=0.2+maxval,
+                label=letters)) +
+  theme_classic() +
+  xlab("Category") +
+  scale_fill_brewer(palette = "Reds") +
+  theme(legend.position = 'none')
+
+```
+
+This approach using `geom_text()` to add letters to a plot can be modified for any statistical test.
+
+<br>

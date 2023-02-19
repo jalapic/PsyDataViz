@@ -15,7 +15,9 @@ book:
     - histograms.qmd
     - distributionsgroups.qmd
     - bar.qmd
+    - baralt.qmd
     - slopes.qmd
+    - labelsig.qmd
     - smallmult.qmd
     - heatmaps.qmd
     - bumps.qmd

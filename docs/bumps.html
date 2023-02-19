@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>PsyDataViz - 10&nbsp; Bump charts</title>
+<title>PsyDataViz - 12&nbsp; Bump charts</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -133,7 +133,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Bump charts</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bump charts</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -193,42 +193,52 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./slopes.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Slope Charts</span></a>
+  <a href="./baralt.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Alternatives to Bar Charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./smallmult.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Small Multiples</span></a>
+  <a href="./slopes.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Slope Charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./heatmaps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Heatmaps</span></a>
+  <a href="./labelsig.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Labeling Significance</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bumps.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Bump charts</span></a>
+  <a href="./smallmult.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Small Multiples</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./waffle.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Waffle Charts</span></a>
+  <a href="./heatmaps.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Heatmaps</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pie.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Pie Charts</span></a>
+  <a href="./bumps.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bump charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./savingexporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Saving and Exporting Plots</span></a>
+  <a href="./waffle.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Waffle Charts</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./pie.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Pie Charts</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./savingexporting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Saving and Exporting Plots</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Summary</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -245,10 +255,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#basic-bump-chart-in-ggplot" id="toc-basic-bump-chart-in-ggplot" class="nav-link active" data-scroll-target="#basic-bump-chart-in-ggplot"><span class="toc-section-number">10.1</span>  Basic Bump Chart in ggplot()</a></li>
-  <li><a href="#ggbump-package" id="toc-ggbump-package" class="nav-link" data-scroll-target="#ggbump-package"><span class="toc-section-number">10.2</span>  ggbump() package</a>
+  <li><a href="#basic-bump-chart-in-ggplot" id="toc-basic-bump-chart-in-ggplot" class="nav-link active" data-scroll-target="#basic-bump-chart-in-ggplot"><span class="toc-section-number">12.1</span>  Basic Bump Chart in ggplot()</a></li>
+  <li><a href="#ggbump-package" id="toc-ggbump-package" class="nav-link" data-scroll-target="#ggbump-package"><span class="toc-section-number">12.2</span>  ggbump() package</a>
   <ul class="collapse">
-  <li><a href="#practical-example---babyname-popularity-over-time." id="toc-practical-example---babyname-popularity-over-time." class="nav-link" data-scroll-target="#practical-example---babyname-popularity-over-time."><span class="toc-section-number">10.2.1</span>  Practical Example - Babyname Popularity Over Time.</a></li>
+  <li><a href="#practical-example---babyname-popularity-over-time." id="toc-practical-example---babyname-popularity-over-time." class="nav-link" data-scroll-target="#practical-example---babyname-popularity-over-time."><span class="toc-section-number">12.2.1</span>  Practical Example - Babyname Popularity Over Time.</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -258,7 +268,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Bump charts</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bump charts</span></h1>
 </div>
 
 
@@ -276,8 +286,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Bump charts are useful for looking at how rankings of a set of observations change over time. They are named (I think) after the visualizations of changes in rankings of Oxford and Cambridge college rowing crews during boat races. Because the river wasn’t wide enough to accommodate all the boats at once, they would start their races at different points on the river and their goal was to “bump” the boat in front. This would mean that they went up in ranking. This was visualized in charts like the one below. When lines cross, this means that the boats bumped and the boats switched rankings:</p>
 <p><img src="img/bumps.png" class="img-fluid"></p>
 <p><br></p>
-<section id="basic-bump-chart-in-ggplot" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="basic-bump-chart-in-ggplot"><span class="header-section-number">10.1</span> Basic Bump Chart in ggplot()</h2>
+<section id="basic-bump-chart-in-ggplot" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="basic-bump-chart-in-ggplot"><span class="header-section-number">12.1</span> Basic Bump Chart in ggplot()</h2>
 <p>We can look at how to make a bump chart using basic <code>ggplot2</code> syntax. We’ll recreate the above chart. Let’s import the data:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -396,8 +406,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p><br></p>
 </section>
-<section id="ggbump-package" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="ggbump-package"><span class="header-section-number">10.2</span> ggbump() package</h2>
+<section id="ggbump-package" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="ggbump-package"><span class="header-section-number">12.2</span> ggbump() package</h2>
 <p>I like the classic angular lines aesthetic of bump charts. However, there may be use cases where we wish to have curved lines joining points. This can be done effectively with the <a href="https://github.com/davidsjoberg/ggbump">ggbump package</a>.</p>
 <p>The below code creates the generic plot for the college bumps dataset above. I’ve kept the <code>scale_y_reverse()</code> in the code so that we have the highest ranked team (i.e.&nbsp;1) at the top of the y-axis, and the lowest ranked at the bottom. The <code>geom_bump()</code> function adds a curved line rather than straight line for each subject across time. The other difference is that I have made the <code>day</code> column numeric by using <code>as.numeric(factor(day))</code> rather than just <code>day</code>. Although <code>geom_bump()</code> should work with characters, I have found that converting them to numeric variables works best.</p>
 <div class="cell">
@@ -440,8 +450,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="bumps_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
-<section id="practical-example---babyname-popularity-over-time." class="level3" data-number="10.2.1">
-<h3 data-number="10.2.1" class="anchored" data-anchor-id="practical-example---babyname-popularity-over-time."><span class="header-section-number">10.2.1</span> Practical Example - Babyname Popularity Over Time.</h3>
+<section id="practical-example---babyname-popularity-over-time." class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="practical-example---babyname-popularity-over-time."><span class="header-section-number">12.2.1</span> Practical Example - Babyname Popularity Over Time.</h3>
 <p>Below is an example of using the <code>ggbump</code> package to plot changing trends of babyname popularity over time. The code for this was inspired by a plot of European Flight traffic made by <a href="https://github.com/steodose/Tidy-Tuesday/blob/master/Week%2028_2022.R">Stephan Teodosescu</a>.</p>
 <p>Essentially what we want to do is find the rankings in popularity of different babynames between two timepoints. We will plot the top 12 names at the final timepoint and track their evolution in popularity from the first timepoint. By only including these names, we avoid too much clutter in the chart and we are able to see how stable or otherwise the rankings are. I chose to look at the popularity of male names between 2012 and 2017.</p>
 <p>We first get the ranking of all male names between 2012 and 2017. The data come from the <code>babynames</code> package:</p>
@@ -703,12 +713,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./heatmaps.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Heatmaps</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Heatmaps</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./waffle.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Waffle Charts</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Waffle Charts</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

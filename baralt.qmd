@@ -1,0 +1,14 @@
+# Alternatives to Bar Charts
+
+There are many more aesthetically pleasing graphs than bar charts. Here are some examples.
+
+
+<br>
+
+## Lollipop Plots
+
+<br>
+
+## Cleveland Dot Plots
+
+<br>
