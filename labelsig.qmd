@@ -102,6 +102,18 @@ ggplot(df,aes(x=reorder(categ,-value,median),y=value))+
   xlab("Category")
 ```
 
+We can nudge the letters up a bit using `vjust=0`:
+
+```{r, warning=FALSE, message=FALSE, fig.height=5, fig.width=5}
+ggplot(df,aes(x=reorder(categ,-value,median),y=value))+
+  geom_boxplot()+
+  geom_text(data=df.sum,
+            aes(x=categ,y=0.2+maxval,
+                label=letters), vjust=0) +
+  theme_classic() +
+  xlab("Category")
+```
+
 Alternatively, you may wish to plot the letters to the side of the upper quartile. I don't like this very much, but it's an option. I also make the letters bold in this example using `fontface="bold"`.
 
 ```{r, warning=FALSE, message=FALSE, fig.height=5, fig.width=5}
@@ -112,7 +124,7 @@ ggplot(df,aes(x=reorder(categ,-value,median),y=value))+
                 label=letters,
                 hjust = -1, 
                 vjust = -0.8, 
-                fontface = "bold")) +
+                fontface = "bold"), vjust=0) +
   theme_classic() +
   xlab("Category")
 
@@ -125,7 +137,7 @@ ggplot(df,aes(x=reorder(categ,-value,median),y=value))+
   geom_boxplot(aes(fill = factor(..middle..)))+
   geom_text(data=df.sum,
             aes(x=categ,y=0.2+maxval,
-                label=letters)) +
+                label=letters), vjust=0) +
   theme_classic() +
   xlab("Category") +
   scale_fill_brewer(palette = "Reds") +
