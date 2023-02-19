@@ -213,7 +213,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, boxrule=0pt, sharp corners, borderline west={3pt}{0pt}{shadecolor}, interior hidden, enhanced, frame hidden]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, enhanced, breakable, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, interior hidden, frame hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -3766,6 +3766,28 @@ We should reorder the plot though to make it more readable:
 
 \end{figure}
 
+We can nudge the letters up a bit using \texttt{vjust=0}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df,}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\FunctionTok{reorder}\NormalTok{(categ,}\SpecialCharTok{{-}}\NormalTok{value,median),}\AttributeTok{y=}\NormalTok{value))}\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{data=}\NormalTok{df.sum,}
+            \FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{categ,}\AttributeTok{y=}\FloatTok{0.2}\SpecialCharTok{+}\NormalTok{maxval,}
+                \AttributeTok{label=}\NormalTok{letters), }\AttributeTok{vjust=}\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Category"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-8-1.pdf}
+
+}
+
+\end{figure}
+
 Alternatively, you may wish to plot the letters to the side of the upper
 quartile. I don't like this very much, but it's an option. I also make
 the letters bold in this example using \texttt{fontface="bold"}.
@@ -3787,7 +3809,7 @@ the letters bold in this example using \texttt{fontface="bold"}.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-8-1.pdf}
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-9-1.pdf}
 
 }
 
@@ -3805,7 +3827,7 @@ position.
   \FunctionTok{geom\_boxplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill =} \FunctionTok{factor}\NormalTok{(..middle..)))}\SpecialCharTok{+}
   \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{data=}\NormalTok{df.sum,}
             \FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{categ,}\AttributeTok{y=}\FloatTok{0.2}\SpecialCharTok{+}\NormalTok{maxval,}
-                \AttributeTok{label=}\NormalTok{letters)) }\SpecialCharTok{+}
+                \AttributeTok{label=}\NormalTok{letters), }\AttributeTok{vjust=}\DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
   \FunctionTok{xlab}\NormalTok{(}\StringTok{"Category"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{scale\_fill\_brewer}\NormalTok{(}\AttributeTok{palette =} \StringTok{"Reds"}\NormalTok{) }\SpecialCharTok{+}
@@ -3815,7 +3837,7 @@ position.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-9-1.pdf}
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-10-1.pdf}
 
 }
 
