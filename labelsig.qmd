@@ -4,9 +4,9 @@ Labeling significance on plots such as boxplots or bar graphs is typically denot
 
 <br>
 
-## Adding stars to plots
+## Adding stars and p-values to plots
 
-Probably the simplest way to add stars to plots is by using the `ggsignif` package. This adds an extra layer to each `ggplot` chart containing the stars.
+Probably the simplest way to add stars and p-values to plots is by using the `ggsignif` package. This adds an extra layer to each `ggplot` chart containing the stars.
 
 Here is some example data with two groups:
 
@@ -61,17 +61,29 @@ ggplot(df, aes(x=subject, y=values)) +
 
 ```
 
-How to control number of decimal places? (probably just do annotation - see below)???
+It's also possible to round numbers to desired decimal places by adding a function within the parameter `map_signif_level`. Here, I round the p-value to 3 decimal places with `round()`.
 
 ```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
 ggplot(df, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "t.test", 
-              comparisons = list(c("Control","Treatment")))
+              comparisons = list(c("Control","Treatment")),
+              map_signif_level = function(p) paste("p =",round(p,3)))
 
 ```
 
-There are also several parameters within `geom_signif()` that can be tweaked to adjust the font type and position. This is using `textsize` to adjust the text size.
+Within this same function, we can actually also annotate text. Here I add "p =" to the beginning of the p-value output on the plot.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+ggplot(df, aes(x=subject, y=values)) +
+  geom_boxplot() +
+  geom_signif(test = "t.test", 
+              comparisons = list(c("Control","Treatment")),
+              map_signif_level = function(p) paste("p =",round(p,3)))
+
+```
+
+There are several other parameters within `geom_signif()` that can be tweaked to adjust the font type and position. This is using `textsize` to adjust the text size.
 
 ```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
 ggplot(df, aes(x=subject, y=values)) +
@@ -82,13 +94,24 @@ ggplot(df, aes(x=subject, y=values)) +
 
 ```
 
+<br>
+
+**Adding stars to plots**
+
+To switch from adding p-values to stars we just need to add `map_signif_level = T`
+
 ```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
 ggplot(df, aes(x=subject, y=values)) +
   geom_boxplot() +
-  geom_signif(comparisons = list(c("Control","Treatment")),
-              map_signif_level = T)
+  geom_signif(test = "t.test", 
+              comparisons = list(c("Control","Treatment")),
+              map_signif_level = T,
+              textsize = 7) +
+  theme_classic()
 
 ```
+
+**What if not significant ?**
 
 <br>
 
@@ -111,7 +134,7 @@ If you use with multiple groups, you can assign multiple groups. But note that i
 
 ```
 
-**Adding stars or p-values manually**
+### **Adding stars or p-values manually**
 
 might want to compute the individual p-values separately and then use the `annotations` parameter to draw them.
 
