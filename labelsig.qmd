@@ -6,18 +6,151 @@ Labeling significance on plots such as boxplots or bar graphs is typically denot
 
 ## Adding stars to plots
 
-<br>
+Probably the simplest way to add stars to plots is by using the `ggsignif` package. This adds an extra layer to each `ggplot` chart containing the stars.
+
+Here is some example data with two groups:
 
 ```{r, warning=FALSE, message=FALSE}
+set.seed(100)
+
+df <- data.frame(
+  values = c(rnorm(n=10,mean=4, sd = 0.5), 
+             rnorm(n=12,mean=3.4, sd = 0.4)),
+  subject = c(rep("Control",10), rep("Treatment",12))
+)
+head(df)
+```
+
+If we run a simple t-test on these data, we can see that the p-value for this test is 0.0009517.
+
+```{r}
+t.test(data=df, values ~ subject)
+summary(aov(data=df, values ~ subject))
+```
+
+To make a boxplot with stars, we just add `geom_signif()` to our plot, but we need to add `comparisons = list(c("Control","Treatment"))` to tell it which groups we wish to compare.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
 library(tidyverse)
+library(ggsignif)
+
+ggplot(df, aes(x=subject, y=values)) +
+  geom_boxplot() +
+  geom_signif(comparisons = list(c("Control","Treatment")))
+
+```
+
+However, what you may notice is that this p-value is not the same as the one we got from the t-test above. This is because the default test it runs to compare groups is the wilcoxon rank sum test (a non-parametric equivalent to the independent' t-test that compares medians between independent groups).
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+ggplot(df, aes(x=subject, y=values)) +
+  geom_boxplot() +
+  geom_signif(test = "wilcox.test", 
+              comparisons = list(c("Control","Treatment")))
+
+
+```
+
+To get the p-value for the t-test we need to assign the test to be the `t.test`:
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+ggplot(df, aes(x=subject, y=values)) +
+  geom_boxplot() +
+  geom_signif(test = "t.test", 
+              comparisons = list(c("Control","Treatment")))
+
+```
+
+How to control number of decimal places? (probably just do annotation - see below)???
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+ggplot(df, aes(x=subject, y=values)) +
+  geom_boxplot() +
+  geom_signif(test = "t.test", 
+              comparisons = list(c("Control","Treatment")))
+
+```
+
+There are also several parameters within `geom_signif()` that can be tweaked to adjust the font type and position. This is using `textsize` to adjust the text size.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+ggplot(df, aes(x=subject, y=values)) +
+  geom_boxplot() +
+  geom_signif(test = "t.test", 
+              comparisons = list(c("Control","Treatment")),
+              textsize = 6)
+
+```
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+ggplot(df, aes(x=subject, y=values)) +
+  geom_boxplot() +
+  geom_signif(comparisons = list(c("Control","Treatment")),
+              map_signif_level = T)
 
 ```
 
 <br>
 
-## Adding p-values to plots
+**Paired Data**
+
+Can you do it for paired data - add in extra arguments related to the test in the `test.args()` argument. Make sure that the parameters are in a list.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+ggplot(mpg, aes(x=manufacturer, y=displ)) +
+    geom_boxplot()  +
+    stat_signif(comparisons=list(c("audi", "ford"), c("hyundai", "nissan")),
+                test="t.test", test.args=list(alternative = "two.sided", var.equal = FALSE, paired=FALSE))
+```
+
+**Multiple Groups**
+
+If you use with multiple groups, you can assign multiple groups. But note that it is giving p-values from t.tests or wilcoxon tests.
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+
+```
+
+**Adding stars or p-values manually**
+
+might want to compute the individual p-values separately and then use the `annotations` parameter to draw them.
+
+    # creating a dataframe 
+    (df <- tibble::tribble(
+      ~x, ~lab,
+      1, "p < 0.001",
+      2, paste("list(~italic(p)<=", "0.001", ")", sep = "")
+    ))
+    #> # A tibble: 2 x 2
+    #>       x lab                    
+    #>   <dbl> <chr>                  
+    #> 1     1 p < 0.001              
+    #> 2     2 list(~italic(p)<=0.001)
+
+    # ggplot supports parsing
+    ggplot(mtcars, aes(as.character(am), wt)) + 
+      geom_point() + 
+      geom_signif(annotations = df$lab[2], comparisons = list(c("0", "1"))) +
+      labs(x = parse(text = df$lab[2]))
+
+**ggpubr package....**
+
+```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+library(ggpubr)
+library(ggplot2)
+ggplot(data, aes(x = label, y = value )) + 
+  geom_boxplot() + 
+  stat_compare_means(method = "anova", label.y = 7)+
+  stat_compare_means(comparisons = list(c("A","B")), method = "t.test", label.y = 8)
+```
+
+### Adding significance to dynamite plots
+
+I don't like dynamite plots. However, it is possible to add these significance annotations to them.
 
 <br>
+
+### Fancier example of adding significance to plots
 
 ## Adding Tukey's Significance Letters
 
