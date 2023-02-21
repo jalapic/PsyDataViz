@@ -1,3 +1,86 @@
 # Lollipop Plots
 
-Lollipop plots are a way to represent the same information as bar charts but in a more aesthetically pleasing way.
+Lollipop plots are a way to represent the same information as bar charts but in a more aesthetically pleasing way. They are comprised of a line and a dot.
+
+In `ggplot2` we can create them using `geom_segment()` to create the line and `geom_point()` to create the dot.
+
+The dataset we'll use in this tutorial is `station_usage` which provides information on passenger numbers using UK train stations during 2017. We'll just keep the variables we need and clean up the column names. We also need to edit the `Passengers` column to ensure it's numeric after we remove the commas.
+
+```{r,warning=FALSE,message=FALSE}
+df <- read.csv("data_raw/station_usage.csv")
+
+df <- df[c(2:4,15,20)]
+colnames(df) <- c("TLC","Name","Region","Network","Passengers")
+df$Passengers <- as.numeric(gsub(",","",df$Passengers))
+head(df)
+```
+
+Let's say we wished to create a dot plot of the top 10 stations in Scotland for passenger numbers. We can use `slice_max()` to get the top 10:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+
+top10 <- df %>% filter(Region=="Scotland") %>% slice_max(Passengers, n=10)
+top10
+
+```
+
+To make our basic lollipop plot with no customization, we need to add a point and a segment. We'll use the station code rather than the full name for space. With `geom_segment()` we need to give it's horizontal width by giving a start and end point for the x-axis, and we do the same on the y-axis for the height.
+
+```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+ggplot(top10, aes(x=TLC, y=Passengers)) +
+  geom_point() + 
+  geom_segment(aes(x=TLC, xend=TLC, y=0, yend=Passengers))
+```
+
+The first thing I'd like to do here is reorder the stations so they are not in alphabetical order, but in descending numerical order. We also provide a title on the x-axis:
+
+
+```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+ggplot(top10, aes(x=reorder(TLC,-Passengers), y=Passengers)) +
+  geom_point() + 
+  geom_segment(aes(x=TLC, xend=TLC, y=0, yend=Passengers)) +
+  xlab("Station")
+```
+We can customize the colors and sizes of our segment lines and dots. Below, we first factor the `TLC` column to have the top 10 stations in Passenger order. This is so when we assign the red color and fill (using the `brewer.reds` palette from the `pals` package), it plots the colors in the correct order and not in alphabetical order. 
+
+```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+top10$TLC <- factor(top10$TLC, levels = top10 %>% pull(TLC))
+
+
+ggplot(top10, aes(x=TLC, y=Passengers, color=TLC, fill=TLC)) +
+  geom_segment(aes(x=TLC, xend=TLC, y=0, yend=Passengers),linewidth=1.5)+
+  geom_point(size=4, stroke=2) +
+  xlab("Station") +
+  scale_color_manual(values = rev(pals::brewer.reds(10))) +
+  scale_fill_manual(values = rev(pals::brewer.reds(10))) 
+```
+Below I add some extra customization. We set the theme to be `theme_light`, remove the legend which is superfluous and tidy up the panel border and x-axis ticks. I also change the y-axis scale to show numbers in millions with the letter "M". This is using the `scales::label_number` function (from the `scales` package).
+
+
+```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
+ggplot(top10, aes(x=TLC, y=Passengers, color=TLC, fill=TLC)) +
+  geom_segment(aes(x=TLC, xend=TLC, y=0, yend=Passengers),linewidth=1.5)+
+  geom_point(size=4, stroke=2) +
+  xlab("Station") +
+  scale_color_manual(values = rev(pals::brewer.reds(10))) +
+  scale_fill_manual(values = rev(pals::brewer.reds(10))) +
+  scale_y_continuous(labels = scales::label_number(suffix = " M", scale = 1e-6)) +
+  theme_light() +
+  theme(legend.position='none',
+        axis.ticks.x = element_blank(),
+        panel.border = element_blank())
+```
+
+
+
+To do:
+
+Graphs from a baseline value (negative/positive) values
+ geom_segment( aes(x=x, xend=x, y=1, yend=y), color="grey") +
+
+
+Highlight a group (grey with accent color) 
+https://r-graph-gallery.com/304-highlight-a-group-in-lollipop.html
+
+http://uc-r.github.io/lollipop
