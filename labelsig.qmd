@@ -29,7 +29,7 @@ t.test(data=df, values ~ subject)
 
 To make a boxplot with stars, we just add `geom_signif()` to our plot, but we need to add `comparisons = list(c("Control","Treatment"))` to tell it which groups we wish to compare.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 library(tidyverse)
 library(ggsignif)
 
@@ -41,7 +41,7 @@ ggplot(df, aes(x=subject, y=values)) +
 
 However, what you may notice is that this p-value is not the same as the one we got from the t-test above. This is because the default test it runs to compare groups is the wilcoxon rank sum test (a non-parametric equivalent to the independent' t-test that compares medians between independent groups).
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(df, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "wilcox.test", 
@@ -52,7 +52,7 @@ ggplot(df, aes(x=subject, y=values)) +
 
 To get the p-value for the t-test we need to assign the test to be the `t.test`:
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(df, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "t.test", 
@@ -62,7 +62,7 @@ ggplot(df, aes(x=subject, y=values)) +
 
 It's also possible to round numbers to desired decimal places by adding a function within the parameter `map_signif_level`. Here, I round the p-value to 3 decimal places with `round()`.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(df, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "t.test", 
@@ -73,7 +73,7 @@ ggplot(df, aes(x=subject, y=values)) +
 
 Within this same function, we can actually also annotate text. Here I add "p =" to the beginning of the p-value output on the plot.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(df, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "t.test", 
@@ -84,12 +84,12 @@ ggplot(df, aes(x=subject, y=values)) +
 
 There are several other parameters within `geom_signif()` that can be tweaked to adjust the font type and position. This is using `textsize` to adjust the text size.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(df, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "t.test", 
               comparisons = list(c("Control","Treatment")),
-              textsize = 6)
+              textsize = 5)
 
 ```
 
@@ -99,13 +99,13 @@ ggplot(df, aes(x=subject, y=values)) +
 
 To switch from adding p-values to stars we just need to add `map_signif_level = T`
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(df, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "t.test", 
               comparisons = list(c("Control","Treatment")),
               map_signif_level = T,
-              textsize = 7) +
+              textsize = 5) +
   theme_classic()
 
 ```
@@ -130,23 +130,23 @@ t.test(data=ddf, values ~ subject)
 
 What does this look like if we use `geom_signif()` to plot ?
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(ddf, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "t.test", 
               comparisons = list(c("Control","Treatment")),
-              textsize = 6)
+              textsize = 5)
 ```
 
 The default plot will add the p-value. If we add `map_signif_level = T` to plot 'stars', we get the following:
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(ddf, aes(x=subject, y=values)) +
   geom_boxplot() +
   geom_signif(test = "t.test", 
               comparisons = list(c("Control","Treatment")),
               map_signif_level = T,
-              textsize = 6)
+              textsize = 5)
 ```
 
 For some reason to me, the dot after NS I find quite irritating. However, this can be all overridden by applying direct annotations (see below).
@@ -185,7 +185,7 @@ pdf.long
 
 Here is the basic boxplot. I'm using the `theme_pubclean()` from the `ggpubr` package:
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 library(ggpubr)
 
 p0 <- ggplot(pdf.long, aes(x=time, y=value)) +
@@ -199,7 +199,7 @@ p0
 
 To add the p-values for paired data we need to add in extra information related to the test in the `test.args()` argument. Make sure that the parameters are in a list.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 p0  +
     stat_signif(comparisons=list(c("before", "after")),
                 test="t.test", 
@@ -216,7 +216,7 @@ t.test(pdf$before, pdf$after, paired=T, alternative = "less")
 
 ... and the plot would look as follows:
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 p0  +
     stat_signif(comparisons=list(c("before", "after")),
                 test="t.test", 
@@ -225,15 +225,16 @@ p0  +
                                paired=T))
 ```
 
-As before, we can add stars using the `map_signif_level = T` argument. I also increase the font size using `textsize = 7` and reduce the sides of the horizontal bar with `tip_length=0`:
+As before, we can add stars using the `map_signif_level = T` argument. I also increase the font size using `textsize = 7` and reduce the sides of the horizontal bar with `tip_length=0`. `vjust=0.5` pushes the asterisk closer to the horizontal line.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
  p0  +
     stat_signif(comparisons=list(c("before", "after")),
                 test="t.test", 
                 map_signif_level = T,
                 textsize = 7,
                 tip_length = 0,
+                vjust=0.5,
                 test.args=list(alternative = "less", 
                                var.equal = FALSE, 
                                paired=T))
@@ -272,7 +273,7 @@ TukeyHSD(fit)
 
 This might be how we would plot the data in a basic boxplot:
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 
 pb <- ggplot(mdf, aes(x=grp, y=values, fill=grp)) +
   geom_boxplot() +
@@ -364,7 +365,7 @@ dat
 
 This dataframe just has four rows, with the `Value` column showing the height of the bar to be plotted. We can plot a bar graph using `geom_col()` and we include `position='dodge'` to make a side-by-side bar chart as opposed to a stacked bar chart. I've also used the `theme_pubclean()` from the `ggpubr` package and set some custom fills. I assign this plot to the object `p` so we can modify other layers without rewriting the code:
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 
 
 p <- ggplot(dat, aes(Group,Value,fill=Subject))+
@@ -377,7 +378,7 @@ p
 
 To add either stars or p-values we just use `geom_signif()`. First, we'll annotate the A vs B comparisons. We dictate the position of the horizontal line we add with `xmin` and `xmax` and `y_position`. The mid-point between the light and dark blue bars are at `x=1` for G1 and `x=2` for G2. This helps us determine what values to use for `xmin` and `xmax`. The values of `y_position` are picked based on the values of A & B in each group. Using `tip_length=0` sets there to be no lines coming down from the edges of the horizontal black lines we add. If we wish to have some of those downward lines, then a really small value like 0.03 would probably be best.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 p + 
   geom_signif(y_position = c(4,18), 
               xmin = c(0.8,1.8), 
@@ -388,7 +389,7 @@ p +
 
 To add the horizontal black line between our two groups (G1 and G2), we add another `geom_signif()` layer. Because this is a comparison between the levels of our groups in our original dataframe, we use the `comparisons=` parameter. That will add the x positions - although it is still possible to do these manually should we wish. We can also set the `y_position()` ourselves.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 
 p + 
   geom_signif(y_position = c(4,18), 
@@ -423,7 +424,7 @@ dat1
 
 Here we plot these data in the same manner as with the bar charts above, but we add error bars manually using `geom_errorbar()` based on the summary data in the dataframe. Note that with these stacked bar charts, we also need to add `position=position_dodge(.9)` to ensure the error bars stay in the middle of the respective bars.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 p1 <- ggplot(dat1, aes(x=Group, y=Mean, fill=Subject)) + 
   geom_col(color="black", position=position_dodge()) +
   scale_fill_manual(values=c('#999999','#E69F00')) +
@@ -438,7 +439,7 @@ p1
 
 Using `geom_signif()` we manually add the stars and other annotations:
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 p1 + 
   geom_signif(y_position = c(1.75,3.0), 
               xmin = c(0.8,1.8), 
@@ -478,7 +479,7 @@ df.sum
 
 This is the plot with annotated error bars. Essentially, in `geom_signif()` we just determine the x and y locations of each thing we wish to plot. Here, I am plotting significance stars to indicate where each condition is significantly different from each other condition in posthoc tests.
 
-```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 ggplot(df.sum, aes(x = group, y = mean, color=condition)) +
   geom_errorbar(
     aes(ymin = mean-sd, 
@@ -511,7 +512,7 @@ ggplot(df.sum, aes(x = group, y = mean, color=condition)) +
 
 Here's another example. This time, we'll plot the raw data only from group A above in the form of a strip plot. Then we add the stars with `geom_signif`. We can use `comparisons=` to do the hard work of determining the x-axis.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}}
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 dfa <- df %>% filter(group=="A")
 dfa$condition <- factor(dfa$condition, levels = c("low","medium","high"))
 
@@ -541,15 +542,86 @@ geom_jitter(width=.085, alpha=.8, size=2) +
 
 ### **Other R packages for adding significance levels**
 
-Not to sidetrack too much, but other R packages also offer the possibility of interfacing with ggplots and adding significance levels. One such example that could be looked at is the `ggpubr` package. I won't give a full overview of how this package achieves much of what we have shown above, but here are a couple of quick examples. We'll use some of the same datasets as above.
+Not to sidetrack too much, but other R packages also offer the possibility of interfacing with ggplots and adding significance levels. One such example that could be looked at is the `ggpubr` package, which actually uses `geom_signif()` in the background but has some nice additional features. I won't give a full overview of how this package achieves much of what we have shown above - please refer to [some of the help guides](http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/76-add-p-values-and-significance-levels-to-ggplots/). However, here are a couple of quick examples.
 
-```{r, warning=FALSE, message=FALSE, fig.width=4, fig.height=4}
+Let's use the dataset `mdf` which has two columns: `values` and `group`. There are three groups in this dataset.
+
+```{r}
+head(mdf)
+```
+
+This is the plot we previously made:
+
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
+pb
+
+```
+
+
+The syntax to add p-values is with `stat_compare_means()` in a very similar way to `geom_signif()`. Note we can also add the p-value from the One-Way ANVOA directly onto the plot here also, if we wish:
+
+```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
 library(ggpubr)
-library(ggplot2)
-ggplot(data, aes(x = label, y = value )) + 
-  geom_boxplot() + 
-  stat_compare_means(method = "anova", label.y = 7)+
-  stat_compare_means(comparisons = list(c("A","B")), method = "t.test", label.y = 8)
+
+pb +  
+  stat_compare_means(method = "anova", label.y = 5)+
+  stat_compare_means(comparisons = list(c("A","B"),
+                                        c("B","C"),
+                                        c("A","C")), 
+                     method = "t.test", 
+                     label.y = c(4.15,4.3,4.45)
+  )
+```
+
+A nice feature of this package is the ability to compare individual groups to a reference group or control. Let's create some data to do this:
+
+```{r}
+set.seed(15)
+xdf <- data.frame(
+  values = c(
+rnorm(n = 20, mean = 0, sd = .4),
+rnorm(n = 20, mean = 0.3, sd = .7),
+rnorm(n = 20, mean = 0.6, sd = .15),
+rnorm(n = 20, mean = 0.2, sd = .4),
+rnorm(n = 20, mean = 0.4, sd = .4),
+rnorm(n = 20, mean = 0.7, sd = .5)
+),
+groups = rep(LETTERS[1:6],each=20)
+)
+
+head(xdf)
+```
+
+These data could be plotted as follows. I'm using the `brewer.greens` color palette from the `pals` package.:
+
+```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
+pg <- ggplot(xdf, aes(x=groups, y=values, fill=groups)) +
+  geom_boxplot() +
+  scale_fill_manual(values=pals::brewer.greens(6)) +
+  theme_pubclean() +
+  theme(legend.position = 'none') +
+  xlab("") +
+  ylab("Values") 
+
+pg
+```
+
+Below, using `ref.group="A"` we run independent t-tests comparing each group to A. Instead of notating p-values here, we use asterisks by including a `label=` option.
+
+
+```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
+
+maxvals <- xdf %>% 
+  group_by(groups) %>% 
+  summarise(maxval = max(values)) %>% 
+  pull(maxval) 
+
+pg +  
+  stat_compare_means(aes(label = after_stat(p.signif)),
+                   method = "t.test", ref.group = "A"
+                   )
+
+
 ```
 
 <br>

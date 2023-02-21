@@ -255,9 +255,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#adding-stars-to-plots" id="toc-adding-stars-to-plots" class="nav-link active" data-scroll-target="#adding-stars-to-plots"><span class="toc-section-number">9.1</span>  Adding stars to plots</a></li>
-  <li><a href="#adding-p-values-to-plots" id="toc-adding-p-values-to-plots" class="nav-link" data-scroll-target="#adding-p-values-to-plots"><span class="toc-section-number">9.2</span>  Adding p-values to plots</a></li>
-  <li><a href="#adding-tukeys-significance-letters" id="toc-adding-tukeys-significance-letters" class="nav-link" data-scroll-target="#adding-tukeys-significance-letters"><span class="toc-section-number">9.3</span>  Adding Tukey’s Significance Letters</a></li>
+  <li><a href="#adding-stars-and-p-values-to-plots" id="toc-adding-stars-and-p-values-to-plots" class="nav-link active" data-scroll-target="#adding-stars-and-p-values-to-plots"><span class="toc-section-number">9.1</span>  Adding stars and p-values to plots</a>
+  <ul class="collapse">
+  <li><a href="#adding-significance-to-multiple-groups" id="toc-adding-significance-to-multiple-groups" class="nav-link" data-scroll-target="#adding-significance-to-multiple-groups"><span class="toc-section-number">9.1.1</span>  Adding Significance to Multiple Groups</a></li>
+  <li><a href="#adding-stars-or-p-values-manually" id="toc-adding-stars-or-p-values-manually" class="nav-link" data-scroll-target="#adding-stars-or-p-values-manually"><span class="toc-section-number">9.1.2</span>  <strong>Adding stars or p-values manually</strong></a></li>
+  <li><a href="#adding-significance-to-bar-graphs" id="toc-adding-significance-to-bar-graphs" class="nav-link" data-scroll-target="#adding-significance-to-bar-graphs"><span class="toc-section-number">9.1.3</span>  Adding Significance to Bar graphs</a></li>
+  <li><a href="#adding-significance-to-dynamite-plots" id="toc-adding-significance-to-dynamite-plots" class="nav-link" data-scroll-target="#adding-significance-to-dynamite-plots"><span class="toc-section-number">9.1.4</span>  Adding significance to dynamite plots</a></li>
+  <li><a href="#adding-significance-to-other-plots" id="toc-adding-significance-to-other-plots" class="nav-link" data-scroll-target="#adding-significance-to-other-plots"><span class="toc-section-number">9.1.5</span>  Adding significance to other plots</a></li>
+  <li><a href="#other-r-packages-for-adding-significance-levels" id="toc-other-r-packages-for-adding-significance-levels" class="nav-link" data-scroll-target="#other-r-packages-for-adding-significance-levels"><span class="toc-section-number">9.1.6</span>  <strong>Other R packages for adding significance levels</strong></a></li>
+  </ul></li>
+  <li><a href="#adding-tukeys-significance-letters" id="toc-adding-tukeys-significance-letters" class="nav-link" data-scroll-target="#adding-tukeys-significance-letters"><span class="toc-section-number">9.2</span>  Adding Tukey’s Significance Letters</a></li>
   </ul>
 </nav>
     </div>
@@ -283,39 +290,786 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <p>Labeling significance on plots such as boxplots or bar graphs is typically denoted using stars or letters (sometimes called Tukey’s signficance letters). These are placed either above one or more of the boxplots, or are placed in between and connected via lines. There is always a danger when adding this information that it becomes cluttered and distracting, so it is important to make clear design choices. Below are some ways of labeling significance on boxplots and bar graphs.</p>
 <p><br></p>
-<section id="adding-stars-to-plots" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="adding-stars-to-plots"><span class="header-section-number">9.1</span> Adding stars to plots</h2>
-<p><br></p>
+<section id="adding-stars-and-p-values-to-plots" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="adding-stars-and-p-values-to-plots"><span class="header-section-number">9.1</span> Adding stars and p-values to plots</h2>
+<p>Probably the simplest way to add stars and p-values to plots is by using the <code>ggsignif</code> package. This adds an extra layer to each <code>ggplot</code> chart containing the stars.</p>
+<p>Here is some example data with two groups:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">values =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="at">n=</span><span class="dv">10</span>,<span class="at">mean=</span><span class="dv">4</span>, <span class="at">sd =</span> <span class="fl">0.5</span>), </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>             <span class="fu">rnorm</span>(<span class="at">n=</span><span class="dv">12</span>,<span class="at">mean=</span><span class="fl">3.4</span>, <span class="at">sd =</span> <span class="fl">0.4</span>)),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">subject =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Control"</span>,<span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">"Treatment"</span>,<span class="dv">12</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    values subject
+1 3.748904 Control
+2 4.065766 Control
+3 3.960541 Control
+4 4.443392 Control
+5 4.058486 Control
+6 4.159315 Control</code></pre>
+</div>
+</div>
+<p>If we run a simple t-test on these data, we can see that the p-value for this test is 0.0009517.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="at">data=</span>df, values <span class="sc">~</span> subject)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  values by subject
+t = 3.8715, df = 19.975, p-value = 0.0009517
+alternative hypothesis: true difference in means between group Control and group Treatment is not equal to 0
+95 percent confidence interval:
+ 0.2316228 0.7728943
+sample estimates:
+  mean in group Control mean in group Treatment 
+               3.991021                3.488763 </code></pre>
+</div>
+</div>
+<p>To make a boxplot with stars, we just add <code>geom_signif()</code> to our plot, but we need to add <code>comparisons = list(c("Control","Treatment"))</code> to tell it which groups we wish to compare.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggsignif)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>However, what you may notice is that this p-value is not the same as the one we got from the t-test above. This is because the default test it runs to compare groups is the wilcoxon rank sum test (a non-parametric equivalent to the independent’ t-test that compares medians between independent groups).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">test =</span> <span class="st">"wilcox.test"</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>To get the p-value for the t-test we need to assign the test to be the <code>t.test</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">test =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>It’s also possible to round numbers to desired decimal places by adding a function within the parameter <code>map_signif_level</code>. Here, I round the p-value to 3 decimal places with <code>round()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">test =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">map_signif_level =</span> <span class="cf">function</span>(p) <span class="fu">paste</span>(<span class="st">"p ="</span>,<span class="fu">round</span>(p,<span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Within this same function, we can actually also annotate text. Here I add “p =” to the beginning of the p-value output on the plot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">test =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">map_signif_level =</span> <span class="cf">function</span>(p) <span class="fu">paste</span>(<span class="st">"p ="</span>,<span class="fu">round</span>(p,<span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>There are several other parameters within <code>geom_signif()</code> that can be tweaked to adjust the font type and position. This is using <code>textsize</code> to adjust the text size.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">test =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">textsize =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p><br></p>
+<p><strong>Adding stars to plots</strong></p>
+<p>To switch from adding p-values to stars we just need to add <code>map_signif_level = T</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">test =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">map_signif_level =</span> T,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">textsize =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p><br></p>
+<p><strong>What if not significant ?</strong></p>
+<p>In the data below, we can see that there is no significant difference between our two groups in means.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ddf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">values =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="at">n=</span><span class="dv">10</span>,<span class="at">mean=</span><span class="fl">7.1</span>, <span class="at">sd =</span> <span class="fl">0.5</span>), </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>             <span class="fu">rnorm</span>(<span class="at">n=</span><span class="dv">12</span>,<span class="at">mean=</span><span class="fl">7.2</span>, <span class="at">sd =</span> <span class="fl">0.4</span>)),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">subject =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Control"</span>,<span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">"Treatment"</span>,<span class="dv">12</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="at">data=</span>ddf, values <span class="sc">~</span> subject)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  values by subject
+t = -1.5242, df = 19.975, p-value = 0.1431
+alternative hypothesis: true difference in means between group Control and group Treatment is not equal to 0
+95 percent confidence interval:
+ -0.46837715  0.07289431
+sample estimates:
+  mean in group Control mean in group Treatment 
+               7.091021                7.288763 </code></pre>
+</div>
+</div>
+<p>What does this look like if we use <code>geom_signif()</code> to plot ?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ddf, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">test =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">textsize =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>The default plot will add the p-value. If we add <code>map_signif_level = T</code> to plot ‘stars’, we get the following:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ddf, <span class="fu">aes</span>(<span class="at">x=</span>subject, <span class="at">y=</span>values)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">test =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Control"</span>,<span class="st">"Treatment"</span>)),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">map_signif_level =</span> T,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">textsize =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>For some reason to me, the dot after NS I find quite irritating. However, this can be all overridden by applying direct annotations (see below).</p>
+<p><br></p>
+<p><strong>Paired Data</strong></p>
+<p>The above examples are all two-tailed independent tests. However, it is possible to apply <code>geom_signif()</code> to one-tailed or paired tests. Let’s create some paired data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">103</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>pdf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">subj =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>],</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">before =</span> <span class="fu">runif</span>(<span class="dv">12</span>),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">after =</span> <span class="fu">runif</span>(<span class="dv">12</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>pdf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   subj     before     after
+1     a 0.21594161 0.7955919
+2     b 0.06316809 0.8247906
+3     c 0.52182676 0.8830082
+4     d 0.50361726 0.1303339
+5     e 0.12048608 0.1375370
+6     f 0.08727517 0.2851473
+7     g 0.43356197 0.3537884
+8     h 0.19308082 0.3349347
+9     i 0.03108849 0.1756115
+10    j 0.31385192 0.5507040
+11    k 0.45206720 0.5132493
+12    l 0.28632367 0.5776094</code></pre>
+</div>
+</div>
+<p>If we run a paired t-test on these data we can see a significant difference in means of p=0.04:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(pdf<span class="sc">$</span>before, pdf<span class="sc">$</span>after, <span class="at">paired=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Paired t-test
+
+data:  pdf$before and pdf$after
+t = -2.2853, df = 11, p-value = 0.04313
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.382805290 -0.007197583
+sample estimates:
+mean of the differences 
+             -0.1950014 </code></pre>
+</div>
+</div>
+<p>To make the basic boxplot, we need to turn the data into long form. We also factor the new <code>time</code> column as annoyingly the word ‘after’ is alphabetically earlier than ‘before’ and we want them plotted the opposite way around on the x-axis:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>pdf.long <span class="ot">&lt;-</span> pdf <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">names_to =</span> <span class="st">"time"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>pdf.long<span class="sc">$</span>time <span class="ot">&lt;-</span> <span class="fu">factor</span>(pdf.long<span class="sc">$</span>time, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"before"</span>,<span class="st">"after"</span>))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>pdf.long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 24 x 3
+   subj  time    value
+   &lt;chr&gt; &lt;fct&gt;   &lt;dbl&gt;
+ 1 a     before 0.216 
+ 2 a     after  0.796 
+ 3 b     before 0.0632
+ 4 b     after  0.825 
+ 5 c     before 0.522 
+ 6 c     after  0.883 
+ 7 d     before 0.504 
+ 8 d     after  0.130 
+ 9 e     before 0.120 
+10 e     after  0.138 
+# ... with 14 more rows</code></pre>
+</div>
+</div>
+<p>Here is the basic boxplot. I’m using the <code>theme_pubclean()</code> from the <code>ggpubr</code> package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pdf.long, <span class="fu">aes</span>(<span class="at">x=</span>time, <span class="at">y=</span>value)) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill=</span><span class="st">'dodgerblue'</span>, <span class="at">alpha=</span>.<span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_pubclean</span>() <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Time"</span>) <span class="sc">+</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Value"</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>p0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>To add the p-values for paired data we need to add in extra information related to the test in the <code>test.args()</code> argument. Make sure that the parameters are in a list.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p0  <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_signif</span>(<span class="at">comparisons=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"before"</span>, <span class="st">"after"</span>)),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">test=</span><span class="st">"t.test"</span>, </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">test.args=</span><span class="fu">list</span>(<span class="at">alternative =</span> <span class="st">"two.sided"</span>, </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">var.equal =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">paired=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>… in the above example, we perform a two-tailed paired t-test not assuming equal variances. If we wished to perform a one-tailed t-test, testing if the ‘before’ mean is significantly lower than the ‘after’ group, we can change that in the <code>test.args</code> parameter. Recall, that for a one-sided t-test, the p-value will be half the value of a two-tailed t-test:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(pdf<span class="sc">$</span>before, pdf<span class="sc">$</span>after, <span class="at">paired=</span>T, <span class="at">alternative =</span> <span class="st">"less"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Paired t-test
+
+data:  pdf$before and pdf$after
+t = -2.2853, df = 11, p-value = 0.02156
+alternative hypothesis: true difference in means is less than 0
+95 percent confidence interval:
+        -Inf -0.04176365
+sample estimates:
+mean of the differences 
+             -0.1950014 </code></pre>
+</div>
+</div>
+<p>… and the plot would look as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>p0  <span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_signif</span>(<span class="at">comparisons=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"before"</span>, <span class="st">"after"</span>)),</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">test=</span><span class="st">"t.test"</span>, </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">test.args=</span><span class="fu">list</span>(<span class="at">alternative =</span> <span class="st">"less"</span>, </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">var.equal =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">paired=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>As before, we can add stars using the <code>map_signif_level = T</code> argument. I also increase the font size using <code>textsize = 7</code> and reduce the sides of the horizontal bar with <code>tip_length=0</code>. <code>vjust=0.5</code> pushes the asterisk closer to the horizontal line.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a> p0  <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_signif</span>(<span class="at">comparisons=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"before"</span>, <span class="st">"after"</span>)),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">test=</span><span class="st">"t.test"</span>, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">map_signif_level =</span> T,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">textsize =</span> <span class="dv">7</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">tip_length =</span> <span class="dv">0</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">vjust=</span><span class="fl">0.5</span>,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">test.args=</span><span class="fu">list</span>(<span class="at">alternative =</span> <span class="st">"less"</span>, </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                               <span class="at">var.equal =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>                               <span class="at">paired=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p><br></p>
+<section id="adding-significance-to-multiple-groups" class="level3" data-number="9.1.1">
+<h3 data-number="9.1.1" class="anchored" data-anchor-id="adding-significance-to-multiple-groups"><span class="header-section-number">9.1.1</span> Adding Significance to Multiple Groups</h3>
+<p>Adding stars or p-values to plots can also be done when there are more than two groups. Obviously, the more groups that exist, the more potential pairwise comparisons there are. It should be noted that by default, <code>geom_signif()</code> will run pairwise wilcoxon ranked sum tests or independent t-tests on each of hte pairwise comparisons. This may be what you wish to report, but more often we are likely to want to report posthoc comparisons or such like. I personally would still advocate for using the Tukey Significance Letters as shown below. It’s also possible to directly annotate plots ourselves with <code>geom_signif()</code> - see below. But first, let’s look at how it does add these pairwise t-tests p-values to plots.</p>
+<p>Here is some example data with three groups:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>mdf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">values =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="at">n=</span><span class="dv">10</span>,<span class="at">mean=</span><span class="fl">3.8</span>, <span class="at">sd =</span> <span class="fl">0.5</span>), </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>             <span class="fu">rnorm</span>(<span class="at">n=</span><span class="dv">12</span>,<span class="at">mean=</span><span class="fl">3.1</span>, <span class="at">sd =</span> <span class="fl">0.4</span>),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>             <span class="fu">rnorm</span>(<span class="at">n=</span><span class="dv">15</span>, <span class="at">mean=</span><span class="fl">3.5</span>, <span class="at">sd=</span><span class="fl">0.3</span>)),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">grp =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"A"</span>,<span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">"B"</span>,<span class="dv">12</span>), <span class="fu">rep</span>(<span class="st">"C"</span>,<span class="dv">15</span>))</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mdf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    values grp
+1 3.809373   A
+2 3.707874   A
+3 3.114335   A
+4 3.500416   A
+5 3.947273   A
+6 3.994897   A</code></pre>
+</div>
+</div>
+<p>If we run a one way ANOVA, with posthoc tests, we can see how the groups differ:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">data =</span> mdf, values <span class="sc">~</span> grp)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)  
+grp          2  0.983  0.4917   4.503 0.0184 *
+Residuals   34  3.713  0.1092                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = values ~ grp, data = mdf)
+
+$grp
+          diff        lwr         upr     p adj
+B-A -0.4241943 -0.7709278 -0.07746088 0.0136482
+C-A -0.2462637 -0.5768611  0.08433364 0.1766410
+C-B  0.1779306 -0.1357016  0.49156280 0.3571951</code></pre>
+</div>
+</div>
+<p>This might be how we would plot the data in a basic boxplot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pb <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mdf, <span class="fu">aes</span>(<span class="at">x=</span>grp, <span class="at">y=</span>values, <span class="at">fill=</span>grp)) <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"#cceeee"</span>, <span class="st">"#bbebbe"</span>, <span class="st">"#dddeee"</span>)) <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_pubclean</span>() <span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>) <span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Values"</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>pb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>We can add our stars and NS in the same way as before. We just need to put all the relevant comparisons we wish to make in the list, and add <code>step_increase=</code> to make sure that the lines do not overlap each other. Note that the order in which the horizontal lines are added onto the plot are dictated by the order in which they occur in the list.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>pb <span class="sc">+</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>),</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"C"</span>),</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"C"</span>)),</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">test =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">step_increase =</span> <span class="fl">0.075</span>,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">map_signif_level =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This way of plotting stars and significance levels is completely functional, however, another options would be to manually add them (see section below). One major advantage of this is that we can plot posthoc tests rather than running t-tests on each comparison.</p>
+<p><br></p>
+</section>
+<section id="adding-stars-or-p-values-manually" class="level3" data-number="9.1.2">
+<h3 data-number="9.1.2" class="anchored" data-anchor-id="adding-stars-or-p-values-manually"><span class="header-section-number">9.1.2</span> <strong>Adding stars or p-values manually</strong></h3>
+<p>We can compute the individual p-values separately and then use the <code>annotations</code> parameter to draw them. The code below grabs the p-values for Tukey HSD posthoc comparions between each of the groups from the previous example.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">TukeyHSD</span>(fit)<span class="sc">$</span>grp[,<span class="dv">4</span>],<span class="dv">2</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>pvals</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> B-A  C-A  C-B 
+0.01 0.18 0.36 </code></pre>
+</div>
+</div>
+<p>We can add these manually to our plot. The <code>y_position</code> dictates how high up the y-axis each lines goes. The <code>xmin</code> and <code>xmax</code> dictate the start and end point of each horizontal line. Group A starts at 1 on the x-axis, Group B at 2 and Group C at 3.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>pb <span class="sc">+</span> </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">y_position =</span> <span class="fu">c</span>(<span class="fl">4.1</span>,<span class="fl">4.25</span>,<span class="fl">4.4</span>), </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmin =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>), </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmax =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>), </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">annotation =</span> pvals,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Instead of passing a vector of annotations that is an object, you can write your own vector like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pb <span class="sc">+</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">y_position =</span> <span class="fu">c</span>(<span class="fl">4.1</span>,<span class="fl">4.25</span>,<span class="fl">4.4</span>), </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmin =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>), </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmax =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>), </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">annotation =</span> <span class="fu">c</span>(<span class="st">"p &lt; .05"</span>, <span class="st">"NS"</span>, <span class="st">"NS"</span>),</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>If you didn’t want to mess around with <code>xmin</code> and <code>xmax</code>, you can pass a list of comparisons. You just need to then supply the annotations and the <code>y_position</code>. Here, I switched up the order in which the lines were drawn:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>pb <span class="sc">+</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"B"</span>),</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">"B"</span>,<span class="st">"C"</span>),</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"C"</span>)), </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">y_position =</span> <span class="fu">c</span>(<span class="fl">4.1</span>,<span class="fl">4.25</span>,<span class="fl">4.4</span>),</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">annotation =</span> <span class="fu">c</span>(<span class="st">"p &lt; .05"</span>, <span class="st">"NS"</span>, <span class="st">"NS"</span>),</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
 </div>
 <p><br></p>
 </section>
-<section id="adding-p-values-to-plots" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="adding-p-values-to-plots"><span class="header-section-number">9.2</span> Adding p-values to plots</h2>
+<section id="adding-significance-to-bar-graphs" class="level3" data-number="9.1.3">
+<h3 data-number="9.1.3" class="anchored" data-anchor-id="adding-significance-to-bar-graphs"><span class="header-section-number">9.1.3</span> Adding Significance to Bar graphs</h3>
+<p>Adding stars or p-values to bar graphs is the same as with boxplots. We add layers to the plot using <code>geom_signif()</code>. If we produce the bar graph with <code>geom_col()</code> then we are plotting summary information without the underlying raw data, we will need to add information to the graph using annotations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Group =</span> <span class="fu">c</span>(<span class="st">"G1"</span>,<span class="st">"G1"</span>,<span class="st">"G2"</span>,<span class="st">"G2"</span>),</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Subject =</span> <span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"B"</span>,<span class="st">"A"</span>,<span class="st">"B"</span>),</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Value =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">12</span>,<span class="dv">17</span>))</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>dat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Group Subject Value
+1    G1       A     3
+2    G1       B     2
+3    G2       A    12
+4    G2       B    17</code></pre>
+</div>
+</div>
+<p>This dataframe just has four rows, with the <code>Value</code> column showing the height of the bar to be plotted. We can plot a bar graph using <code>geom_col()</code> and we include <code>position='dodge'</code> to make a side-by-side bar chart as opposed to a stacked bar chart. I’ve also used the <code>theme_pubclean()</code> from the <code>ggpubr</code> package and set some custom fills. I assign this plot to the object <code>p</code> so we can modify other layers without rewriting the code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(Group,Value,<span class="at">fill=</span>Subject))<span class="sc">+</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_pubclean</span>() <span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"#ababde"</span>,<span class="st">"#123abc"</span>))</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>To add either stars or p-values we just use <code>geom_signif()</code>. First, we’ll annotate the A vs B comparisons. We dictate the position of the horizontal line we add with <code>xmin</code> and <code>xmax</code> and <code>y_position</code>. The mid-point between the light and dark blue bars are at <code>x=1</code> for G1 and <code>x=2</code> for G2. This helps us determine what values to use for <code>xmin</code> and <code>xmax</code>. The values of <code>y_position</code> are picked based on the values of A &amp; B in each group. Using <code>tip_length=0</code> sets there to be no lines coming down from the edges of the horizontal black lines we add. If we wish to have some of those downward lines, then a really small value like 0.03 would probably be best.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">y_position =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">18</span>), </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmin =</span> <span class="fu">c</span>(<span class="fl">0.8</span>,<span class="fl">1.8</span>), </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmax =</span> <span class="fu">c</span>(<span class="fl">1.2</span>,<span class="fl">2.2</span>), </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">annotation =</span> <span class="fu">c</span>(<span class="st">"NS"</span>,<span class="st">"**"</span>),</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>To add the horizontal black line between our two groups (G1 and G2), we add another <code>geom_signif()</code> layer. Because this is a comparison between the levels of our groups in our original dataframe, we use the <code>comparisons=</code> parameter. That will add the x positions - although it is still possible to do these manually should we wish. We can also set the <code>y_position()</code> ourselves.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">y_position =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">18</span>), </span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmin =</span> <span class="fu">c</span>(<span class="fl">0.8</span>,<span class="fl">1.8</span>), </span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmax =</span> <span class="fu">c</span>(<span class="fl">1.2</span>,<span class="fl">2.2</span>), </span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">annotation =</span> <span class="fu">c</span>(<span class="st">"NS"</span>,<span class="st">"**"</span>),</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"G1"</span>,<span class="st">"G2"</span>)), </span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">y_position =</span> <span class="dv">21</span>,</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">annotation =</span> <span class="st">"p &lt; 0.001"</span>,</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Clearly, you wouldn’t mix numerical p-values with stars like this on an actual figure, but for the purpose of illustration, you can write anything you like inside <code>annotation =</code> and it will appear on the plot.</p>
 <p><br></p>
 </section>
-<section id="adding-tukeys-significance-letters" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="adding-tukeys-significance-letters"><span class="header-section-number">9.3</span> Adding Tukey’s Significance Letters</h2>
+<section id="adding-significance-to-dynamite-plots" class="level3" data-number="9.1.4">
+<h3 data-number="9.1.4" class="anchored" data-anchor-id="adding-significance-to-dynamite-plots"><span class="header-section-number">9.1.4</span> Adding significance to dynamite plots</h3>
+<p>I don’t like dynamite plots. However, it is possible to add these significance annotations to them. It is done in the identical way to the bar charts above. Note how when we add extra annotations, the plot margins automatically adjust, so we don’t need to worry about rescaling the axes.</p>
+<p>Let’s use some example data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Group =</span> <span class="fu">c</span>(<span class="st">"G1"</span>,<span class="st">"G1"</span>,<span class="st">"G2"</span>,<span class="st">"G2"</span>),</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Subject =</span> <span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"B"</span>,<span class="st">"A"</span>,<span class="st">"B"</span>),</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Mean =</span> <span class="fu">c</span>(<span class="fl">1.1</span>, <span class="fl">1.4</span>, <span class="fl">2.5</span>, <span class="fl">2.0</span>),</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Serr =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.35</span>, <span class="fl">0.3</span>))</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>dat1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Group Subject Mean Serr
+1    G1       A  1.1 0.10
+2    G1       B  1.4 0.20
+3    G2       A  2.5 0.35
+4    G2       B  2.0 0.30</code></pre>
+</div>
+</div>
+<p>Here we plot these data in the same manner as with the bar charts above, but we add error bars manually using <code>geom_errorbar()</code> based on the summary data in the dataframe. Note that with these stacked bar charts, we also need to add <code>position=position_dodge(.9)</code> to ensure the error bars stay in the middle of the respective bars.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dat1, <span class="fu">aes</span>(<span class="at">x=</span>Group, <span class="at">y=</span>Mean, <span class="at">fill=</span>Subject)) <span class="sc">+</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">position=</span><span class="fu">position_dodge</span>()) <span class="sc">+</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">'#999999'</span>,<span class="st">'#E69F00'</span>)) <span class="sc">+</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_pubclean</span>() <span class="sc">+</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> Mean<span class="sc">-</span>Serr, </span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> Mean<span class="sc">+</span>Serr), </span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">width=</span>.<span class="dv">2</span>,</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">position=</span><span class="fu">position_dodge</span>(.<span class="dv">9</span>)) </span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>p1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Using <code>geom_signif()</code> we manually add the stars and other annotations:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> </span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">y_position =</span> <span class="fu">c</span>(<span class="fl">1.75</span>,<span class="fl">3.0</span>), </span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmin =</span> <span class="fu">c</span>(<span class="fl">0.8</span>,<span class="fl">1.8</span>), </span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmax =</span> <span class="fu">c</span>(<span class="fl">1.2</span>,<span class="fl">2.2</span>), </span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">annotation =</span> <span class="fu">c</span>(<span class="st">"*"</span>,<span class="st">"NS"</span>),</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="adding-significance-to-other-plots" class="level3" data-number="9.1.5">
+<h3 data-number="9.1.5" class="anchored" data-anchor-id="adding-significance-to-other-plots"><span class="header-section-number">9.1.5</span> Adding significance to other plots</h3>
+<p>We can add significance labels to other plots that show raw or summary data. Here are two examples - dot plots and strip plots. We’ll use a data set looking at viral load <code>values</code> in subjects under different exposures risks (<code>condition</code>) who are in different treatment groups <code>group</code>.</p>
+<p>Load in the data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data_raw/viralload.csv"</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     values subjs group condition
+1  7.824307    s1     B       low
+2  3.921456    s2     B       low
+3 10.001437    s3     C       low
+4  4.035973    s4     A       low
+5  8.886767    s5     B       low
+6  3.003866    s6     B       low</code></pre>
+</div>
+</div>
+<p><strong>Dot plots</strong></p>
+<p>To plot dot plots we need to calculate the summary statistics we wish to plot. Here, I determine the mean and standard deviation of each condition by group. I also refactor the <code>condition</code> variable so that in the plot it will appear in the order high, medium,low.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>df.sum <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(group, condition) <span class="sc">%&gt;%</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="fu">sd</span>(values),</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(values)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>df.sum<span class="sc">$</span>condition <span class="ot">&lt;-</span> <span class="fu">factor</span>(df.sum<span class="sc">$</span>condition, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"low"</span>,<span class="st">"medium"</span>,<span class="st">"high"</span>))</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>df.sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 x 4
+# Groups:   group [4]
+   group condition    sd  mean
+   &lt;chr&gt; &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;
+ 1 A     high       6.12 24.4 
+ 2 A     low        3.46  6.83
+ 3 A     medium     5.00  9.72
+ 4 B     high       5.11 16.3 
+ 5 B     low        4.48  9.17
+ 6 B     medium     6.53  9.65
+ 7 C     high       4.92 10.2 
+ 8 C     low        3.36  6.46
+ 9 C     medium     4.73 13.1 
+10 D     high       9.82 13.2 
+11 D     low        3.90  9.74
+12 D     medium     4.87 11.1 </code></pre>
+</div>
+</div>
+<p>This is the plot with annotated error bars. Essentially, in <code>geom_signif()</code> we just determine the x and y locations of each thing we wish to plot. Here, I am plotting significance stars to indicate where each condition is significantly different from each other condition in posthoc tests.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df.sum, <span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> mean, <span class="at">color=</span>condition)) <span class="sc">+</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> mean<span class="sc">-</span>sd, </span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">ymax =</span> mean<span class="sc">+</span>sd),</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.3</span>), </span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.2</span>,</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="dv">1</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>,</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.3</span>)) <span class="sc">+</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#bacddd"</span>, <span class="st">"#E7B800"</span>,<span class="st">"#bb3300"</span>)) <span class="sc">+</span></span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Group"</span>) <span class="sc">+</span></span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Viral Load"</span>) <span class="sc">+</span></span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">xmin =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">1.1</span>,<span class="dv">2</span>,<span class="fl">2.1</span>,<span class="dv">3</span>),</span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">xmax =</span> <span class="fu">c</span>(<span class="fl">1.1</span>,<span class="fl">0.9</span>,<span class="fl">2.1</span>,<span class="fl">1.9</span>,<span class="fl">2.9</span>),</span>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">y_position =</span> <span class="fu">c</span>(<span class="dv">32</span>,<span class="fl">33.5</span>,<span class="dv">23</span>,<span class="fl">24.5</span>,<span class="fl">19.5</span>),</span>
+<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">annotation =</span> <span class="fu">c</span>(<span class="st">"***"</span>, <span class="st">"***"</span>,<span class="st">"*"</span>, <span class="st">"**"</span>,<span class="st">"**"</span>),</span>
+<span id="cb54-20"><a href="#cb54-20" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="fl">0.01</span>,</span>
+<span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">'black'</span>,</span>
+<span id="cb54-22"><a href="#cb54-22" aria-hidden="true" tabindex="-1"></a>              <span class="at">vjust=</span><span class="fl">0.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p><br></p>
+<p><strong>Strip plots</strong></p>
+<p>Here’s another example. This time, we’ll plot the raw data only from group A above in the form of a strip plot. Then we add the stars with <code>geom_signif</code>. We can use <code>comparisons=</code> to do the hard work of determining the x-axis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>dfa <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(group<span class="sc">==</span><span class="st">"A"</span>)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>dfa<span class="sc">$</span>condition <span class="ot">&lt;-</span> <span class="fu">factor</span>(dfa<span class="sc">$</span>condition, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"low"</span>,<span class="st">"medium"</span>,<span class="st">"high"</span>))</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dfa, </span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> condition, <span class="at">y =</span> values, <span class="at">color=</span>condition)) <span class="sc">+</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_jitter</span>(<span class="at">width=</span>.<span class="dv">085</span>, <span class="at">alpha=</span>.<span class="dv">8</span>, <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#bacddd"</span>, <span class="st">"#E7B800"</span>,<span class="st">"#bb3300"</span>)) <span class="sc">+</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Viral Load"</span>) <span class="sc">+</span></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Condition"</span>) <span class="sc">+</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_signif</span>(<span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"low"</span>,<span class="st">"medium"</span>),</span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">"medium"</span>,<span class="st">"high"</span>),</span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">"low"</span>,<span class="st">"high"</span>)),</span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">y_position =</span> <span class="fu">c</span>(<span class="dv">32</span>,<span class="fl">33.5</span>,<span class="dv">35</span>),</span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">annotation =</span> <span class="fu">c</span>(<span class="st">"NS"</span>,<span class="st">"***"</span>, <span class="st">"***"</span>),</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">tip_length =</span> <span class="dv">0</span>,</span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">'black'</span>,</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">step_increase =</span> <span class="fl">0.075</span>,</span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">vjust=</span>.<span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+</section>
+<section id="other-r-packages-for-adding-significance-levels" class="level3" data-number="9.1.6">
+<h3 data-number="9.1.6" class="anchored" data-anchor-id="other-r-packages-for-adding-significance-levels"><span class="header-section-number">9.1.6</span> <strong>Other R packages for adding significance levels</strong></h3>
+<p>Not to sidetrack too much, but other R packages also offer the possibility of interfacing with ggplots and adding significance levels. One such example that could be looked at is the <code>ggpubr</code> package, which actually uses <code>geom_signif()</code> in the background but has some nice additional features. I won’t give a full overview of how this package achieves much of what we have shown above - please refer to <a href="http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/76-add-p-values-and-significance-levels-to-ggplots/">some of the help guides</a>. However, here are a couple of quick examples.</p>
+<p>Let’s use the dataset <code>mdf</code> which has two columns: <code>values</code> and <code>group</code>. There are three groups in this dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mdf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    values grp
+1 3.809373   A
+2 3.707874   A
+3 3.114335   A
+4 3.500416   A
+5 3.947273   A
+6 3.994897   A</code></pre>
+</div>
+</div>
+<p>This is the plot we previously made:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>pb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>The syntax to add p-values is with <code>stat_compare_means()</code> in a very similar way to <code>geom_signif()</code>. Note we can also add the p-value from the One-Way ANVOA directly onto the plot here also, if we wish:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>pb <span class="sc">+</span>  </span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">method =</span> <span class="st">"anova"</span>, <span class="at">label.y =</span> <span class="dv">5</span>)<span class="sc">+</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"B"</span>),</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">c</span>(<span class="st">"B"</span>,<span class="st">"C"</span>),</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"C"</span>)), </span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">method =</span> <span class="st">"t.test"</span>, </span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">label.y =</span> <span class="fu">c</span>(<span class="fl">4.15</span>,<span class="fl">4.3</span>,<span class="fl">4.45</span>)</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>A nice feature of this package is the ability to compare individual groups to a reference group or control. Let’s create some data to do this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">15</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>xdf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">4</span>),</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fl">0.3</span>, <span class="at">sd =</span> .<span class="dv">7</span>),</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fl">0.6</span>, <span class="at">sd =</span> .<span class="dv">15</span>),</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fl">0.2</span>, <span class="at">sd =</span> .<span class="dv">4</span>),</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fl">0.4</span>, <span class="at">sd =</span> .<span class="dv">4</span>),</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fl">0.7</span>, <span class="at">sd =</span> .<span class="dv">5</span>)</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>),</span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a><span class="at">groups =</span> <span class="fu">rep</span>(LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>],<span class="at">each=</span><span class="dv">20</span>)</span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(xdf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      values groups
+1  0.1035291      A
+2  0.7324483      A
+3 -0.1358474      A
+4  0.3588793      A
+5  0.1952065      A
+6 -0.5021543      A</code></pre>
+</div>
+</div>
+<p>These data could be plotted as follows. I’m using the <code>brewer.greens</code> color palette from the <code>pals</code> package.:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>pg <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(xdf, <span class="fu">aes</span>(<span class="at">x=</span>groups, <span class="at">y=</span>values, <span class="at">fill=</span>groups)) <span class="sc">+</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>pals<span class="sc">::</span><span class="fu">brewer.greens</span>(<span class="dv">6</span>)) <span class="sc">+</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_pubclean</span>() <span class="sc">+</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>) <span class="sc">+</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Values"</span>) </span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>pg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-44-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p>Below, using <code>ref.group="A"</code> we run independent t-tests comparing each group to A. Instead of notating p-values here, we use asterisks by including a <code>label=</code> option.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>maxvals <span class="ot">&lt;-</span> xdf <span class="sc">%&gt;%</span> </span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(groups) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">maxval =</span> <span class="fu">max</span>(values)) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(maxval) </span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>pg <span class="sc">+</span>  </span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">after_stat</span>(p.signif)),</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">method =</span> <span class="st">"t.test"</span>, <span class="at">ref.group =</span> <span class="st">"A"</span></span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>                   )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="labelsig_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+</section>
+</section>
+<section id="adding-tukeys-significance-letters" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="adding-tukeys-significance-letters"><span class="header-section-number">9.2</span> Adding Tukey’s Significance Letters</h2>
 <p>Rather than denoting pairwise comparisons with stars or p-values, I prefer to use letter notation. Letters that are the same between two groups indicate no significant differences between those groups. Letters that differ between two groups indicate that those groups have significant differencess.</p>
 <p><br></p>
 <p><strong>One-Way ANOVA example</strong></p>
 <p>Let’s create some random data. We’ll make a dataframe of six groups.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="fl">1.8</span>),</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">12</span>, <span class="at">mean =</span> <span class="dv">11</span>, <span class="at">sd =</span> <span class="fl">1.0</span>),</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">14</span>, <span class="at">mean =</span> <span class="dv">13</span>, <span class="at">sd =</span> <span class="fl">1.1</span>),</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">16</span>, <span class="at">mean =</span> <span class="dv">15</span>, <span class="at">sd =</span> <span class="fl">1.2</span>),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">12</span>, <span class="at">mean =</span> <span class="dv">14</span>, <span class="at">sd =</span> <span class="fl">2.2</span>),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="fl">1.0</span>)),</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">categ =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"A"</span>,<span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">"B"</span>,<span class="dv">12</span>), <span class="fu">rep</span>(<span class="st">"C"</span>,<span class="dv">14</span>), </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rep</span>(<span class="st">"D"</span>,<span class="dv">16</span>), <span class="fu">rep</span>(<span class="st">"E"</span>,<span class="dv">12</span>), <span class="fu">rep</span>(<span class="st">"F"</span>,<span class="dv">10</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="fl">1.8</span>),</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">12</span>, <span class="at">mean =</span> <span class="dv">11</span>, <span class="at">sd =</span> <span class="fl">1.0</span>),</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">14</span>, <span class="at">mean =</span> <span class="dv">13</span>, <span class="at">sd =</span> <span class="fl">1.1</span>),</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">16</span>, <span class="at">mean =</span> <span class="dv">15</span>, <span class="at">sd =</span> <span class="fl">1.2</span>),</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">12</span>, <span class="at">mean =</span> <span class="dv">14</span>, <span class="at">sd =</span> <span class="fl">2.2</span>),</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="fl">1.0</span>)),</span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">categ =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"A"</span>,<span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">"B"</span>,<span class="dv">12</span>), <span class="fu">rep</span>(<span class="st">"C"</span>,<span class="dv">14</span>), </span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rep</span>(<span class="st">"D"</span>,<span class="dv">16</span>), <span class="fu">rep</span>(<span class="st">"E"</span>,<span class="dv">12</span>), <span class="fu">rep</span>(<span class="st">"F"</span>,<span class="dv">10</span>)</span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      value categ
 1 10.033743     A
@@ -328,20 +1082,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>We can plot the basic boxplot of these data like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>categ, <span class="at">y=</span>value)) <span class="sc">+</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>categ, <span class="at">y=</span>value)) <span class="sc">+</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="labelsig_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="480"></p>
+<p><img src="labelsig_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
 <p>To compare significance differences between groups, we could run Tukey post-hoc tests using Honestly Signficant Differences. This is done using the <code>TukeyHSD()</code> function in base R, but using the <code>HSD.test()</code> function from the <code>agricolae</code> R package, we can get the letter notation we need directly.</p>
 <p>This code runs the post hoc test and the groups part of it gives us the letter notations we need:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agricolae)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>hsd <span class="ot">&lt;-</span> <span class="fu">HSD.test</span>(<span class="fu">aov</span>(value <span class="sc">~</span> categ, <span class="at">data=</span>df), <span class="st">"categ"</span>, <span class="at">group=</span>T)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>hsd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agricolae)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>hsd <span class="ot">&lt;-</span> <span class="fu">HSD.test</span>(<span class="fu">aov</span>(value <span class="sc">~</span> categ, <span class="at">data=</span>df), <span class="st">"categ"</span>, <span class="at">group=</span>T)</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>hsd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$statistics
    MSerror Df     Mean       CV
@@ -378,16 +1132,16 @@ attr(,"class")
 </div>
 <p>To add these letters on to the plot, we need to decide where to put them. The x coordinate will be the mid point of each category (which can just be the name of the group), and the y coordinate will be above the maximum value of that group. But note that the groups in the summary output are reorganized from highest median value to lowest. I find it easiest to add these to our summary output in the appropriate order.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df.sum <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(categ) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">maxval =</span> <span class="fu">max</span>(value), </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">med =</span> <span class="fu">median</span>(value),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">uq =</span> <span class="fu">quantile</span>(value, .<span class="dv">75</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>med)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>df.sum<span class="sc">$</span>letters <span class="ot">&lt;-</span> hsd<span class="sc">$</span>groups<span class="sc">$</span>groups</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>df.sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>df.sum <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(categ) <span class="sc">%&gt;%</span> </span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">maxval =</span> <span class="fu">max</span>(value), </span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">med =</span> <span class="fu">median</span>(value),</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">uq =</span> <span class="fu">quantile</span>(value, .<span class="dv">75</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>med)</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>df.sum<span class="sc">$</span>letters <span class="ot">&lt;-</span> hsd<span class="sc">$</span>groups<span class="sc">$</span>groups</span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>df.sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 x 5
   categ maxval   med    uq letters
@@ -402,73 +1156,73 @@ attr(,"class")
 </div>
 <p>This code plots the letters above the boxplots at a y coordinate 0.2 higher than the max value.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span>value))<span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span><span class="fl">0.2</span><span class="sc">+</span>maxval,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters)) <span class="sc">+</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span>value))<span class="sc">+</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span><span class="fl">0.2</span><span class="sc">+</span>maxval,</span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters)) <span class="sc">+</span></span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="labelsig_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="480"></p>
+<p><img src="labelsig_files/figure-html/unnamed-chunk-50-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
 <p>In the above plot, we can see that Group B is not significantly different from Group C or Group F (because both share the <code>b</code> and <code>c</code> letter, but is significantly different from the other groups. Groups D and E are not significantly different from each other (they both have an <code>a</code>) but are significantly different from all other groups.</p>
 <p>We should reorder the plot though to make it more readable:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span><span class="fl">0.2</span><span class="sc">+</span>maxval,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters)) <span class="sc">+</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span><span class="fl">0.2</span><span class="sc">+</span>maxval,</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters)) <span class="sc">+</span></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="labelsig_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="480"></p>
+<p><img src="labelsig_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
 <p>We can nudge the letters up a bit using <code>vjust=0</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span><span class="fl">0.2</span><span class="sc">+</span>maxval,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters), <span class="at">vjust=</span><span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span><span class="fl">0.2</span><span class="sc">+</span>maxval,</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters), <span class="at">vjust=</span><span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="labelsig_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="480"></p>
+<p><img src="labelsig_files/figure-html/unnamed-chunk-52-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
 <p>Alternatively, you may wish to plot the letters to the side of the upper quartile. I don’t like this very much, but it’s an option. I also make the letters bold in this example using <code>fontface="bold"</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span>uq,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">hjust =</span> <span class="sc">-</span><span class="dv">1</span>, </span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.8</span>, </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">fontface =</span> <span class="st">"bold"</span>)) <span class="sc">+</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span>uq,</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters,</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">hjust =</span> <span class="sc">-</span><span class="dv">1</span>, </span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.8</span>, </span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">fontface =</span> <span class="st">"bold"</span>)) <span class="sc">+</span></span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="labelsig_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="480"></p>
+<p><img src="labelsig_files/figure-html/unnamed-chunk-53-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
 <p>Just for fun, here I’m including <code>aes(fill = factor(..middle..)))</code> and <code>scale_fill_brewer(palette = "Reds")</code> to make the colors of the boxplots a shade of red that is equivalent to their categorical position.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> <span class="fu">factor</span>(..middle..)))<span class="sc">+</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span><span class="fl">0.2</span><span class="sc">+</span>maxval,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters), <span class="at">vjust=</span><span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>) <span class="sc">+</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Reds"</span>) <span class="sc">+</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(categ,<span class="sc">-</span>value,median),<span class="at">y=</span>value))<span class="sc">+</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> <span class="fu">factor</span>(..middle..)))<span class="sc">+</span></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data=</span>df.sum,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x=</span>categ,<span class="at">y=</span><span class="fl">0.2</span><span class="sc">+</span>maxval,</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">label=</span>letters), <span class="at">vjust=</span><span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Category"</span>) <span class="sc">+</span></span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Reds"</span>) <span class="sc">+</span></span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="labelsig_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="480"></p>
+<p><img src="labelsig_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid" width="480"></p>
 </div>
 </div>
 <p>This approach using <code>geom_text()</code> to add letters to a plot can be modified for any statistical test.</p>
