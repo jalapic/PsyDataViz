@@ -517,22 +517,25 @@ dfa$condition <- factor(dfa$condition, levels = c("low","medium","high"))
 
 ggplot(dfa, 
        aes(x = condition, y = values, color=condition)) +
-geom_jitter(width=.085, alpha=.8) +
+geom_jitter(width=.085, alpha=.8, size=2) +
   scale_color_manual(values = c("#bacddd", "#E7B800","#bb3300")) +
   theme_classic() +
   ylab("Viral Load") +
   xlab("Condition") +
-  geom_signif(comparisons = list(c("medium","high"),
+  geom_signif(comparisons = list(c("low","medium"),
+                                 c("medium","high"),
                                  c("low","high")),
-              y_position = c(32,33.5),
-              annotation = c("***", "***"),
+              y_position = c(32,33.5,35),
+              annotation = c("NS","***", "***"),
               tip_length = 0,
               color='black',
               step_increase = 0.075,
-              vjust=.5) +
+              vjust=.3) +
   theme(legend.position = 'none')
 
 ```
+
+<br>
 
 <br>
 
