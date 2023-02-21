@@ -15,7 +15,8 @@ book:
     - histograms.qmd
     - distributionsgroups.qmd
     - bar.qmd
-    - baralt.qmd
+    - dot.qmd
+    - lollipop.qmd
     - slopes.qmd
     - labelsig.qmd
     - smallmult.qmd

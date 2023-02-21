@@ -1,0 +1,3 @@
+# Dot Plots
+
+Dot plots, sometimes called Cleveland dot plots, are a way to represent frequencies in a simple way. Often we use them to compare the frequencies of two groups across subjects.

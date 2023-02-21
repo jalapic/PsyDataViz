@@ -1,0 +1,3 @@
+# Lollipop Plots
+
+Lollipop plots are a way to represent the same information as bar charts but in a more aesthetically pleasing way.

@@ -557,7 +557,6 @@ pb
 
 ```
 
-
 The syntax to add p-values is with `stat_compare_means()` in a very similar way to `geom_signif()`. Note we can also add the p-value from the One-Way ANVOA directly onto the plot here also, if we wish:
 
 ```{r, warning=FALSE, message=FALSE, fig.width=5, fig.height=5}
@@ -607,7 +606,6 @@ pg
 ```
 
 Below, using `ref.group="A"` we run independent t-tests comparing each group to A. Instead of notating p-values here, we use asterisks by including a `label=` option.
-
 
 ```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=5}
 
