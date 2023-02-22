@@ -433,34 +433,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="lollipop_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
-<p>The above chart is quite useful for visualizing overall trends quickly, but the plot is quite busy with many individual stations on the x-axis. Without zooming in, it’s hard to identify which stations had the biggest percentage changes. One way to help with this is to use highlighting of the segments and points as well as the axis labels. In this example we do it by using <code>ifelse()</code> logical expressions. This does work, although <code>ggplot2</code> gives a warning message for using it inside the <code>axis.text.x</code> argument. But, for now, at least, it works fine.</p>
+<p>The above chart is quite useful for visualizing overall trends quickly, but the plot is quite busy with many individual stations on the x-axis. Without zooming in, it’s hard to identify which stations had the biggest percentage changes. One way to help with this is to use highlighting of the segments and points as well as the axis labels. In this example we do it by using <code>ifelse()</code> logical expressions. This does work, although <code>ggplot2</code> gives a warning message when using them with the <code>axis.text.x</code> argument. I like to put the logical statements for use inside <code>element_text()</code> outside of the plot as shown below. It is important to ensure that your dataframe is arranged in the same order as your x-axis will be plotted when directly assinging colors, face font or size in this way.</p>
+<p>For the sake of space, let’s only look at those stations that have more than 250,000 passengers a year, and we’ll highlight stations that gained passengers by 10% or more from the previous year.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rr,<span class="fu">aes</span>(<span class="at">x=</span>Name, <span class="at">y=</span>PctChange)) <span class="sc">+</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>Name, </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">xend=</span>Name, </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">y=</span><span class="dv">0</span>, </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">yend=</span>PctChange),</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">color=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>, <span class="st">"darkorange"</span>, <span class="st">"grey44"</span>), </span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">linewidth=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>, <span class="fl">1.1</span>, <span class="fl">0.7</span>)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">+</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">color=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>, <span class="st">"darkorange"</span>, <span class="st">"grey44"</span>), </span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">size=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>, <span class="dv">3</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Station"</span>) <span class="sc">+</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percent Change from Previous Year %"</span>) <span class="sc">+</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">'none'</span>,</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>,</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">face=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>,<span class="st">"bold"</span>,<span class="st">"plain"</span>),</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>                     <span class="at">size=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>,<span class="dv">7</span>,<span class="dv">5</span>),</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>,<span class="st">"#A14A11"</span>,<span class="st">"grey44"</span>))</span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rrr <span class="ot">&lt;-</span> rr <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Passengers<span class="sc">&gt;</span><span class="dv">250000</span>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="sc">-</span>Passengers)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a> c1 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(rrr<span class="sc">$</span>PctChange <span class="sc">&gt;</span> <span class="dv">10</span>,<span class="st">"bold"</span>,<span class="st">"plain"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a> c2 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(rrr<span class="sc">$</span>PctChange <span class="sc">&gt;</span> <span class="dv">10</span>,<span class="dv">12</span>,<span class="dv">9</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a> c3 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(rrr<span class="sc">$</span>PctChange <span class="sc">&gt;</span> <span class="dv">10</span>,<span class="st">"#A14A11"</span>,<span class="st">"grey44"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rrr,<span class="fu">aes</span>(<span class="at">x=</span>Name, <span class="at">y=</span>PctChange)) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>Name, </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">xend=</span>Name, </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">y=</span><span class="dv">0</span>, </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">yend=</span>PctChange),</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">color=</span><span class="fu">ifelse</span>(rrr<span class="sc">$</span>PctChange <span class="sc">&gt;</span> <span class="dv">10</span>, <span class="st">"darkorange"</span>, <span class="st">"grey44"</span>), </span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">linewidth=</span><span class="fu">ifelse</span>(rrr<span class="sc">$</span>PctChange <span class="sc">&gt;</span> <span class="dv">10</span>, <span class="fl">1.5</span>, <span class="fl">1.1</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">+</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">color=</span><span class="fu">ifelse</span>(rrr<span class="sc">$</span>PctChange <span class="sc">&gt;</span> <span class="dv">10</span>, <span class="st">"darkorange"</span>, <span class="st">"grey44"</span>), </span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">size=</span><span class="fu">ifelse</span>(rrr<span class="sc">$</span>PctChange <span class="sc">&gt;</span> <span class="dv">10</span>, <span class="dv">5</span>, <span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Station"</span>) <span class="sc">+</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percent Change from Previous Year %"</span>) <span class="sc">+</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">color=</span><span class="st">'gray33'</span>)<span class="sc">+</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">'none'</span>,</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>,</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">face=</span>c1,<span class="at">size=</span>c2,<span class="at">color=</span>c3)</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>        ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lollipop_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="768"></p>
 </div>
-<p><img src="img/dot.png" class="img-fluid"></p>
+</div>
 <p><br></p>
 
 

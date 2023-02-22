@@ -122,7 +122,7 @@ For the sake of space, let's only look at those stations that have more than 250
 rrr <- rr %>% filter(Passengers>250000) %>% arrange(-Passengers)
 
  c1 <- ifelse(rrr$PctChange > 10,"bold","plain")
- c2 <- ifelse(rrr$PctChange > 10,9,7)
+ c2 <- ifelse(rrr$PctChange > 10,12,9)
  c3 <- ifelse(rrr$PctChange > 10,"#A14A11","grey44")
 
 ggplot(rrr,aes(x=Name, y=PctChange)) +
@@ -132,13 +132,14 @@ ggplot(rrr,aes(x=Name, y=PctChange)) +
         y=0, 
         yend=PctChange),
         color=ifelse(rrr$PctChange > 10, "darkorange", "grey44"), 
-        linewidth=ifelse(rrr$PctChange > 10, 1.1, 0.7)
+        linewidth=ifelse(rrr$PctChange > 10, 1.5, 1.1)
     )+
   geom_point(
          color=ifelse(rrr$PctChange > 10, "darkorange", "grey44"), 
-         size=ifelse(rrr$PctChange > 10, 3, 1)) +
+         size=ifelse(rrr$PctChange > 10, 5, 2)) +
   xlab("Station") +
   ylab("Percent Change from Previous Year %") +
+  geom_hline(yintercept=0, color='gray33')+
   theme_light() +
   theme(legend.position='none',
         axis.ticks.x = element_blank(),
