@@ -114,21 +114,29 @@ ggplot(rr,aes(x=Name, y=PctChange,color=UpDown, fill=UpDown)) +
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5)) 
 ```
 
-The above chart is quite useful for visualizing overall trends quickly, but the plot is quite busy with many individual stations on the x-axis. Without zooming in, it's hard to identify which stations had the biggest percentage changes. One way to help with this is to use highlighting of the segments and points as well as the axis labels. In this example we do it by using `ifelse()` logical expressions. This does work, although `ggplot2` gives a warning message for using it inside the `axis.text.x` argument. But, for now, at least, it works fine.
+The above chart is quite useful for visualizing overall trends quickly, but the plot is quite busy with many individual stations on the x-axis. Without zooming in, it's hard to identify which stations had the biggest percentage changes. One way to help with this is to use highlighting of the segments and points as well as the axis labels. In this example we do it by using `ifelse()` logical expressions. This does work, although `ggplot2` gives a warning message when using them with the `axis.text.x` argument. I like to put the logical statements for use inside `element_text()` outside of the plot as shown below. It is important to ensure that your dataframe is arranged in the same order as your x-axis will be plotted when directly assinging colors, face font or size in this way.
 
-```{r, warning=FALSE, message=FALSE, eval=FALSE}
-ggplot(rr,aes(x=Name, y=PctChange)) +
+For the sake of space, let's only look at those stations that have more than 250,000 passengers a year, and we'll highlight stations that gained passengers by 10% or more from the previous year.
+
+```{r, warning=FALSE, message=FALSE, fig.height=5, fig.width=8}
+rrr <- rr %>% filter(Passengers>250000) %>% arrange(-Passengers)
+
+ c1 <- ifelse(rrr$PctChange > 10,"bold","plain")
+ c2 <- ifelse(rrr$PctChange > 10,9,7)
+ c3 <- ifelse(rrr$PctChange > 10,"#A14A11","grey44")
+
+ggplot(rrr,aes(x=Name, y=PctChange)) +
   geom_segment(
     aes(x=Name, 
         xend=Name, 
         y=0, 
         yend=PctChange),
-        color=ifelse(rr$PctChange < -25, "darkorange", "grey44"), 
-        linewidth=ifelse(rr$PctChange < -25, 1.1, 0.7)
+        color=ifelse(rrr$PctChange > 10, "darkorange", "grey44"), 
+        linewidth=ifelse(rrr$PctChange > 10, 1.1, 0.7)
     )+
   geom_point(
-         color=ifelse(rr$PctChange < -25, "darkorange", "grey44"), 
-         size=ifelse(rr$PctChange < -25, 3, 1)) +
+         color=ifelse(rrr$PctChange > 10, "darkorange", "grey44"), 
+         size=ifelse(rrr$PctChange > 10, 3, 1)) +
   xlab("Station") +
   ylab("Percent Change from Previous Year %") +
   theme_light() +
@@ -137,12 +145,8 @@ ggplot(rr,aes(x=Name, y=PctChange)) +
         panel.border = element_blank(),
         panel.grid.major.x = element_blank(),
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,
-                     face=ifelse(rr$PctChange < -25,"bold","plain"),
-                     size=ifelse(rr$PctChange < -25,7,5),
-                     color=ifelse(rr$PctChange < -25,"#A14A11","grey44"))
+                                   face=c1,size=c2,color=c3)
         ) 
 ```
-
-![](img/dot.png)
 
 <br>
