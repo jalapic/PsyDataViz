@@ -213,7 +213,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, enhanced, breakable, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, interior hidden, frame hidden]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, boxrule=0pt, frame hidden, sharp corners, enhanced, borderline west={3pt}{0pt}{shadecolor}, breakable]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -3085,17 +3085,317 @@ to read and compare bars.
 
 \bookmarksetup{startatroot}
 
-\hypertarget{alternatives-to-bar-charts}{%
-\chapter{Alternatives to Bar Charts}\label{alternatives-to-bar-charts}}
+\hypertarget{dot-plots}{%
+\chapter{Dot Plots}\label{dot-plots}}
 
-There are many more aesthetically pleasing graphs than bar charts. Here
-are some examples.
+Dot plots, sometimes called Cleveland dot plots, are a way to represent
+frequencies in a simple way. Often we use them to compare the
+frequencies of two groups across subjects.
+
+\bookmarksetup{startatroot}
 
 \hypertarget{lollipop-plots}{%
-\section{Lollipop Plots}\label{lollipop-plots}}
+\chapter{Lollipop Plots}\label{lollipop-plots}}
 
-\hypertarget{cleveland-dot-plots}{%
-\section{Cleveland Dot Plots}\label{cleveland-dot-plots}}
+Lollipop plots are a way to represent the same information as bar charts
+but in a more aesthetically pleasing way. They are comprised of a line
+and a dot.
+
+In \texttt{ggplot2} we can create them using \texttt{geom\_segment()} to
+create the line and \texttt{geom\_point()} to create the dot.
+
+The dataset we'll use in this tutorial is \texttt{station\_usage} which
+provides information on passenger numbers using UK train stations during
+2017. We'll just keep the variables we need and clean up the column
+names. We also need to edit the \texttt{Passengers} column to ensure
+it's numeric after we remove the commas.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rail }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"data\_raw/station\_usage.csv"}\NormalTok{)}
+
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ rail[}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\SpecialCharTok{:}\DecValTok{4}\NormalTok{,}\DecValTok{15}\NormalTok{,}\DecValTok{20}\NormalTok{)]}
+\FunctionTok{colnames}\NormalTok{(df) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"TLC"}\NormalTok{,}\StringTok{"Name"}\NormalTok{,}\StringTok{"Region"}\NormalTok{,}\StringTok{"Network"}\NormalTok{,}\StringTok{"Passengers"}\NormalTok{)}
+\NormalTok{df}\SpecialCharTok{$}\NormalTok{Passengers }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{gsub}\NormalTok{(}\StringTok{","}\NormalTok{,}\StringTok{""}\NormalTok{,df}\SpecialCharTok{$}\NormalTok{Passengers))}
+\FunctionTok{head}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  TLC       Name        Region            Network Passengers
+1 ABW Abbey Wood        London           Southern    3769402
+2 ABE       Aber Wales - Cymru    Wales & Western     283894
+3 ACY  Abercynon Wales - Cymru    Wales & Western     329532
+4 ABA   Aberdare Wales - Cymru    Wales & Western     581388
+5 ABD   Aberdeen      Scotland Scotland's Railway    2616142
+6 AUR   Aberdour      Scotland Scotland's Railway     140048
+\end{verbatim}
+
+Let's say we wished to create a dot plot of the top 10 stations in
+Scotland for passenger numbers. We can use \texttt{slice\_max()} to get
+the top 10:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\NormalTok{top10 }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Region}\SpecialCharTok{==}\StringTok{"Scotland"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{slice\_max}\NormalTok{(Passengers, }\AttributeTok{n=}\DecValTok{10}\NormalTok{)}
+\NormalTok{top10}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   TLC                    Name   Region            Network Passengers
+1  GLC         Glasgow Central Scotland Scotland's Railway   32797088
+2  EDB               Edinburgh Scotland Scotland's Railway   23872996
+3  GLQ    Glasgow Queen Street Scotland Scotland's Railway   17207208
+4  PYG  Paisley Gilmour Street Scotland Scotland's Railway    4027962
+5  HYM               Haymarket Scotland Scotland's Railway    3068112
+6  PTK                 Partick Scotland Scotland's Railway    2944084
+7  ABD                Aberdeen Scotland Scotland's Railway    2616142
+8  STG                Stirling Scotland Scotland's Railway    2480154
+9  CHC Charing Cross (Glasgow) Scotland Scotland's Railway    2229356
+10 DEE                  Dundee Scotland Scotland's Railway    2015782
+\end{verbatim}
+
+To make our basic lollipop plot with no customization, we need to add a
+point and a segment. We'll use the station code rather than the full
+name for space. With \texttt{geom\_segment()} we need to give it's
+horizontal width by giving a start and end point for the x-axis, and we
+do the same on the y-axis for the height.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(top10, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{TLC, }\AttributeTok{y=}\NormalTok{Passengers)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{TLC, }\AttributeTok{xend=}\NormalTok{TLC, }\AttributeTok{y=}\DecValTok{0}\NormalTok{, }\AttributeTok{yend=}\NormalTok{Passengers))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./lollipop_files/figure-pdf/unnamed-chunk-3-1.pdf}
+
+}
+
+\end{figure}
+
+The first thing I'd like to do here is reorder the stations so they are
+not in alphabetical order, but in descending numerical order. We also
+provide a title on the x-axis:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(top10, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\FunctionTok{reorder}\NormalTok{(TLC,}\SpecialCharTok{{-}}\NormalTok{Passengers), }\AttributeTok{y=}\NormalTok{Passengers)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+} 
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{TLC, }\AttributeTok{xend=}\NormalTok{TLC, }\AttributeTok{y=}\DecValTok{0}\NormalTok{, }\AttributeTok{yend=}\NormalTok{Passengers)) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Station"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./lollipop_files/figure-pdf/unnamed-chunk-4-1.pdf}
+
+}
+
+\end{figure}
+
+We can customize the colors and sizes of our segment lines and dots.
+Below, we first factor the \texttt{TLC} column to have the top 10
+stations in Passenger order. This is so when we assign the red color and
+fill (using the \texttt{brewer.reds} palette from the \texttt{pals}
+package), it plots the colors in the correct order and not in
+alphabetical order.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{top10}\SpecialCharTok{$}\NormalTok{TLC }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(top10}\SpecialCharTok{$}\NormalTok{TLC, }\AttributeTok{levels =}\NormalTok{ top10 }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pull}\NormalTok{(TLC))}
+
+
+\FunctionTok{ggplot}\NormalTok{(top10, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{TLC, }\AttributeTok{y=}\NormalTok{Passengers, }\AttributeTok{color=}\NormalTok{TLC, }\AttributeTok{fill=}\NormalTok{TLC)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{TLC, }\AttributeTok{xend=}\NormalTok{TLC, }\AttributeTok{y=}\DecValTok{0}\NormalTok{, }\AttributeTok{yend=}\NormalTok{Passengers),}\AttributeTok{linewidth=}\FloatTok{1.5}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{, }\AttributeTok{stroke=}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Station"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{rev}\NormalTok{(pals}\SpecialCharTok{::}\FunctionTok{brewer.reds}\NormalTok{(}\DecValTok{10}\NormalTok{))) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{rev}\NormalTok{(pals}\SpecialCharTok{::}\FunctionTok{brewer.reds}\NormalTok{(}\DecValTok{10}\NormalTok{))) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./lollipop_files/figure-pdf/unnamed-chunk-5-1.pdf}
+
+}
+
+\end{figure}
+
+Below I add some extra customization. We set the theme to be
+\texttt{theme\_light}, remove the legend which is superfluous and tidy
+up the panel border and x-axis ticks. I also change the y-axis scale to
+show numbers in millions with the letter ``M''. This is using the
+\texttt{scales::label\_number} function (from the \texttt{scales}
+package).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(top10, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{TLC, }\AttributeTok{y=}\NormalTok{Passengers, }\AttributeTok{color=}\NormalTok{TLC, }\AttributeTok{fill=}\NormalTok{TLC)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{TLC, }\AttributeTok{xend=}\NormalTok{TLC, }\AttributeTok{y=}\DecValTok{0}\NormalTok{, }\AttributeTok{yend=}\NormalTok{Passengers),}\AttributeTok{linewidth=}\FloatTok{1.5}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{4}\NormalTok{, }\AttributeTok{stroke=}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Station"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{rev}\NormalTok{(pals}\SpecialCharTok{::}\FunctionTok{brewer.reds}\NormalTok{(}\DecValTok{10}\NormalTok{))) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{rev}\NormalTok{(pals}\SpecialCharTok{::}\FunctionTok{brewer.reds}\NormalTok{(}\DecValTok{10}\NormalTok{))) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{label\_number}\NormalTok{(}\AttributeTok{suffix =} \StringTok{" M"}\NormalTok{, }\AttributeTok{scale =} \FloatTok{1e{-}6}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_light}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{,}
+        \AttributeTok{axis.ticks.x =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{panel.border =} \FunctionTok{element\_blank}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./lollipop_files/figure-pdf/unnamed-chunk-6-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{lollipop-charts-adding-baselines-and-highlighting}{%
+\subsection{Lollipop Charts adding Baselines and
+Highlighting}\label{lollipop-charts-adding-baselines-and-highlighting}}
+
+Sometimes it helps to visualize changes from some baseline level. In the
+following example, we are going to look at percent changes in rail
+passengers usage from 2017 compared to the previous year. Below, we grab
+all the stations in the ``East Midlands'' region and collect and rename
+the columns we want. We also ensure that the columns we need to be
+numeric are:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rr }\OtherTok{\textless{}{-}}\NormalTok{ rail[rail}\SpecialCharTok{$}\NormalTok{Region}\SpecialCharTok{==}\StringTok{"East Midlands"}\NormalTok{,]}
+\NormalTok{rr }\OtherTok{\textless{}{-}}\NormalTok{ rr[}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\SpecialCharTok{:}\DecValTok{4}\NormalTok{,}\DecValTok{15}\NormalTok{,}\DecValTok{20}\NormalTok{,}\DecValTok{27}\NormalTok{)]}
+\FunctionTok{colnames}\NormalTok{(rr) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"TLC"}\NormalTok{,}\StringTok{"Name"}\NormalTok{,}\StringTok{"Region"}\NormalTok{,}\StringTok{"Network"}\NormalTok{,}\StringTok{"Passengers"}\NormalTok{,}\StringTok{"PctChange"}\NormalTok{)}
+\NormalTok{rr}\SpecialCharTok{$}\NormalTok{Passengers }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{gsub}\NormalTok{(}\StringTok{","}\NormalTok{,}\StringTok{""}\NormalTok{,rr}\SpecialCharTok{$}\NormalTok{Passengers))}
+\NormalTok{rr}\SpecialCharTok{$}\NormalTok{PctChange }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{gsub}\NormalTok{(}\StringTok{"\%"}\NormalTok{,}\StringTok{""}\NormalTok{,rr}\SpecialCharTok{$}\NormalTok{PctChange))}
+\FunctionTok{head}\NormalTok{(rr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+    TLC         Name        Region              Network Passengers PctChange
+43  ALF     Alfreton East Midlands              Eastern     314464       5.6
+56  AMB    Ambergate East Midlands              Eastern      41130     -11.6
+60  ANC     Ancaster East Midlands              Eastern       5904     -10.2
+107 ALK    Aslockton East Midlands              Eastern      31204      25.1
+114 ATB Attenborough East Midlands              Eastern      99484      -7.8
+139 BAM      Bamford East Midlands North West & Central      34526       9.1
+\end{verbatim}
+
+For the plot, we want to have a new column that will be called
+\texttt{UpDown} which will depict whether the percent change is positive
+or negative. Also, we are going to plot stations on the x-axis in their
+rank order, so we set the levels of the station column \texttt{TLC} to
+be in the correct order by using \texttt{arrange} and \texttt{pull}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rr}\SpecialCharTok{$}\NormalTok{UpDown }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, }\StringTok{"up"}\NormalTok{,}\StringTok{"down"}\NormalTok{)}
+
+\NormalTok{rr }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{arrange}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Passengers) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pull}\NormalTok{(TLC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  [1] "NOT" "LEI" "DBY" "NMP" "LCN" "CHD" "GRA" "LBO" "GLO" "KET" "WEL" "NNG"
+ [13] "MHR" "NCT" "LGE" "BEE" "RET" "WRK" "MFT" "HDF" "NBR" "LBK" "SMD" "EMD"
+ [25] "SKG" "HNK" "BUX" "ALF" "SLR" "COR" "MMO" "OKM" "NMN" "BSN" "SYS" "NMC"
+ [37] "BLP" "MAT" "HKN" "SPK" "DRO" "SPA" "MSW" "KKB" "HKM" "DTG" "GBL" "WBR"
+ [49] "ILN" "CLY" "SIL" "CLM" "MGM" "ATB" "EDL" "LGM" "BWS" "SHB" "SWS" "RKT"
+ [61] "BIN" "KGS" "SXY" "LOW" "TUT" "MKR" "HOP" "DFI" "HSG" "BLW" "CEF" "HEC"
+ [73] "BTF" "MTB" "GRN" "CTO" "WFL" "CMF" "AMB" "NSD" "CWD" "WIL" "FSK" "SRO"
+ [85] "BAM" "ALK" "FNV" "WTS" "WWL" "LAG" "SPO" "SWD" "BUJ" "RAU" "RDF" "NET"
+ [97] "BSB" "ROL" "DVH" "ANC" "SWE" "THU" "PEA" "GNB" "HBB" "TPC" "ELO" "HVN"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rr}\SpecialCharTok{$}\NormalTok{TLC }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{TLC, }\AttributeTok{levels =}\NormalTok{ rr }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{arrange}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Passengers) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pull}\NormalTok{(TLC))}
+\NormalTok{rr}\SpecialCharTok{$}\NormalTok{Name }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{Name, }\AttributeTok{levels =}\NormalTok{ rr }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{arrange}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Passengers) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pull}\NormalTok{(Name))}
+\end{Highlighting}
+\end{Shaded}
+
+The code for the plot is below. \texttt{geom\_segment()} and
+\texttt{geom\_point()} are doing the same job as before. Our y-axis
+ranges from negative values to positive, and 0 is our baseline. So we
+use \texttt{y=0} as the baseline value in \texttt{geom\_segment()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(rr,}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Name, }\AttributeTok{y=}\NormalTok{PctChange,}\AttributeTok{color=}\NormalTok{UpDown, }\AttributeTok{fill=}\NormalTok{UpDown)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_segment}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Name, }\AttributeTok{xend=}\NormalTok{Name, }\AttributeTok{y=}\DecValTok{0}\NormalTok{, }\AttributeTok{yend=}\NormalTok{PctChange))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{2}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"\#FA8072"}\NormalTok{,}\StringTok{"darkblue"}\NormalTok{ )) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{( }\StringTok{"\#FA8072"}\NormalTok{,}\StringTok{"darkblue"}\NormalTok{))  }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Station"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Percent Change from Previous Year \%"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_light}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{,}
+        \AttributeTok{axis.ticks.x =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{panel.border =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{hjust=}\DecValTok{1}\NormalTok{,}\AttributeTok{size=}\DecValTok{5}\NormalTok{)) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./lollipop_files/figure-pdf/unnamed-chunk-9-1.pdf}
+
+}
+
+\end{figure}
+
+The above chart is quite useful for visualizing overall trends quickly,
+but the plot is quite busy with many individual stations on the x-axis.
+Without zooming in, it's hard to identify which stations had the biggest
+percentage changes. One way to help with this is to use highlighting of
+the segments and points as well as the axis labels. In this example we
+do it by using \texttt{ifelse()} logical expressions. This does work,
+although \texttt{ggplot2} gives a warning message for using it inside
+the \texttt{axis.text.x} argument. But, for now, at least, it works
+fine.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(rr,}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Name, }\AttributeTok{y=}\NormalTok{PctChange)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_segment}\NormalTok{(}
+    \FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Name, }
+        \AttributeTok{xend=}\NormalTok{Name, }
+        \AttributeTok{y=}\DecValTok{0}\NormalTok{, }
+        \AttributeTok{yend=}\NormalTok{PctChange),}
+        \AttributeTok{color=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\StringTok{"darkorange"}\NormalTok{, }\StringTok{"grey44"}\NormalTok{), }
+        \AttributeTok{linewidth=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{0.7}\NormalTok{)}
+\NormalTok{    )}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}
+         \AttributeTok{color=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\StringTok{"darkorange"}\NormalTok{, }\StringTok{"grey44"}\NormalTok{), }
+         \AttributeTok{size=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{1}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Station"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Percent Change from Previous Year \%"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_light}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{,}
+        \AttributeTok{axis.ticks.x =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{panel.border =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{panel.grid.major.x =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{hjust=}\DecValTok{1}\NormalTok{,}
+                     \AttributeTok{face=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{,}\StringTok{"bold"}\NormalTok{,}\StringTok{"plain"}\NormalTok{),}
+                     \AttributeTok{size=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{5}\NormalTok{),}
+                     \AttributeTok{color=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{,}\StringTok{"\#A14A11"}\NormalTok{,}\StringTok{"grey44"}\NormalTok{))}
+\NormalTok{        ) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{./img/dot.png}
 
 \bookmarksetup{startatroot}
 
@@ -3568,21 +3868,1264 @@ always a danger when adding this information that it becomes cluttered
 and distracting, so it is important to make clear design choices. Below
 are some ways of labeling significance on boxplots and bar graphs.
 
-\hypertarget{adding-stars-to-plots}{%
-\section{Adding stars to plots}\label{adding-stars-to-plots}}
+\hypertarget{adding-stars-and-p-values-to-plots}{%
+\section{Adding stars and p-values to
+plots}\label{adding-stars-and-p-values-to-plots}}
+
+Probably the simplest way to add stars and p-values to plots is by using
+the \texttt{ggsignif} package. This adds an extra layer to each
+\texttt{ggplot} chart containing the stars.
+
+Here is some example data with two groups:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{100}\NormalTok{)}
+
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n=}\DecValTok{10}\NormalTok{,}\AttributeTok{mean=}\DecValTok{4}\NormalTok{, }\AttributeTok{sd =} \FloatTok{0.5}\NormalTok{), }
+             \FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n=}\DecValTok{12}\NormalTok{,}\AttributeTok{mean=}\FloatTok{3.4}\NormalTok{, }\AttributeTok{sd =} \FloatTok{0.4}\NormalTok{)),}
+  \AttributeTok{subject =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\DecValTok{10}\NormalTok{), }\FunctionTok{rep}\NormalTok{(}\StringTok{"Treatment"}\NormalTok{,}\DecValTok{12}\NormalTok{))}
+\NormalTok{)}
+\FunctionTok{head}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+    values subject
+1 3.748904 Control
+2 4.065766 Control
+3 3.960541 Control
+4 4.443392 Control
+5 4.058486 Control
+6 4.159315 Control
+\end{verbatim}
+
+If we run a simple t-test on these data, we can see that the p-value for
+this test is 0.0009517.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{t.test}\NormalTok{(}\AttributeTok{data=}\NormalTok{df, values }\SpecialCharTok{\textasciitilde{}}\NormalTok{ subject)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+    Welch Two Sample t-test
+
+data:  values by subject
+t = 3.8715, df = 19.975, p-value = 0.0009517
+alternative hypothesis: true difference in means between group Control and group Treatment is not equal to 0
+95 percent confidence interval:
+ 0.2316228 0.7728943
+sample estimates:
+  mean in group Control mean in group Treatment 
+               3.991021                3.488763 
+\end{verbatim}
+
+To make a boxplot with stars, we just add \texttt{geom\_signif()} to our
+plot, but we need to add
+\texttt{comparisons\ =\ list(c("Control","Treatment"))} to tell it which
+groups we wish to compare.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(ggsignif)}
+
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)))}
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{adding-p-values-to-plots}{%
-\section{Adding p-values to plots}\label{adding-p-values-to-plots}}
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-3-1.pdf}
+
+}
+
+\end{figure}
+
+However, what you may notice is that this p-value is not the same as the
+one we got from the t-test above. This is because the default test it
+runs to compare groups is the wilcoxon rank sum test (a non-parametric
+equivalent to the independent' t-test that compares medians between
+independent groups).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{test =} \StringTok{"wilcox.test"}\NormalTok{, }
+              \AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-4-1.pdf}
+
+}
+
+\end{figure}
+
+To get the p-value for the t-test we need to assign the test to be the
+\texttt{t.test}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{test =} \StringTok{"t.test"}\NormalTok{, }
+              \AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-5-1.pdf}
+
+}
+
+\end{figure}
+
+It's also possible to round numbers to desired decimal places by adding
+a function within the parameter \texttt{map\_signif\_level}. Here, I
+round the p-value to 3 decimal places with \texttt{round()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{test =} \StringTok{"t.test"}\NormalTok{, }
+              \AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)),}
+              \AttributeTok{map\_signif\_level =} \ControlFlowTok{function}\NormalTok{(p) }\FunctionTok{paste}\NormalTok{(}\StringTok{"p ="}\NormalTok{,}\FunctionTok{round}\NormalTok{(p,}\DecValTok{3}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-6-1.pdf}
+
+}
+
+\end{figure}
+
+Within this same function, we can actually also annotate text. Here I
+add ``p ='' to the beginning of the p-value output on the plot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{test =} \StringTok{"t.test"}\NormalTok{, }
+              \AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)),}
+              \AttributeTok{map\_signif\_level =} \ControlFlowTok{function}\NormalTok{(p) }\FunctionTok{paste}\NormalTok{(}\StringTok{"p ="}\NormalTok{,}\FunctionTok{round}\NormalTok{(p,}\DecValTok{3}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-7-1.pdf}
+
+}
+
+\end{figure}
+
+There are several other parameters within \texttt{geom\_signif()} that
+can be tweaked to adjust the font type and position. This is using
+\texttt{textsize} to adjust the text size.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{test =} \StringTok{"t.test"}\NormalTok{, }
+              \AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)),}
+              \AttributeTok{textsize =} \DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-8-1.pdf}
+
+}
+
+\end{figure}
+
+\textbf{Adding stars to plots}
+
+To switch from adding p-values to stars we just need to add
+\texttt{map\_signif\_level\ =\ T}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{test =} \StringTok{"t.test"}\NormalTok{, }
+              \AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)),}
+              \AttributeTok{map\_signif\_level =}\NormalTok{ T,}
+              \AttributeTok{textsize =} \DecValTok{5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-9-1.pdf}
+
+}
+
+\end{figure}
+
+\textbf{What if not significant ?}
+
+In the data below, we can see that there is no significant difference
+between our two groups in means.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{100}\NormalTok{)}
+
+\NormalTok{ddf }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n=}\DecValTok{10}\NormalTok{,}\AttributeTok{mean=}\FloatTok{7.1}\NormalTok{, }\AttributeTok{sd =} \FloatTok{0.5}\NormalTok{), }
+             \FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n=}\DecValTok{12}\NormalTok{,}\AttributeTok{mean=}\FloatTok{7.2}\NormalTok{, }\AttributeTok{sd =} \FloatTok{0.4}\NormalTok{)),}
+  \AttributeTok{subject =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\DecValTok{10}\NormalTok{), }\FunctionTok{rep}\NormalTok{(}\StringTok{"Treatment"}\NormalTok{,}\DecValTok{12}\NormalTok{))}
+\NormalTok{)}
+
+\FunctionTok{t.test}\NormalTok{(}\AttributeTok{data=}\NormalTok{ddf, values }\SpecialCharTok{\textasciitilde{}}\NormalTok{ subject)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+    Welch Two Sample t-test
+
+data:  values by subject
+t = -1.5242, df = 19.975, p-value = 0.1431
+alternative hypothesis: true difference in means between group Control and group Treatment is not equal to 0
+95 percent confidence interval:
+ -0.46837715  0.07289431
+sample estimates:
+  mean in group Control mean in group Treatment 
+               7.091021                7.288763 
+\end{verbatim}
+
+What does this look like if we use \texttt{geom\_signif()} to plot ?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(ddf, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{test =} \StringTok{"t.test"}\NormalTok{, }
+              \AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)),}
+              \AttributeTok{textsize =} \DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-11-1.pdf}
+
+}
+
+\end{figure}
+
+The default plot will add the p-value. If we add
+\texttt{map\_signif\_level\ =\ T} to plot `stars', we get the following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(ddf, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{subject, }\AttributeTok{y=}\NormalTok{values)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{test =} \StringTok{"t.test"}\NormalTok{, }
+              \AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{"Treatment"}\NormalTok{)),}
+              \AttributeTok{map\_signif\_level =}\NormalTok{ T,}
+              \AttributeTok{textsize =} \DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-12-1.pdf}
+
+}
+
+\end{figure}
+
+For some reason to me, the dot after NS I find quite irritating.
+However, this can be all overridden by applying direct annotations (see
+below).
+
+\textbf{Paired Data}
+
+The above examples are all two-tailed independent tests. However, it is
+possible to apply \texttt{geom\_signif()} to one-tailed or paired tests.
+Let's create some paired data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{103}\NormalTok{)}
+
+\NormalTok{pdf }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{subj =}\NormalTok{ letters[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{],}
+  \AttributeTok{before =} \FunctionTok{runif}\NormalTok{(}\DecValTok{12}\NormalTok{),}
+  \AttributeTok{after =} \FunctionTok{runif}\NormalTok{(}\DecValTok{12}\NormalTok{)}
+\NormalTok{)}
+
+\NormalTok{pdf}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   subj     before     after
+1     a 0.21594161 0.7955919
+2     b 0.06316809 0.8247906
+3     c 0.52182676 0.8830082
+4     d 0.50361726 0.1303339
+5     e 0.12048608 0.1375370
+6     f 0.08727517 0.2851473
+7     g 0.43356197 0.3537884
+8     h 0.19308082 0.3349347
+9     i 0.03108849 0.1756115
+10    j 0.31385192 0.5507040
+11    k 0.45206720 0.5132493
+12    l 0.28632367 0.5776094
+\end{verbatim}
+
+If we run a paired t-test on these data we can see a significant
+difference in means of p=0.04:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{t.test}\NormalTok{(pdf}\SpecialCharTok{$}\NormalTok{before, pdf}\SpecialCharTok{$}\NormalTok{after, }\AttributeTok{paired=}\NormalTok{T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+    Paired t-test
+
+data:  pdf$before and pdf$after
+t = -2.2853, df = 11, p-value = 0.04313
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.382805290 -0.007197583
+sample estimates:
+mean of the differences 
+             -0.1950014 
+\end{verbatim}
+
+To make the basic boxplot, we need to turn the data into long form. We
+also factor the new \texttt{time} column as annoyingly the word `after'
+is alphabetically earlier than `before' and we want them plotted the
+opposite way around on the x-axis:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pdf.long }\OtherTok{\textless{}{-}}\NormalTok{ pdf }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols=}\DecValTok{2}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{names\_to =} \StringTok{"time"}\NormalTok{)}
+\NormalTok{pdf.long}\SpecialCharTok{$}\NormalTok{time }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(pdf.long}\SpecialCharTok{$}\NormalTok{time, }\AttributeTok{levels=}\FunctionTok{c}\NormalTok{(}\StringTok{"before"}\NormalTok{,}\StringTok{"after"}\NormalTok{))}
+\NormalTok{pdf.long}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 24 x 3
+   subj  time    value
+   <chr> <fct>   <dbl>
+ 1 a     before 0.216 
+ 2 a     after  0.796 
+ 3 b     before 0.0632
+ 4 b     after  0.825 
+ 5 c     before 0.522 
+ 6 c     after  0.883 
+ 7 d     before 0.504 
+ 8 d     after  0.130 
+ 9 e     before 0.120 
+10 e     after  0.138 
+# ... with 14 more rows
+\end{verbatim}
+
+Here is the basic boxplot. I'm using the \texttt{theme\_pubclean()} from
+the \texttt{ggpubr} package:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggpubr)}
+
+\NormalTok{p0 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(pdf.long, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{time, }\AttributeTok{y=}\NormalTok{value)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{fill=}\StringTok{\textquotesingle{}dodgerblue\textquotesingle{}}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_pubclean}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Time"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Value"}\NormalTok{)}
+
+\NormalTok{p0}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-16-1.pdf}
+
+}
+
+\end{figure}
+
+To add the p-values for paired data we need to add in extra information
+related to the test in the \texttt{test.args()} argument. Make sure that
+the parameters are in a list.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p0  }\SpecialCharTok{+}
+    \FunctionTok{stat\_signif}\NormalTok{(}\AttributeTok{comparisons=}\FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"before"}\NormalTok{, }\StringTok{"after"}\NormalTok{)),}
+                \AttributeTok{test=}\StringTok{"t.test"}\NormalTok{, }
+                \AttributeTok{test.args=}\FunctionTok{list}\NormalTok{(}\AttributeTok{alternative =} \StringTok{"two.sided"}\NormalTok{, }
+                               \AttributeTok{var.equal =} \ConstantTok{FALSE}\NormalTok{, }
+                               \AttributeTok{paired=}\NormalTok{T))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-17-1.pdf}
+
+}
+
+\end{figure}
+
+\ldots{} in the above example, we perform a two-tailed paired t-test not
+assuming equal variances. If we wished to perform a one-tailed t-test,
+testing if the `before' mean is significantly lower than the `after'
+group, we can change that in the \texttt{test.args} parameter. Recall,
+that for a one-sided t-test, the p-value will be half the value of a
+two-tailed t-test:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{t.test}\NormalTok{(pdf}\SpecialCharTok{$}\NormalTok{before, pdf}\SpecialCharTok{$}\NormalTok{after, }\AttributeTok{paired=}\NormalTok{T, }\AttributeTok{alternative =} \StringTok{"less"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+    Paired t-test
+
+data:  pdf$before and pdf$after
+t = -2.2853, df = 11, p-value = 0.02156
+alternative hypothesis: true difference in means is less than 0
+95 percent confidence interval:
+        -Inf -0.04176365
+sample estimates:
+mean of the differences 
+             -0.1950014 
+\end{verbatim}
+
+\ldots{} and the plot would look as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p0  }\SpecialCharTok{+}
+    \FunctionTok{stat\_signif}\NormalTok{(}\AttributeTok{comparisons=}\FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"before"}\NormalTok{, }\StringTok{"after"}\NormalTok{)),}
+                \AttributeTok{test=}\StringTok{"t.test"}\NormalTok{, }
+                \AttributeTok{test.args=}\FunctionTok{list}\NormalTok{(}\AttributeTok{alternative =} \StringTok{"less"}\NormalTok{, }
+                               \AttributeTok{var.equal =} \ConstantTok{FALSE}\NormalTok{, }
+                               \AttributeTok{paired=}\NormalTok{T))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-19-1.pdf}
+
+}
+
+\end{figure}
+
+As before, we can add stars using the \texttt{map\_signif\_level\ =\ T}
+argument. I also increase the font size using \texttt{textsize\ =\ 7}
+and reduce the sides of the horizontal bar with \texttt{tip\_length=0}.
+\texttt{vjust=0.5} pushes the asterisk closer to the horizontal line.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ p0  }\SpecialCharTok{+}
+    \FunctionTok{stat\_signif}\NormalTok{(}\AttributeTok{comparisons=}\FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"before"}\NormalTok{, }\StringTok{"after"}\NormalTok{)),}
+                \AttributeTok{test=}\StringTok{"t.test"}\NormalTok{, }
+                \AttributeTok{map\_signif\_level =}\NormalTok{ T,}
+                \AttributeTok{textsize =} \DecValTok{7}\NormalTok{,}
+                \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{,}
+                \AttributeTok{vjust=}\FloatTok{0.5}\NormalTok{,}
+                \AttributeTok{test.args=}\FunctionTok{list}\NormalTok{(}\AttributeTok{alternative =} \StringTok{"less"}\NormalTok{, }
+                               \AttributeTok{var.equal =} \ConstantTok{FALSE}\NormalTok{, }
+                               \AttributeTok{paired=}\NormalTok{T))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-20-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{adding-significance-to-multiple-groups}{%
+\subsection{Adding Significance to Multiple
+Groups}\label{adding-significance-to-multiple-groups}}
+
+Adding stars or p-values to plots can also be done when there are more
+than two groups. Obviously, the more groups that exist, the more
+potential pairwise comparisons there are. It should be noted that by
+default, \texttt{geom\_signif()} will run pairwise wilcoxon ranked sum
+tests or independent t-tests on each of hte pairwise comparisons. This
+may be what you wish to report, but more often we are likely to want to
+report posthoc comparisons or such like. I personally would still
+advocate for using the Tukey Significance Letters as shown below. It's
+also possible to directly annotate plots ourselves with
+\texttt{geom\_signif()} - see below. But first, let's look at how it
+does add these pairwise t-tests p-values to plots.
+
+Here is some example data with three groups:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{10}\NormalTok{)}
+
+\NormalTok{mdf }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n=}\DecValTok{10}\NormalTok{,}\AttributeTok{mean=}\FloatTok{3.8}\NormalTok{, }\AttributeTok{sd =} \FloatTok{0.5}\NormalTok{), }
+             \FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n=}\DecValTok{12}\NormalTok{,}\AttributeTok{mean=}\FloatTok{3.1}\NormalTok{, }\AttributeTok{sd =} \FloatTok{0.4}\NormalTok{),}
+             \FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n=}\DecValTok{15}\NormalTok{, }\AttributeTok{mean=}\FloatTok{3.5}\NormalTok{, }\AttributeTok{sd=}\FloatTok{0.3}\NormalTok{)),}
+  \AttributeTok{grp =} \FunctionTok{c}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\StringTok{"A"}\NormalTok{,}\DecValTok{10}\NormalTok{), }\FunctionTok{rep}\NormalTok{(}\StringTok{"B"}\NormalTok{,}\DecValTok{12}\NormalTok{), }\FunctionTok{rep}\NormalTok{(}\StringTok{"C"}\NormalTok{,}\DecValTok{15}\NormalTok{))}
+\NormalTok{)}
+\FunctionTok{head}\NormalTok{(mdf)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+    values grp
+1 3.809373   A
+2 3.707874   A
+3 3.114335   A
+4 3.500416   A
+5 3.947273   A
+6 3.994897   A
+\end{verbatim}
+
+If we run a one way ANOVA, with posthoc tests, we can see how the groups
+differ:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit }\OtherTok{\textless{}{-}} \FunctionTok{aov}\NormalTok{(}\AttributeTok{data =}\NormalTok{ mdf, values }\SpecialCharTok{\textasciitilde{}}\NormalTok{ grp)}
+
+\FunctionTok{summary}\NormalTok{(fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+            Df Sum Sq Mean Sq F value Pr(>F)  
+grp          2  0.983  0.4917   4.503 0.0184 *
+Residuals   34  3.713  0.1092                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{TukeyHSD}\NormalTok{(fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = values ~ grp, data = mdf)
+
+$grp
+          diff        lwr         upr     p adj
+B-A -0.4241943 -0.7709278 -0.07746088 0.0136482
+C-A -0.2462637 -0.5768611  0.08433364 0.1766410
+C-B  0.1779306 -0.1357016  0.49156280 0.3571951
+\end{verbatim}
+
+This might be how we would plot the data in a basic boxplot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pb }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(mdf, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{grp, }\AttributeTok{y=}\NormalTok{values, }\AttributeTok{fill=}\NormalTok{grp)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"\#cceeee"}\NormalTok{, }\StringTok{"\#bbebbe"}\NormalTok{, }\StringTok{"\#dddeee"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_pubclean}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Values"}\NormalTok{)}
+
+\NormalTok{pb}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-23-1.pdf}
+
+}
+
+\end{figure}
+
+We can add our stars and NS in the same way as before. We just need to
+put all the relevant comparisons we wish to make in the list, and add
+\texttt{step\_increase=} to make sure that the lines do not overlap each
+other. Note that the order in which the horizontal lines are added onto
+the plot are dictated by the order in which they occur in the list.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pb }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{, }\StringTok{"B"}\NormalTok{),}
+                                 \FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{, }\StringTok{"C"}\NormalTok{),}
+                                 \FunctionTok{c}\NormalTok{(}\StringTok{"B"}\NormalTok{, }\StringTok{"C"}\NormalTok{)),}
+              \AttributeTok{test =} \StringTok{"t.test"}\NormalTok{, }
+              \AttributeTok{step\_increase =} \FloatTok{0.075}\NormalTok{,}
+              \AttributeTok{map\_signif\_level =} \ConstantTok{TRUE}\NormalTok{, }
+              \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-24-1.pdf}
+
+}
+
+\end{figure}
+
+This way of plotting stars and significance levels is completely
+functional, however, another options would be to manually add them (see
+section below). One major advantage of this is that we can plot posthoc
+tests rather than running t-tests on each comparison.
+
+\hypertarget{adding-stars-or-p-values-manually}{%
+\subsection{\texorpdfstring{\textbf{Adding stars or p-values
+manually}}{Adding stars or p-values manually}}\label{adding-stars-or-p-values-manually}}
+
+We can compute the individual p-values separately and then use the
+\texttt{annotations} parameter to draw them. The code below grabs the
+p-values for Tukey HSD posthoc comparions between each of the groups
+from the previous example.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pvals }\OtherTok{\textless{}{-}} \FunctionTok{round}\NormalTok{(}\FunctionTok{TukeyHSD}\NormalTok{(fit)}\SpecialCharTok{$}\NormalTok{grp[,}\DecValTok{4}\NormalTok{],}\DecValTok{2}\NormalTok{)}
+\NormalTok{pvals}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ B-A  C-A  C-B 
+0.01 0.18 0.36 
+\end{verbatim}
+
+We can add these manually to our plot. The \texttt{y\_position} dictates
+how high up the y-axis each lines goes. The \texttt{xmin} and
+\texttt{xmax} dictate the start and end point of each horizontal line.
+Group A starts at 1 on the x-axis, Group B at 2 and Group C at 3.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pb }\SpecialCharTok{+} 
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{y\_position =} \FunctionTok{c}\NormalTok{(}\FloatTok{4.1}\NormalTok{,}\FloatTok{4.25}\NormalTok{,}\FloatTok{4.4}\NormalTok{), }
+              \AttributeTok{xmin =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{), }
+              \AttributeTok{xmax =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{), }
+              \AttributeTok{annotation =}\NormalTok{ pvals,}
+              \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-26-1.pdf}
+
+}
+
+\end{figure}
+
+Instead of passing a vector of annotations that is an object, you can
+write your own vector like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pb }\SpecialCharTok{+} 
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{y\_position =} \FunctionTok{c}\NormalTok{(}\FloatTok{4.1}\NormalTok{,}\FloatTok{4.25}\NormalTok{,}\FloatTok{4.4}\NormalTok{), }
+              \AttributeTok{xmin =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{), }
+              \AttributeTok{xmax =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{), }
+              \AttributeTok{annotation =} \FunctionTok{c}\NormalTok{(}\StringTok{"p \textless{} .05"}\NormalTok{, }\StringTok{"NS"}\NormalTok{, }\StringTok{"NS"}\NormalTok{),}
+              \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-27-1.pdf}
+
+}
+
+\end{figure}
+
+If you didn't want to mess around with \texttt{xmin} and \texttt{xmax},
+you can pass a list of comparisons. You just need to then supply the
+annotations and the \texttt{y\_position}. Here, I switched up the order
+in which the lines were drawn:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pb }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{,}\StringTok{"B"}\NormalTok{),}
+                                 \FunctionTok{c}\NormalTok{(}\StringTok{"B"}\NormalTok{,}\StringTok{"C"}\NormalTok{),}
+                                 \FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{,}\StringTok{"C"}\NormalTok{)), }
+              \AttributeTok{y\_position =} \FunctionTok{c}\NormalTok{(}\FloatTok{4.1}\NormalTok{,}\FloatTok{4.25}\NormalTok{,}\FloatTok{4.4}\NormalTok{),}
+             \AttributeTok{annotation =} \FunctionTok{c}\NormalTok{(}\StringTok{"p \textless{} .05"}\NormalTok{, }\StringTok{"NS"}\NormalTok{, }\StringTok{"NS"}\NormalTok{),}
+              \AttributeTok{tip\_length =} \FloatTok{0.01}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-28-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{adding-significance-to-bar-graphs}{%
+\subsection{Adding Significance to Bar
+graphs}\label{adding-significance-to-bar-graphs}}
+
+Adding stars or p-values to bar graphs is the same as with boxplots. We
+add layers to the plot using \texttt{geom\_signif()}. If we produce the
+bar graph with \texttt{geom\_col()} then we are plotting summary
+information without the underlying raw data, we will need to add
+information to the graph using annotations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Group =} \FunctionTok{c}\NormalTok{(}\StringTok{"G1"}\NormalTok{,}\StringTok{"G1"}\NormalTok{,}\StringTok{"G2"}\NormalTok{,}\StringTok{"G2"}\NormalTok{),}
+                   \AttributeTok{Subject =} \FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{,}\StringTok{"B"}\NormalTok{,}\StringTok{"A"}\NormalTok{,}\StringTok{"B"}\NormalTok{),}
+                   \AttributeTok{Value =} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{12}\NormalTok{,}\DecValTok{17}\NormalTok{))}
+
+\NormalTok{dat}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  Group Subject Value
+1    G1       A     3
+2    G1       B     2
+3    G2       A    12
+4    G2       B    17
+\end{verbatim}
+
+This dataframe just has four rows, with the \texttt{Value} column
+showing the height of the bar to be plotted. We can plot a bar graph
+using \texttt{geom\_col()} and we include
+\texttt{position=\textquotesingle{}dodge\textquotesingle{}} to make a
+side-by-side bar chart as opposed to a stacked bar chart. I've also used
+the \texttt{theme\_pubclean()} from the \texttt{ggpubr} package and set
+some custom fills. I assign this plot to the object \texttt{p} so we can
+modify other layers without rewriting the code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(dat, }\FunctionTok{aes}\NormalTok{(Group,Value,}\AttributeTok{fill=}\NormalTok{Subject))}\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{\textquotesingle{}dodge\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_pubclean}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"\#ababde"}\NormalTok{,}\StringTok{"\#123abc"}\NormalTok{))}
+
+\NormalTok{p}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-30-1.pdf}
+
+}
+
+\end{figure}
+
+To add either stars or p-values we just use \texttt{geom\_signif()}.
+First, we'll annotate the A vs B comparisons. We dictate the position of
+the horizontal line we add with \texttt{xmin} and \texttt{xmax} and
+\texttt{y\_position}. The mid-point between the light and dark blue bars
+are at \texttt{x=1} for G1 and \texttt{x=2} for G2. This helps us
+determine what values to use for \texttt{xmin} and \texttt{xmax}. The
+values of \texttt{y\_position} are picked based on the values of A \& B
+in each group. Using \texttt{tip\_length=0} sets there to be no lines
+coming down from the edges of the horizontal black lines we add. If we
+wish to have some of those downward lines, then a really small value
+like 0.03 would probably be best.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p }\SpecialCharTok{+} 
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{y\_position =} \FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{18}\NormalTok{), }
+              \AttributeTok{xmin =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.8}\NormalTok{,}\FloatTok{1.8}\NormalTok{), }
+              \AttributeTok{xmax =} \FunctionTok{c}\NormalTok{(}\FloatTok{1.2}\NormalTok{,}\FloatTok{2.2}\NormalTok{), }
+              \AttributeTok{annotation =} \FunctionTok{c}\NormalTok{(}\StringTok{"NS"}\NormalTok{,}\StringTok{"**"}\NormalTok{),}
+              \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-31-1.pdf}
+
+}
+
+\end{figure}
+
+To add the horizontal black line between our two groups (G1 and G2), we
+add another \texttt{geom\_signif()} layer. Because this is a comparison
+between the levels of our groups in our original dataframe, we use the
+\texttt{comparisons=} parameter. That will add the x positions -
+although it is still possible to do these manually should we wish. We
+can also set the \texttt{y\_position()} ourselves.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p }\SpecialCharTok{+} 
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{y\_position =} \FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{18}\NormalTok{), }
+              \AttributeTok{xmin =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.8}\NormalTok{,}\FloatTok{1.8}\NormalTok{), }
+              \AttributeTok{xmax =} \FunctionTok{c}\NormalTok{(}\FloatTok{1.2}\NormalTok{,}\FloatTok{2.2}\NormalTok{), }
+              \AttributeTok{annotation =} \FunctionTok{c}\NormalTok{(}\StringTok{"NS"}\NormalTok{,}\StringTok{"**"}\NormalTok{),}
+              \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"G1"}\NormalTok{,}\StringTok{"G2"}\NormalTok{)), }
+              \AttributeTok{y\_position =} \DecValTok{21}\NormalTok{,}
+              \AttributeTok{annotation =} \StringTok{"p \textless{} 0.001"}\NormalTok{,}
+              \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-32-1.pdf}
+
+}
+
+\end{figure}
+
+Clearly, you wouldn't mix numerical p-values with stars like this on an
+actual figure, but for the purpose of illustration, you can write
+anything you like inside \texttt{annotation\ =} and it will appear on
+the plot.
+
+\hypertarget{adding-significance-to-dynamite-plots}{%
+\subsection{Adding significance to dynamite
+plots}\label{adding-significance-to-dynamite-plots}}
+
+I don't like dynamite plots. However, it is possible to add these
+significance annotations to them. It is done in the identical way to the
+bar charts above. Note how when we add extra annotations, the plot
+margins automatically adjust, so we don't need to worry about rescaling
+the axes.
+
+Let's use some example data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat1 }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Group =} \FunctionTok{c}\NormalTok{(}\StringTok{"G1"}\NormalTok{,}\StringTok{"G1"}\NormalTok{,}\StringTok{"G2"}\NormalTok{,}\StringTok{"G2"}\NormalTok{),}
+                   \AttributeTok{Subject =} \FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{,}\StringTok{"B"}\NormalTok{,}\StringTok{"A"}\NormalTok{,}\StringTok{"B"}\NormalTok{),}
+                   \AttributeTok{Mean =} \FunctionTok{c}\NormalTok{(}\FloatTok{1.1}\NormalTok{, }\FloatTok{1.4}\NormalTok{, }\FloatTok{2.5}\NormalTok{, }\FloatTok{2.0}\NormalTok{),}
+                   \AttributeTok{Serr =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{, }\FloatTok{0.2}\NormalTok{, }\FloatTok{0.35}\NormalTok{, }\FloatTok{0.3}\NormalTok{))}
+
+\NormalTok{dat1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+  Group Subject Mean Serr
+1    G1       A  1.1 0.10
+2    G1       B  1.4 0.20
+3    G2       A  2.5 0.35
+4    G2       B  2.0 0.30
+\end{verbatim}
+
+Here we plot these data in the same manner as with the bar charts above,
+but we add error bars manually using \texttt{geom\_errorbar()} based on
+the summary data in the dataframe. Note that with these stacked bar
+charts, we also need to add \texttt{position=position\_dodge(.9)} to
+ensure the error bars stay in the middle of the respective bars.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(dat1, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Group, }\AttributeTok{y=}\NormalTok{Mean, }\AttributeTok{fill=}\NormalTok{Subject)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{color=}\StringTok{"black"}\NormalTok{, }\AttributeTok{position=}\FunctionTok{position\_dodge}\NormalTok{()) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}\#999999\textquotesingle{}}\NormalTok{,}\StringTok{\textquotesingle{}\#E69F00\textquotesingle{}}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_pubclean}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_errorbar}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{ymin =}\NormalTok{ Mean}\SpecialCharTok{{-}}\NormalTok{Serr, }
+                    \AttributeTok{ymax =}\NormalTok{ Mean}\SpecialCharTok{+}\NormalTok{Serr), }
+                  \AttributeTok{width=}\NormalTok{.}\DecValTok{2}\NormalTok{,}
+                  \AttributeTok{position=}\FunctionTok{position\_dodge}\NormalTok{(.}\DecValTok{9}\NormalTok{)) }
+
+\NormalTok{p1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-34-1.pdf}
+
+}
+
+\end{figure}
+
+Using \texttt{geom\_signif()} we manually add the stars and other
+annotations:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p1 }\SpecialCharTok{+} 
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{y\_position =} \FunctionTok{c}\NormalTok{(}\FloatTok{1.75}\NormalTok{,}\FloatTok{3.0}\NormalTok{), }
+              \AttributeTok{xmin =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.8}\NormalTok{,}\FloatTok{1.8}\NormalTok{), }
+              \AttributeTok{xmax =} \FunctionTok{c}\NormalTok{(}\FloatTok{1.2}\NormalTok{,}\FloatTok{2.2}\NormalTok{), }
+              \AttributeTok{annotation =} \FunctionTok{c}\NormalTok{(}\StringTok{"*"}\NormalTok{,}\StringTok{"NS"}\NormalTok{),}
+              \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-35-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{adding-significance-to-other-plots}{%
+\subsection{Adding significance to other
+plots}\label{adding-significance-to-other-plots}}
+
+We can add significance labels to other plots that show raw or summary
+data. Here are two examples - dot plots and strip plots. We'll use a
+data set looking at viral load \texttt{values} in subjects under
+different exposures risks (\texttt{condition}) who are in different
+treatment groups \texttt{group}.
+
+Load in the data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"data\_raw/viralload.csv"}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+     values subjs group condition
+1  7.824307    s1     B       low
+2  3.921456    s2     B       low
+3 10.001437    s3     C       low
+4  4.035973    s4     A       low
+5  8.886767    s5     B       low
+6  3.003866    s6     B       low
+\end{verbatim}
+
+\textbf{Dot plots}
+
+To plot dot plots we need to calculate the summary statistics we wish to
+plot. Here, I determine the mean and standard deviation of each
+condition by group. I also refactor the \texttt{condition} variable so
+that in the plot it will appear in the order high, medium,low.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df.sum }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(group, condition) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{sd =} \FunctionTok{sd}\NormalTok{(values),}
+    \AttributeTok{mean =} \FunctionTok{mean}\NormalTok{(values)}
+\NormalTok{  )}
+\NormalTok{df.sum}\SpecialCharTok{$}\NormalTok{condition }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(df.sum}\SpecialCharTok{$}\NormalTok{condition, }\AttributeTok{levels=}\FunctionTok{c}\NormalTok{(}\StringTok{"low"}\NormalTok{,}\StringTok{"medium"}\NormalTok{,}\StringTok{"high"}\NormalTok{))}
+
+\NormalTok{df.sum}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 12 x 4
+# Groups:   group [4]
+   group condition    sd  mean
+   <chr> <fct>     <dbl> <dbl>
+ 1 A     high       6.12 24.4 
+ 2 A     low        3.46  6.83
+ 3 A     medium     5.00  9.72
+ 4 B     high       5.11 16.3 
+ 5 B     low        4.48  9.17
+ 6 B     medium     6.53  9.65
+ 7 C     high       4.92 10.2 
+ 8 C     low        3.36  6.46
+ 9 C     medium     4.73 13.1 
+10 D     high       9.82 13.2 
+11 D     low        3.90  9.74
+12 D     medium     4.87 11.1 
+\end{verbatim}
+
+This is the plot with annotated error bars. Essentially, in
+\texttt{geom\_signif()} we just determine the x and y locations of each
+thing we wish to plot. Here, I am plotting significance stars to
+indicate where each condition is significantly different from each other
+condition in posthoc tests.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df.sum, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ group, }\AttributeTok{y =}\NormalTok{ mean, }\AttributeTok{color=}\NormalTok{condition)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_errorbar}\NormalTok{(}
+    \FunctionTok{aes}\NormalTok{(}\AttributeTok{ymin =}\NormalTok{ mean}\SpecialCharTok{{-}}\NormalTok{sd, }
+        \AttributeTok{ymax =}\NormalTok{ mean}\SpecialCharTok{+}\NormalTok{sd),}
+    \AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\FloatTok{0.3}\NormalTok{), }
+    \AttributeTok{width =} \FloatTok{0.2}\NormalTok{,}
+    \AttributeTok{linewidth =} \DecValTok{1}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{2}\NormalTok{,}
+             \AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\FloatTok{0.3}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"\#bacddd"}\NormalTok{, }\StringTok{"\#E7B800"}\NormalTok{,}\StringTok{"\#bb3300"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Group"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Viral Load"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{xmin =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\FloatTok{1.1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\FloatTok{2.1}\NormalTok{,}\DecValTok{3}\NormalTok{),}
+              \AttributeTok{xmax =} \FunctionTok{c}\NormalTok{(}\FloatTok{1.1}\NormalTok{,}\FloatTok{0.9}\NormalTok{,}\FloatTok{2.1}\NormalTok{,}\FloatTok{1.9}\NormalTok{,}\FloatTok{2.9}\NormalTok{),}
+              \AttributeTok{y\_position =} \FunctionTok{c}\NormalTok{(}\DecValTok{32}\NormalTok{,}\FloatTok{33.5}\NormalTok{,}\DecValTok{23}\NormalTok{,}\FloatTok{24.5}\NormalTok{,}\FloatTok{19.5}\NormalTok{),}
+              \AttributeTok{annotation =} \FunctionTok{c}\NormalTok{(}\StringTok{"***"}\NormalTok{, }\StringTok{"***"}\NormalTok{,}\StringTok{"*"}\NormalTok{, }\StringTok{"**"}\NormalTok{,}\StringTok{"**"}\NormalTok{),}
+              \AttributeTok{tip\_length =} \FloatTok{0.01}\NormalTok{,}
+              \AttributeTok{color=}\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{,}
+              \AttributeTok{vjust=}\FloatTok{0.6}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-38-1.pdf}
+
+}
+
+\end{figure}
+
+\textbf{Strip plots}
+
+Here's another example. This time, we'll plot the raw data only from
+group A above in the form of a strip plot. Then we add the stars with
+\texttt{geom\_signif}. We can use \texttt{comparisons=} to do the hard
+work of determining the x-axis.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dfa }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(group}\SpecialCharTok{==}\StringTok{"A"}\NormalTok{)}
+\NormalTok{dfa}\SpecialCharTok{$}\NormalTok{condition }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(dfa}\SpecialCharTok{$}\NormalTok{condition, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"low"}\NormalTok{,}\StringTok{"medium"}\NormalTok{,}\StringTok{"high"}\NormalTok{))}
+
+\FunctionTok{ggplot}\NormalTok{(dfa, }
+       \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ condition, }\AttributeTok{y =}\NormalTok{ values, }\AttributeTok{color=}\NormalTok{condition)) }\SpecialCharTok{+}
+\FunctionTok{geom\_jitter}\NormalTok{(}\AttributeTok{width=}\NormalTok{.}\DecValTok{085}\NormalTok{, }\AttributeTok{alpha=}\NormalTok{.}\DecValTok{8}\NormalTok{, }\AttributeTok{size=}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"\#bacddd"}\NormalTok{, }\StringTok{"\#E7B800"}\NormalTok{,}\StringTok{"\#bb3300"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Viral Load"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Condition"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_signif}\NormalTok{(}\AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"low"}\NormalTok{,}\StringTok{"medium"}\NormalTok{),}
+                                 \FunctionTok{c}\NormalTok{(}\StringTok{"medium"}\NormalTok{,}\StringTok{"high"}\NormalTok{),}
+                                 \FunctionTok{c}\NormalTok{(}\StringTok{"low"}\NormalTok{,}\StringTok{"high"}\NormalTok{)),}
+              \AttributeTok{y\_position =} \FunctionTok{c}\NormalTok{(}\DecValTok{32}\NormalTok{,}\FloatTok{33.5}\NormalTok{,}\DecValTok{35}\NormalTok{),}
+              \AttributeTok{annotation =} \FunctionTok{c}\NormalTok{(}\StringTok{"NS"}\NormalTok{,}\StringTok{"***"}\NormalTok{, }\StringTok{"***"}\NormalTok{),}
+              \AttributeTok{tip\_length =} \DecValTok{0}\NormalTok{,}
+              \AttributeTok{color=}\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{,}
+              \AttributeTok{step\_increase =} \FloatTok{0.075}\NormalTok{,}
+              \AttributeTok{vjust=}\NormalTok{.}\DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-39-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{other-r-packages-for-adding-significance-levels}{%
+\subsection{\texorpdfstring{\textbf{Other R packages for adding
+significance
+levels}}{Other R packages for adding significance levels}}\label{other-r-packages-for-adding-significance-levels}}
+
+Not to sidetrack too much, but other R packages also offer the
+possibility of interfacing with ggplots and adding significance levels.
+One such example that could be looked at is the \texttt{ggpubr} package,
+which actually uses \texttt{geom\_signif()} in the background but has
+some nice additional features. I won't give a full overview of how this
+package achieves much of what we have shown above - please refer to
+\href{http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/76-add-p-values-and-significance-levels-to-ggplots/}{some
+of the help guides}. However, here are a couple of quick examples.
+
+Let's use the dataset \texttt{mdf} which has two columns:
+\texttt{values} and \texttt{group}. There are three groups in this
+dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(mdf)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+    values grp
+1 3.809373   A
+2 3.707874   A
+3 3.114335   A
+4 3.500416   A
+5 3.947273   A
+6 3.994897   A
+\end{verbatim}
+
+This is the plot we previously made:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pb}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-41-1.pdf}
+
+}
+
+\end{figure}
+
+The syntax to add p-values is with \texttt{stat\_compare\_means()} in a
+very similar way to \texttt{geom\_signif()}. Note we can also add the
+p-value from the One-Way ANVOA directly onto the plot here also, if we
+wish:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggpubr)}
+
+\NormalTok{pb }\SpecialCharTok{+}  
+  \FunctionTok{stat\_compare\_means}\NormalTok{(}\AttributeTok{method =} \StringTok{"anova"}\NormalTok{, }\AttributeTok{label.y =} \DecValTok{5}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{stat\_compare\_means}\NormalTok{(}\AttributeTok{comparisons =} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{,}\StringTok{"B"}\NormalTok{),}
+                                        \FunctionTok{c}\NormalTok{(}\StringTok{"B"}\NormalTok{,}\StringTok{"C"}\NormalTok{),}
+                                        \FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{,}\StringTok{"C"}\NormalTok{)), }
+                     \AttributeTok{method =} \StringTok{"t.test"}\NormalTok{, }
+                     \AttributeTok{label.y =} \FunctionTok{c}\NormalTok{(}\FloatTok{4.15}\NormalTok{,}\FloatTok{4.3}\NormalTok{,}\FloatTok{4.45}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-42-1.pdf}
+
+}
+
+\end{figure}
+
+A nice feature of this package is the ability to compare individual
+groups to a reference group or control. Let's create some data to do
+this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{15}\NormalTok{)}
+\NormalTok{xdf }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{values =} \FunctionTok{c}\NormalTok{(}
+\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n =} \DecValTok{20}\NormalTok{, }\AttributeTok{mean =} \DecValTok{0}\NormalTok{, }\AttributeTok{sd =}\NormalTok{ .}\DecValTok{4}\NormalTok{),}
+\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n =} \DecValTok{20}\NormalTok{, }\AttributeTok{mean =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{sd =}\NormalTok{ .}\DecValTok{7}\NormalTok{),}
+\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n =} \DecValTok{20}\NormalTok{, }\AttributeTok{mean =} \FloatTok{0.6}\NormalTok{, }\AttributeTok{sd =}\NormalTok{ .}\DecValTok{15}\NormalTok{),}
+\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n =} \DecValTok{20}\NormalTok{, }\AttributeTok{mean =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{sd =}\NormalTok{ .}\DecValTok{4}\NormalTok{),}
+\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n =} \DecValTok{20}\NormalTok{, }\AttributeTok{mean =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{sd =}\NormalTok{ .}\DecValTok{4}\NormalTok{),}
+\FunctionTok{rnorm}\NormalTok{(}\AttributeTok{n =} \DecValTok{20}\NormalTok{, }\AttributeTok{mean =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{sd =}\NormalTok{ .}\DecValTok{5}\NormalTok{)}
+\NormalTok{),}
+\AttributeTok{groups =} \FunctionTok{rep}\NormalTok{(LETTERS[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{6}\NormalTok{],}\AttributeTok{each=}\DecValTok{20}\NormalTok{)}
+\NormalTok{)}
+
+\FunctionTok{head}\NormalTok{(xdf)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+      values groups
+1  0.1035291      A
+2  0.7324483      A
+3 -0.1358474      A
+4  0.3588793      A
+5  0.1952065      A
+6 -0.5021543      A
+\end{verbatim}
+
+These data could be plotted as follows. I'm using the
+\texttt{brewer.greens} color palette from the \texttt{pals} package.:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pg }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(xdf, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{groups, }\AttributeTok{y=}\NormalTok{values, }\AttributeTok{fill=}\NormalTok{groups)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\NormalTok{pals}\SpecialCharTok{::}\FunctionTok{brewer.greens}\NormalTok{(}\DecValTok{6}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_pubclean}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Values"}\NormalTok{) }
+
+\NormalTok{pg}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-44-1.pdf}
+
+}
+
+\end{figure}
+
+Below, using \texttt{ref.group="A"} we run independent t-tests comparing
+each group to A. Instead of notating p-values here, we use asterisks by
+including a \texttt{label=} option.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{maxvals }\OtherTok{\textless{}{-}}\NormalTok{ xdf }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(groups) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{maxval =} \FunctionTok{max}\NormalTok{(values)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{pull}\NormalTok{(maxval) }
+
+\NormalTok{pg }\SpecialCharTok{+}  
+  \FunctionTok{stat\_compare\_means}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{after\_stat}\NormalTok{(p.signif)),}
+                   \AttributeTok{method =} \StringTok{"t.test"}\NormalTok{, }\AttributeTok{ref.group =} \StringTok{"A"}
+\NormalTok{                   )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-45-1.pdf}
+
+}
+
+\end{figure}
 
 \hypertarget{adding-tukeys-significance-letters}{%
 \section{Adding Tukey's Significance
 Letters}\label{adding-tukeys-significance-letters}}
+
+Rather than denoting pairwise comparisons with stars or p-values, I
+prefer to use letter notation. Letters that are the same between two
+groups indicate no significant differences between those groups. Letters
+that differ between two groups indicate that those groups have
+significant differencess.
 
 \textbf{One-Way ANOVA example}
 
@@ -3629,7 +5172,7 @@ We can plot the basic boxplot of these data like this:
 
 \begin{figure}[H]
 
-{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-3-1.pdf}
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-47-1.pdf}
 
 }
 
@@ -3738,11 +5281,18 @@ higher than the max value.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-6-1.pdf}
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-50-1.pdf}
 
 }
 
 \end{figure}
+
+In the above plot, we can see that Group B is not significantly
+different from Group C or Group F (because both share the \texttt{b} and
+\texttt{c} letter, but is significantly different from the other groups.
+Groups D and E are not significantly different from each other (they
+both have an \texttt{a}) but are significantly different from all other
+groups.
 
 We should reorder the plot though to make it more readable:
 
@@ -3760,7 +5310,7 @@ We should reorder the plot though to make it more readable:
 
 \begin{figure}[H]
 
-{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-7-1.pdf}
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-51-1.pdf}
 
 }
 
@@ -3782,7 +5332,7 @@ We can nudge the letters up a bit using \texttt{vjust=0}:
 
 \begin{figure}[H]
 
-{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-8-1.pdf}
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-52-1.pdf}
 
 }
 
@@ -3809,7 +5359,7 @@ the letters bold in this example using \texttt{fontface="bold"}.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-9-1.pdf}
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-53-1.pdf}
 
 }
 
@@ -3837,7 +5387,7 @@ position.
 
 \begin{figure}[H]
 
-{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-10-1.pdf}
+{\centering \includegraphics{./labelsig_files/figure-pdf/unnamed-chunk-54-1.pdf}
 
 }
 
