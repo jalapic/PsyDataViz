@@ -143,7 +143,6 @@ ggplot(rr,aes(x=Name, y=PctChange)) +
         ) 
 ```
 
-
 ![](img/dot.png)
 
 <br>
