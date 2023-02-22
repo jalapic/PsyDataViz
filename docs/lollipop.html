@@ -256,7 +256,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#lollipop-charts-adding-baselines-and-highlighting" id="toc-lollipop-charts-adding-baselines-and-highlighting" class="nav-link active" data-scroll-target="#lollipop-charts-adding-baselines-and-highlighting"><span class="toc-section-number">8.0.1</span>  Lollipop Charts adding Baselines and Highlighting</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -282,9 +288,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In <code>ggplot2</code> we can create them using <code>geom_segment()</code> to create the line and <code>geom_point()</code> to create the dot.</p>
 <p>The dataset we’ll use in this tutorial is <code>station_usage</code> which provides information on passenger numbers using UK train stations during 2017. We’ll just keep the variables we need and clean up the column names. We also need to edit the <code>Passengers</code> column to ensure it’s numeric after we remove the commas.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data_raw/station_usage.csv"</span>)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>rail <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data_raw/station_usage.csv"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df[<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">15</span>,<span class="dv">20</span>)]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> rail[<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">15</span>,<span class="dv">20</span>)]</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"TLC"</span>,<span class="st">"Name"</span>,<span class="st">"Region"</span>,<span class="st">"Network"</span>,<span class="st">"Passengers"</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Passengers <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">","</span>,<span class="st">""</span>,df<span class="sc">$</span>Passengers))</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -369,12 +375,96 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="lollipop_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="576"></p>
 </div>
 </div>
-<p>To do:</p>
-<p>Graphs from a baseline value (negative/positive) values geom_segment( aes(x=x, xend=x, y=1, yend=y), color=“grey”) +</p>
-<p>Highlight a group (grey with accent color) https://r-graph-gallery.com/304-highlight-a-group-in-lollipop.html</p>
-<p>http://uc-r.github.io/lollipop</p>
+<p><br></p>
+<section id="lollipop-charts-adding-baselines-and-highlighting" class="level3" data-number="8.0.1">
+<h3 data-number="8.0.1" class="anchored" data-anchor-id="lollipop-charts-adding-baselines-and-highlighting"><span class="header-section-number">8.0.1</span> Lollipop Charts adding Baselines and Highlighting</h3>
+<p>Sometimes it helps to visualize changes from some baseline level. In the following example, we are going to look at percent changes in rail passengers usage from 2017 compared to the previous year. Below, we grab all the stations in the “East Midlands” region and collect and rename the columns we want. We also ensure that the columns we need to be numeric are:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> rail[rail<span class="sc">$</span>Region<span class="sc">==</span><span class="st">"East Midlands"</span>,]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> rr[<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">15</span>,<span class="dv">20</span>,<span class="dv">27</span>)]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(rr) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"TLC"</span>,<span class="st">"Name"</span>,<span class="st">"Region"</span>,<span class="st">"Network"</span>,<span class="st">"Passengers"</span>,<span class="st">"PctChange"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span>Passengers <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">","</span>,<span class="st">""</span>,rr<span class="sc">$</span>Passengers))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span>PctChange <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"%"</span>,<span class="st">""</span>,rr<span class="sc">$</span>PctChange))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    TLC         Name        Region              Network Passengers PctChange
+43  ALF     Alfreton East Midlands              Eastern     314464       5.6
+56  AMB    Ambergate East Midlands              Eastern      41130     -11.6
+60  ANC     Ancaster East Midlands              Eastern       5904     -10.2
+107 ALK    Aslockton East Midlands              Eastern      31204      25.1
+114 ATB Attenborough East Midlands              Eastern      99484      -7.8
+139 BAM      Bamford East Midlands North West &amp; Central      34526       9.1</code></pre>
+</div>
+</div>
+<p>For the plot, we want to have a new column that will be called <code>UpDown</code> which will depict whether the percent change is positive or negative. Also, we are going to plot stations on the x-axis in their rank order, so we set the levels of the station column <code>TLC</code> to be in the correct order by using <code>arrange</code> and <code>pull</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span>UpDown <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"up"</span>,<span class="st">"down"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>rr <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="sc">-</span>Passengers) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(TLC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "NOT" "LEI" "DBY" "NMP" "LCN" "CHD" "GRA" "LBO" "GLO" "KET" "WEL" "NNG"
+ [13] "MHR" "NCT" "LGE" "BEE" "RET" "WRK" "MFT" "HDF" "NBR" "LBK" "SMD" "EMD"
+ [25] "SKG" "HNK" "BUX" "ALF" "SLR" "COR" "MMO" "OKM" "NMN" "BSN" "SYS" "NMC"
+ [37] "BLP" "MAT" "HKN" "SPK" "DRO" "SPA" "MSW" "KKB" "HKM" "DTG" "GBL" "WBR"
+ [49] "ILN" "CLY" "SIL" "CLM" "MGM" "ATB" "EDL" "LGM" "BWS" "SHB" "SWS" "RKT"
+ [61] "BIN" "KGS" "SXY" "LOW" "TUT" "MKR" "HOP" "DFI" "HSG" "BLW" "CEF" "HEC"
+ [73] "BTF" "MTB" "GRN" "CTO" "WFL" "CMF" "AMB" "NSD" "CWD" "WIL" "FSK" "SRO"
+ [85] "BAM" "ALK" "FNV" "WTS" "WWL" "LAG" "SPO" "SWD" "BUJ" "RAU" "RDF" "NET"
+ [97] "BSB" "ROL" "DVH" "ANC" "SWE" "THU" "PEA" "GNB" "HBB" "TPC" "ELO" "HVN"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span>TLC <span class="ot">&lt;-</span> <span class="fu">factor</span>(rr<span class="sc">$</span>TLC, <span class="at">levels =</span> rr <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="sc">-</span>Passengers) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(TLC))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>rr<span class="sc">$</span>Name <span class="ot">&lt;-</span> <span class="fu">factor</span>(rr<span class="sc">$</span>Name, <span class="at">levels =</span> rr <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="sc">-</span>Passengers) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(Name))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The code for the plot is below. <code>geom_segment()</code> and <code>geom_point()</code> are doing the same job as before. Our y-axis ranges from negative values to positive, and 0 is our baseline. So we use <code>y=0</code> as the baseline value in <code>geom_segment()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rr,<span class="fu">aes</span>(<span class="at">x=</span>Name, <span class="at">y=</span>PctChange,<span class="at">color=</span>UpDown, <span class="at">fill=</span>UpDown)) <span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x=</span>Name, <span class="at">xend=</span>Name, <span class="at">y=</span><span class="dv">0</span>, <span class="at">yend=</span>PctChange))<span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#FA8072"</span>,<span class="st">"darkblue"</span> )) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>( <span class="st">"#FA8072"</span>,<span class="st">"darkblue"</span>))  <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Station"</span>) <span class="sc">+</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percent Change from Previous Year %"</span>) <span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">'none'</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>,<span class="at">size=</span><span class="dv">5</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lollipop_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<p>The above chart is quite useful for visualizing overall trends quickly, but the plot is quite busy with many individual stations on the x-axis. Without zooming in, it’s hard to identify which stations had the biggest percentage changes. One way to help with this is to use highlighting of the segments and points as well as the axis labels. In this example we do it by using <code>ifelse()</code> logical expressions. This does work, although <code>ggplot2</code> gives a warning message for using it inside the <code>axis.text.x</code> argument. But, for now, at least, it works fine.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rr,<span class="fu">aes</span>(<span class="at">x=</span>Name, <span class="at">y=</span>PctChange)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x=</span>Name, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">xend=</span>Name, </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">y=</span><span class="dv">0</span>, </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">yend=</span>PctChange),</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">color=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>, <span class="st">"darkorange"</span>, <span class="st">"grey44"</span>), </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">linewidth=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>, <span class="fl">1.1</span>, <span class="fl">0.7</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">+</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">color=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>, <span class="st">"darkorange"</span>, <span class="st">"grey44"</span>), </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">size=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>, <span class="dv">3</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Station"</span>) <span class="sc">+</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percent Change from Previous Year %"</span>) <span class="sc">+</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">'none'</span>,</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>,</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">face=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>,<span class="st">"bold"</span>,<span class="st">"plain"</span>),</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>                     <span class="at">size=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>,<span class="dv">7</span>,<span class="dv">5</span>),</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color=</span><span class="fu">ifelse</span>(rr<span class="sc">$</span>PctChange <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">25</span>,<span class="st">"#A14A11"</span>,<span class="st">"grey44"</span>))</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="img/dot.png" class="img-fluid"></p>
+<p><br></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

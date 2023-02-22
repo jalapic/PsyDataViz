@@ -7,9 +7,9 @@ In `ggplot2` we can create them using `geom_segment()` to create the line and `g
 The dataset we'll use in this tutorial is `station_usage` which provides information on passenger numbers using UK train stations during 2017. We'll just keep the variables we need and clean up the column names. We also need to edit the `Passengers` column to ensure it's numeric after we remove the commas.
 
 ```{r,warning=FALSE,message=FALSE}
-df <- read.csv("data_raw/station_usage.csv")
+rail <- read.csv("data_raw/station_usage.csv")
 
-df <- df[c(2:4,15,20)]
+df <- rail[c(2:4,15,20)]
 colnames(df) <- c("TLC","Name","Region","Network","Passengers")
 df$Passengers <- as.numeric(gsub(",","",df$Passengers))
 head(df)
@@ -35,14 +35,14 @@ ggplot(top10, aes(x=TLC, y=Passengers)) +
 
 The first thing I'd like to do here is reorder the stations so they are not in alphabetical order, but in descending numerical order. We also provide a title on the x-axis:
 
-
 ```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
 ggplot(top10, aes(x=reorder(TLC,-Passengers), y=Passengers)) +
   geom_point() + 
   geom_segment(aes(x=TLC, xend=TLC, y=0, yend=Passengers)) +
   xlab("Station")
 ```
-We can customize the colors and sizes of our segment lines and dots. Below, we first factor the `TLC` column to have the top 10 stations in Passenger order. This is so when we assign the red color and fill (using the `brewer.reds` palette from the `pals` package), it plots the colors in the correct order and not in alphabetical order. 
+
+We can customize the colors and sizes of our segment lines and dots. Below, we first factor the `TLC` column to have the top 10 stations in Passenger order. This is so when we assign the red color and fill (using the `brewer.reds` palette from the `pals` package), it plots the colors in the correct order and not in alphabetical order.
 
 ```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
 top10$TLC <- factor(top10$TLC, levels = top10 %>% pull(TLC))
@@ -55,8 +55,8 @@ ggplot(top10, aes(x=TLC, y=Passengers, color=TLC, fill=TLC)) +
   scale_color_manual(values = rev(pals::brewer.reds(10))) +
   scale_fill_manual(values = rev(pals::brewer.reds(10))) 
 ```
-Below I add some extra customization. We set the theme to be `theme_light`, remove the legend which is superfluous and tidy up the panel border and x-axis ticks. I also change the y-axis scale to show numbers in millions with the letter "M". This is using the `scales::label_number` function (from the `scales` package).
 
+Below I add some extra customization. We set the theme to be `theme_light`, remove the legend which is superfluous and tidy up the panel border and x-axis ticks. I also change the y-axis scale to show numbers in millions with the letter "M". This is using the `scales::label_number` function (from the `scales` package).
 
 ```{r, warning=FALSE, message=FALSE, fig.width=6, fig.height=4}
 ggplot(top10, aes(x=TLC, y=Passengers, color=TLC, fill=TLC)) +
@@ -72,15 +72,78 @@ ggplot(top10, aes(x=TLC, y=Passengers, color=TLC, fill=TLC)) +
         panel.border = element_blank())
 ```
 
+<br>
+
+### Lollipop Charts adding Baselines and Highlighting
+
+Sometimes it helps to visualize changes from some baseline level. In the following example, we are going to look at percent changes in rail passengers usage from 2017 compared to the previous year. Below, we grab all the stations in the "East Midlands" region and collect and rename the columns we want. We also ensure that the columns we need to be numeric are:
+
+```{r}
+rr <- rail[rail$Region=="East Midlands",]
+rr <- rr[c(2:4,15,20,27)]
+colnames(rr) <- c("TLC","Name","Region","Network","Passengers","PctChange")
+rr$Passengers <- as.numeric(gsub(",","",rr$Passengers))
+rr$PctChange <- as.numeric(gsub("%","",rr$PctChange))
+head(rr)
+```
+
+For the plot, we want to have a new column that will be called `UpDown` which will depict whether the percent change is positive or negative. Also, we are going to plot stations on the x-axis in their rank order, so we set the levels of the station column `TLC` to be in the correct order by using `arrange` and `pull`.
+
+```{r}
+rr$UpDown <- ifelse(rr$PctChange > 0, "up","down")
+
+rr %>% arrange(-Passengers) %>% pull(TLC)
+rr$TLC <- factor(rr$TLC, levels = rr %>% arrange(-Passengers) %>% pull(TLC))
+rr$Name <- factor(rr$Name, levels = rr %>% arrange(-Passengers) %>% pull(Name))
+```
+
+The code for the plot is below. `geom_segment()` and `geom_point()` are doing the same job as before. Our y-axis ranges from negative values to positive, and 0 is our baseline. So we use `y=0` as the baseline value in `geom_segment()`.
+
+```{r, warning=FALSE, message=FALSE, fig.width=8, fig.height=4}
+ggplot(rr,aes(x=Name, y=PctChange,color=UpDown, fill=UpDown)) +
+  geom_segment(aes(x=Name, xend=Name, y=0, yend=PctChange))+
+  geom_point(size=2)+
+  scale_color_manual(values = c("#FA8072","darkblue" )) +
+  scale_fill_manual(values = c( "#FA8072","darkblue"))  +
+  xlab("Station") +
+  ylab("Percent Change from Previous Year %") +
+  theme_light() +
+  theme(legend.position='none',
+        axis.ticks.x = element_blank(),
+        panel.border = element_blank(),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=5)) 
+```
+
+The above chart is quite useful for visualizing overall trends quickly, but the plot is quite busy with many individual stations on the x-axis. Without zooming in, it's hard to identify which stations had the biggest percentage changes. One way to help with this is to use highlighting of the segments and points as well as the axis labels. In this example we do it by using `ifelse()` logical expressions. This does work, although `ggplot2` gives a warning message for using it inside the `axis.text.x` argument. But, for now, at least, it works fine.
+
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
+ggplot(rr,aes(x=Name, y=PctChange)) +
+  geom_segment(
+    aes(x=Name, 
+        xend=Name, 
+        y=0, 
+        yend=PctChange),
+        color=ifelse(rr$PctChange < -25, "darkorange", "grey44"), 
+        linewidth=ifelse(rr$PctChange < -25, 1.1, 0.7)
+    )+
+  geom_point(
+         color=ifelse(rr$PctChange < -25, "darkorange", "grey44"), 
+         size=ifelse(rr$PctChange < -25, 3, 1)) +
+  xlab("Station") +
+  ylab("Percent Change from Previous Year %") +
+  theme_light() +
+  theme(legend.position='none',
+        axis.ticks.x = element_blank(),
+        panel.border = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,
+                     face=ifelse(rr$PctChange < -25,"bold","plain"),
+                     size=ifelse(rr$PctChange < -25,7,5),
+                     color=ifelse(rr$PctChange < -25,"#A14A11","grey44"))
+        ) 
+```
 
 
-To do:
+![](img/dot.png)
 
-Graphs from a baseline value (negative/positive) values
- geom_segment( aes(x=x, xend=x, y=1, yend=y), color="grey") +
-
-
-Highlight a group (grey with accent color) 
-https://r-graph-gallery.com/304-highlight-a-group-in-lollipop.html
-
-http://uc-r.github.io/lollipop
+<br>
