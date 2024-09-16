@@ -1,0 +1,7 @@
+"Restaurant_id","City","Cuisine.Style","Ranking","Rating","Price.Range","Number.of.Reviews","Reviews"
+"id_5569","Paris","['European', 'French', 'International']",5570,3.5,"$$ - $$$",194,"[['Good food at your doorstep', 'A good hotel restaurant'], ['12/31/2017', '11/20/2017']]"
+"id_1535","Stockholm","",1537,4,"",10,"[['Unique cuisine', 'Delicious Nepalese food'], ['07/06/2017', '06/19/2016']]"
+"id_352","London","['Japanese', 'Sushi', 'Asian', 'Grill', 'Vegetarian Friendly', 'Vegan Options', 'Gluten Free Options']",353,4.5,"$$$$",688,"[['Catch up with friends', 'Not exceptional'], ['01/08/2018', '01/06/2018']]"
+"id_3456","Berlin","",3458,5,"",3,"[[], []]"
+"id_615","Munich","['German', 'Central European', 'Vegetarian Friendly']",621,4,"$$ - $$$",84,"[['Best place to try a Bavarian food', 'Nice building but improvements need to be...'], ['11/18/2017', '02/19/2017']]"
+"id_1418","Oporto","",1419,3,"",2,"[['There are better 3 star hotel bars', 'Amazing views, friendly service and good q...'], ['09/16/2017', '05/31/2017']]"
