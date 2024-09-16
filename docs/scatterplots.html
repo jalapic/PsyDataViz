@@ -424,16 +424,15 @@ i Specify the column types or set `show_col_types = FALSE` to quiet this message
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(olives)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 x 10
-  macro.a~1 region palmi~2 palmi~3 stearic oleic linol~4 linol~5 arach~6 eicos~7
-  &lt;chr&gt;     &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-1 South     Apuli~    1075      75     226  7823     672      36      60      29
-2 South     Apuli~    1088      73     224  7709     781      31      61      29
-3 South     Apuli~     911      54     246  8113     549      31      63      29
-4 South     Apuli~     966      57     240  7952     619      50      78      35
-5 South     Apuli~    1051      67     259  7771     672      50      80      46
-6 South     Apuli~     911      49     268  7924     678      51      70      44
-# ... with abbreviated variable names 1: macro.area, 2: palmitic,
-#   3: palmitoleic, 4: linoleic, 5: linolenic, 6: arachidic, 7: eicosenoic</code></pre>
+  macro.area region       palmitic palmitoleic stearic oleic linoleic linolenic
+  &lt;chr&gt;      &lt;chr&gt;           &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1 South      Apulia.north     1075          75     226  7823      672        36
+2 South      Apulia.north     1088          73     224  7709      781        31
+3 South      Apulia.north      911          54     246  8113      549        31
+4 South      Apulia.north      966          57     240  7952      619        50
+5 South      Apulia.north     1051          67     259  7771      672        50
+6 South      Apulia.north      911          49     268  7924      678        51
+# i 2 more variables: arachidic &lt;dbl&gt;, eicosenoic &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>If we use <code>table()</code>, we can see how many different regions are represented in the data. There are three unique Italian areas where the olives come from:</p>

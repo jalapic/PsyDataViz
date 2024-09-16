@@ -327,7 +327,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 data:  values by subject
 t = 3.8715, df = 19.975, p-value = 0.0009517
-alternative hypothesis: true difference in means is not equal to 0
+alternative hypothesis: true difference in means between group Control and group Treatment is not equal to 0
 95 percent confidence interval:
  0.2316228 0.7728943
 sample estimates:
@@ -434,7 +434,7 @@ sample estimates:
 
 data:  values by subject
 t = -1.5242, df = 19.975, p-value = 0.1431
-alternative hypothesis: true difference in means is not equal to 0
+alternative hypothesis: true difference in means between group Control and group Treatment is not equal to 0
 95 percent confidence interval:
  -0.46837715  0.07289431
 sample estimates:
@@ -531,7 +531,7 @@ mean of the differences
  8 d     after  0.130 
  9 e     before 0.120 
 10 e     after  0.138 
-# ... with 14 more rows</code></pre>
+# i 14 more rows</code></pre>
 </div>
 </div>
 <p>Here is the basic boxplot. I’m using the <code>theme_pubclean()</code> from the <code>ggpubr</code> package:</p>
@@ -1111,13 +1111,20 @@ $parameters
   Tukey  categ   6         4.147238  0.05
 
 $means
-      value       std  r       Min      Max       Q25       Q50       Q75
-A  9.116818 1.2598083 10  7.071989 10.70163  8.099472  9.441861  9.942394
-B 11.076193 0.9758832 12  8.814713 12.10178 10.672247 11.286163 11.798216
-C 12.218867 0.9310972 14 10.669033 14.06542 11.513617 12.250668 12.846258
-D 14.710048 0.8877416 16 12.889096 16.30386 14.161383 14.604540 15.317899
-E 14.346442 2.2162032 12 11.277292 18.70309 12.477597 14.694213 15.311768
-F  9.953696 0.9761422 10  8.569573 11.21613  9.093364 10.081209 10.692454
+      value       std  r        se       Min      Max       Q25       Q50
+A  9.116818 1.2598083 10 0.4030294  7.071989 10.70163  8.099472  9.441861
+B 11.076193 0.9758832 12 0.3679138  8.814713 12.10178 10.672247 11.286163
+C 12.218867 0.9310972 14 0.3406220 10.669033 14.06542 11.513617 12.250668
+D 14.710048 0.8877416 16 0.3186227 12.889096 16.30386 14.161383 14.604540
+E 14.346442 2.2162032 12 0.3679138 11.277292 18.70309 12.477597 14.694213
+F  9.953696 0.9761422 10 0.4030294  8.569573 11.21613  9.093364 10.081209
+        Q75
+A  9.942394
+B 11.798216
+C 12.846258
+D 15.317899
+E 15.311768
+F 10.692454
 
 $comparison
 NULL

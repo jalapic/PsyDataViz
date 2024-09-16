@@ -213,7 +213,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, boxrule=0pt, frame hidden, sharp corners, enhanced, borderline west={3pt}{0pt}{shadecolor}, breakable]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, boxrule=0pt, enhanced, borderline west={3pt}{0pt}{shadecolor}, interior hidden, breakable, sharp corners]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -229,8 +229,7 @@
 
 \markboth{Preface}{Preface}
 
-I am James Curley, Associate Professor in the Psychology Department, UT
-Austin.
+I am James Curley, Professor in the Psychology Department, UT Austin.
 
 This guide to using \texttt{ggplot2} to make graphs is aimed primarily
 at Psychology students, but could be used by anyone interested in
@@ -1019,16 +1018,15 @@ like:
 
 \begin{verbatim}
 # A tibble: 6 x 10
-  macro.a~1 region palmi~2 palmi~3 stearic oleic linol~4 linol~5 arach~6 eicos~7
-  <chr>     <chr>    <dbl>   <dbl>   <dbl> <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
-1 South     Apuli~    1075      75     226  7823     672      36      60      29
-2 South     Apuli~    1088      73     224  7709     781      31      61      29
-3 South     Apuli~     911      54     246  8113     549      31      63      29
-4 South     Apuli~     966      57     240  7952     619      50      78      35
-5 South     Apuli~    1051      67     259  7771     672      50      80      46
-6 South     Apuli~     911      49     268  7924     678      51      70      44
-# ... with abbreviated variable names 1: macro.area, 2: palmitic,
-#   3: palmitoleic, 4: linoleic, 5: linolenic, 6: arachidic, 7: eicosenoic
+  macro.area region       palmitic palmitoleic stearic oleic linoleic linolenic
+  <chr>      <chr>           <dbl>       <dbl>   <dbl> <dbl>    <dbl>     <dbl>
+1 South      Apulia.north     1075          75     226  7823      672        36
+2 South      Apulia.north     1088          73     224  7709      781        31
+3 South      Apulia.north      911          54     246  8113      549        31
+4 South      Apulia.north      966          57     240  7952      619        50
+5 South      Apulia.north     1051          67     259  7771      672        50
+6 South      Apulia.north      911          49     268  7924      678        51
+# i 2 more variables: arachidic <dbl>, eicosenoic <dbl>
 \end{verbatim}
 
 If we use \texttt{table()}, we can see how many different regions are
@@ -2570,7 +2568,7 @@ stacked boxplot graph.
  8 675ai B6     day4  11684 
  9 656af B6     day1   6906.
 10 656af B6     day4   8468.
-# ... with 150 more rows
+# i 150 more rows
 \end{verbatim}
 
 Now the wheel running data is in its own column - \texttt{value}. So we
@@ -3362,40 +3360,58 @@ Without zooming in, it's hard to identify which stations had the biggest
 percentage changes. One way to help with this is to use highlighting of
 the segments and points as well as the axis labels. In this example we
 do it by using \texttt{ifelse()} logical expressions. This does work,
-although \texttt{ggplot2} gives a warning message for using it inside
-the \texttt{axis.text.x} argument. But, for now, at least, it works
-fine.
+although \texttt{ggplot2} gives a warning message when using them with
+the \texttt{axis.text.x} argument. I like to put the logical statements
+for use inside \texttt{element\_text()} outside of the plot as shown
+below. It is important to ensure that your dataframe is arranged in the
+same order as your x-axis will be plotted when directly assinging
+colors, face font or size in this way.
+
+For the sake of space, let's only look at those stations that have more
+than 250,000 passengers a year, and we'll highlight stations that gained
+passengers by 10\% or more from the previous year.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{ggplot}\NormalTok{(rr,}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Name, }\AttributeTok{y=}\NormalTok{PctChange)) }\SpecialCharTok{+}
+\NormalTok{rrr }\OtherTok{\textless{}{-}}\NormalTok{ rr }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Passengers}\SpecialCharTok{\textgreater{}}\DecValTok{250000}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{arrange}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Passengers)}
+
+\NormalTok{ c1 }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(rrr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{,}\StringTok{"bold"}\NormalTok{,}\StringTok{"plain"}\NormalTok{)}
+\NormalTok{ c2 }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(rrr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{,}\DecValTok{12}\NormalTok{,}\DecValTok{9}\NormalTok{)}
+\NormalTok{ c3 }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(rrr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{,}\StringTok{"\#A14A11"}\NormalTok{,}\StringTok{"grey44"}\NormalTok{)}
+
+\FunctionTok{ggplot}\NormalTok{(rrr,}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Name, }\AttributeTok{y=}\NormalTok{PctChange)) }\SpecialCharTok{+}
   \FunctionTok{geom\_segment}\NormalTok{(}
     \FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{Name, }
         \AttributeTok{xend=}\NormalTok{Name, }
         \AttributeTok{y=}\DecValTok{0}\NormalTok{, }
         \AttributeTok{yend=}\NormalTok{PctChange),}
-        \AttributeTok{color=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\StringTok{"darkorange"}\NormalTok{, }\StringTok{"grey44"}\NormalTok{), }
-        \AttributeTok{linewidth=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{0.7}\NormalTok{)}
+        \AttributeTok{color=}\FunctionTok{ifelse}\NormalTok{(rrr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{, }\StringTok{"darkorange"}\NormalTok{, }\StringTok{"grey44"}\NormalTok{), }
+        \AttributeTok{linewidth=}\FunctionTok{ifelse}\NormalTok{(rrr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{, }\FloatTok{1.5}\NormalTok{, }\FloatTok{1.1}\NormalTok{)}
 \NormalTok{    )}\SpecialCharTok{+}
   \FunctionTok{geom\_point}\NormalTok{(}
-         \AttributeTok{color=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\StringTok{"darkorange"}\NormalTok{, }\StringTok{"grey44"}\NormalTok{), }
-         \AttributeTok{size=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{1}\NormalTok{)) }\SpecialCharTok{+}
+         \AttributeTok{color=}\FunctionTok{ifelse}\NormalTok{(rrr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{, }\StringTok{"darkorange"}\NormalTok{, }\StringTok{"grey44"}\NormalTok{), }
+         \AttributeTok{size=}\FunctionTok{ifelse}\NormalTok{(rrr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textgreater{}} \DecValTok{10}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{+}
   \FunctionTok{xlab}\NormalTok{(}\StringTok{"Station"}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{ylab}\NormalTok{(}\StringTok{"Percent Change from Previous Year \%"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_hline}\NormalTok{(}\AttributeTok{yintercept=}\DecValTok{0}\NormalTok{, }\AttributeTok{color=}\StringTok{\textquotesingle{}gray33\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
   \FunctionTok{theme\_light}\NormalTok{() }\SpecialCharTok{+}
   \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{\textquotesingle{}none\textquotesingle{}}\NormalTok{,}
         \AttributeTok{axis.ticks.x =} \FunctionTok{element\_blank}\NormalTok{(),}
         \AttributeTok{panel.border =} \FunctionTok{element\_blank}\NormalTok{(),}
         \AttributeTok{panel.grid.major.x =} \FunctionTok{element\_blank}\NormalTok{(),}
         \AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{hjust=}\DecValTok{1}\NormalTok{,}
-                     \AttributeTok{face=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{,}\StringTok{"bold"}\NormalTok{,}\StringTok{"plain"}\NormalTok{),}
-                     \AttributeTok{size=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{5}\NormalTok{),}
-                     \AttributeTok{color=}\FunctionTok{ifelse}\NormalTok{(rr}\SpecialCharTok{$}\NormalTok{PctChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\DecValTok{25}\NormalTok{,}\StringTok{"\#A14A11"}\NormalTok{,}\StringTok{"grey44"}\NormalTok{))}
+                                   \AttributeTok{face=}\NormalTok{c1,}\AttributeTok{size=}\NormalTok{c2,}\AttributeTok{color=}\NormalTok{c3)}
 \NormalTok{        ) }
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{./img/dot.png}
+\begin{figure}[H]
+
+{\centering \includegraphics{./lollipop_files/figure-pdf/unnamed-chunk-10-1.pdf}
+
+}
+
+\end{figure}
 
 \bookmarksetup{startatroot}
 
@@ -4246,7 +4262,7 @@ opposite way around on the x-axis:
  8 d     after  0.130 
  9 e     before 0.120 
 10 e     after  0.138 
-# ... with 14 more rows
+# i 14 more rows
 \end{verbatim}
 
 Here is the basic boxplot. I'm using the \texttt{theme\_pubclean()} from
@@ -5206,13 +5222,20 @@ $parameters
   Tukey  categ   6         4.147238  0.05
 
 $means
-      value       std  r       Min      Max       Q25       Q50       Q75
-A  9.116818 1.2598083 10  7.071989 10.70163  8.099472  9.441861  9.942394
-B 11.076193 0.9758832 12  8.814713 12.10178 10.672247 11.286163 11.798216
-C 12.218867 0.9310972 14 10.669033 14.06542 11.513617 12.250668 12.846258
-D 14.710048 0.8877416 16 12.889096 16.30386 14.161383 14.604540 15.317899
-E 14.346442 2.2162032 12 11.277292 18.70309 12.477597 14.694213 15.311768
-F  9.953696 0.9761422 10  8.569573 11.21613  9.093364 10.081209 10.692454
+      value       std  r        se       Min      Max       Q25       Q50
+A  9.116818 1.2598083 10 0.4030294  7.071989 10.70163  8.099472  9.441861
+B 11.076193 0.9758832 12 0.3679138  8.814713 12.10178 10.672247 11.286163
+C 12.218867 0.9310972 14 0.3406220 10.669033 14.06542 11.513617 12.250668
+D 14.710048 0.8877416 16 0.3186227 12.889096 16.30386 14.161383 14.604540
+E 14.346442 2.2162032 12 0.3679138 11.277292 18.70309 12.477597 14.694213
+F  9.953696 0.9761422 10 0.4030294  8.569573 11.21613  9.093364 10.081209
+        Q75
+A  9.942394
+B 11.798216
+C 12.846258
+D 15.317899
+E 15.311768
+F 10.692454
 
 $comparison
 NULL
@@ -5423,15 +5446,15 @@ size of various penguins culmen (the beak) and flippers:
 
 \begin{verbatim}
 # A tibble: 6 x 7
-  species island    culmen_length_mm culmen_depth_mm flipper_len~1 body_~2 sex  
-  <chr>   <chr>                <dbl>           <dbl>         <dbl>   <dbl> <chr>
-1 Adelie  Torgersen             39.1            18.7           181    3750 MALE 
-2 Adelie  Torgersen             39.5            17.4           186    3800 FEMA~
-3 Adelie  Torgersen             40.3            18             195    3250 FEMA~
-4 Adelie  Torgersen             36.7            19.3           193    3450 FEMA~
-5 Adelie  Torgersen             39.3            20.6           190    3650 MALE 
-6 Adelie  Torgersen             38.9            17.8           181    3625 FEMA~
-# ... with abbreviated variable names 1: flipper_length_mm, 2: body_mass_g
+  species island  culmen_length_mm culmen_depth_mm flipper_length_mm body_mass_g
+  <chr>   <chr>              <dbl>           <dbl>             <dbl>       <dbl>
+1 Adelie  Torger~             39.1            18.7               181        3750
+2 Adelie  Torger~             39.5            17.4               186        3800
+3 Adelie  Torger~             40.3            18                 195        3250
+4 Adelie  Torger~             36.7            19.3               193        3450
+5 Adelie  Torger~             39.3            20.6               190        3650
+6 Adelie  Torger~             38.9            17.8               181        3625
+# i 1 more variable: sex <chr>
 \end{verbatim}
 
 The dataset contains three different species:
@@ -6994,7 +7017,7 @@ data come from the \texttt{babynames} package:
  8  2013 Jacob 18148     2
  9  2014 Liam  18451     2
 10  2015 Liam  18355     2
-# ... with 84,655 more rows
+# i 84,655 more rows
 \end{verbatim}
 
 We can see that for the years 2012-2017, the names ``Jacob'', ``Noah''
@@ -7302,7 +7325,7 @@ frequencies of different types of storm across different years.
  8  2010 tropical storm           212
  9  2011 disturbance               10
 10  2011 extratropical             55
-# ... with 79 more rows
+# i 79 more rows
 \end{verbatim}
 
 \begin{Shaded}
