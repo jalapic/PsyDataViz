@@ -1,6 +1,6 @@
 # Preface {.unnumbered}
 
-I am James Curley, Associate Professor in the Psychology Department, UT Austin.
+I am James Curley, Professor in the Psychology Department, UT Austin.
 
 This guide to using `ggplot2` to make graphs is aimed primarily at Psychology students, but could be used by anyone interested in improving their data visualization skills.
 
