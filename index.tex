@@ -213,7 +213,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, boxrule=0pt, enhanced, borderline west={3pt}{0pt}{shadecolor}, interior hidden, breakable, sharp corners]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, sharp corners, borderline west={3pt}{0pt}{shadecolor}, frame hidden, enhanced, breakable, interior hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -2763,6 +2763,299 @@ For more information about these plots, you can look up the help
 documentation for this
 \href{https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html}{package
 here}.
+
+\bookmarksetup{startatroot}
+
+\hypertarget{rainclouds}{%
+\chapter{Rainclouds}\label{rainclouds}}
+
+A raincloud plot combines a density plot (the ``cloud''), a boxplot (or
+similar summary statistic plot), and a strip plot or raw data points
+(the ``rain''). This chapter will show how to make some basic examples
+of these using the \texttt{ggdist} R package.
+
+The \texttt{ggdist} package has many geoms that can be used to show
+distributions of data. Which one is best to use depends on the data you
+are wanting to describe and how you want to show the data spread and
+summary information. The image below summarizes these:
+
+\includegraphics[width=0.5\textwidth,height=\textheight]{./img/slabinterval_family-1.png}
+
+More information on how to use each of these can be found at the
+\href{https://mjskay.github.io/ggdist/articles/slabinterval.html}{tutorial
+here}.
+
+\hypertarget{basic-raincloud-plots}{%
+\section{Basic Raincloud plots}\label{basic-raincloud-plots}}
+
+First we will look at how to make the clouds. These are effectively
+density plots.
+
+The dataset we will use contains the monthly rainfall levels (in mm) for
+various Bangladesh cities from 1948-2014. We will filter this dataset to
+keep data from three cities (Bogra, Chittagong, Rangpur) for the month
+of June.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\NormalTok{df }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data\_raw/bangladesh.csv"}\NormalTok{)}
+
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(Station }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"Bogra"}\NormalTok{,}\StringTok{"Chittagong"}\NormalTok{,}\StringTok{"Rangpur"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(Month}\SpecialCharTok{==}\DecValTok{6}\NormalTok{)}
+
+\FunctionTok{head}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+# A tibble: 6 x 4
+  Station     Year Month Total
+  <chr>      <dbl> <dbl> <dbl>
+1 Bogra       1948     6    NA
+2 Bogra       1949     6    NA
+3 Chittagong  1949     6   624
+4 Bogra       1950     6   180
+5 Chittagong  1950     6  1676
+6 Bogra       1951     6   351
+\end{verbatim}
+
+This plot uses \texttt{stat\_halfeye()} to draw the density plots.
+Associated with each density plot is a point interval summary. The
+default is the median and interquartile range.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggdist)}
+
+\NormalTok{df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ Station, }\AttributeTok{x =}\NormalTok{ Total)) }\SpecialCharTok{+}
+  \FunctionTok{stat\_halfeye}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Rainfall (mm)"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{""}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Rainfall in June in Selected Bangladesh Cities"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./rainclouds_files/figure-pdf/unnamed-chunk-2-1.pdf}
+
+}
+
+\end{figure}
+
+Next, we will use \texttt{stat\_slabinterval()} to show the density
+plots and summary information. We can dictated which side of the summary
+information the density plots are shown using the \texttt{(side=)}
+parameter. This is the basic plot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p }\OtherTok{=}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Station, }\AttributeTok{y =}\NormalTok{ Total)) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{panel.background =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{color =} \StringTok{"grey70"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Rainfall (mm)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Then we can dictate the side. I'm using the \texttt{grid.arrange()}
+function from the \texttt{gridExtra} package to just show these plots
+side-by-side.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p1 }\OtherTok{\textless{}{-}}\NormalTok{ p }\SpecialCharTok{+} \FunctionTok{stat\_slabinterval}\NormalTok{(}\AttributeTok{side =} \StringTok{"left"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"side = \textquotesingle{}left\textquotesingle{}"}\NormalTok{)}
+
+\NormalTok{p2 }\OtherTok{\textless{}{-}}\NormalTok{ p }\SpecialCharTok{+} \FunctionTok{stat\_slabinterval}\NormalTok{(}\AttributeTok{side =} \StringTok{"both"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"side = \textquotesingle{}both\textquotesingle{}"}\NormalTok{)}
+
+\NormalTok{p3 }\OtherTok{\textless{}{-}}\NormalTok{ p }\SpecialCharTok{+} \FunctionTok{stat\_slabinterval}\NormalTok{(}\AttributeTok{side =} \StringTok{"right"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"side = \textquotesingle{}right\textquotesingle{}"}\NormalTok{)}
+
+\FunctionTok{library}\NormalTok{(gridExtra)}
+\FunctionTok{grid.arrange}\NormalTok{(p1,p2,p3,}\AttributeTok{nrow=}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./rainclouds_files/figure-pdf/unnamed-chunk-4-1.pdf}
+
+}
+
+\end{figure}
+
+Sometimes when constructing these composite plots we may wish to show
+the summary information and density plots separate from each other. Or,
+to be more precise, we may wish to show the summary information for each
+group next to each other and overlay the density plots. We can do that
+using \texttt{stat\_slab()} and \texttt{stat\_pointinterval()}. Using
+\texttt{stat\_pointinterval()} instead of a combined
+\texttt{stat\_slabinterval()} allows us to use
+\texttt{position\_dodge()} on the intervals but not the slabs:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill =}\NormalTok{ Station, }\AttributeTok{color =}\NormalTok{ Station, }\AttributeTok{x =}\NormalTok{ Total)) }\SpecialCharTok{+}
+  \FunctionTok{stat\_slab}\NormalTok{(}\AttributeTok{alpha =}\NormalTok{ .}\DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{stat\_pointinterval}\NormalTok{(}\AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\AttributeTok{width =}\NormalTok{ .}\DecValTok{4}\NormalTok{, }\AttributeTok{preserve =} \StringTok{"single"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"stat\_slab() and stat\_pointinterval()"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"with position\_dodge() applied to the intervals"}\NormalTok{,}
+    \AttributeTok{y =} \ConstantTok{NULL}\NormalTok{,}
+    \AttributeTok{fill =} \ConstantTok{NULL}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{breaks =} \ConstantTok{NULL}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"\#a6160c"}\NormalTok{, }\StringTok{"\#c97e55"}\NormalTok{, }\StringTok{"\#e0cb80"}\NormalTok{))}\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"\#a6160c"}\NormalTok{, }\StringTok{"\#c97e55"}\NormalTok{, }\StringTok{"\#e0cb80"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./rainclouds_files/figure-pdf/unnamed-chunk-5-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{basic-raincloud-plots-1}{%
+\section{Basic Raincloud Plots}\label{basic-raincloud-plots-1}}
+
+The key to making a raincloud plot is to separate the plotting of the
+points and the density plots.
+
+This is achieved by using multiple slab geometries together. First,
+decide which side of the interval to draw the dots. In this example we
+draw them at the bottom with
+\texttt{stat\_dotsinterval(side=\textquotesingle{}bottom\textquotesingle{})}.
+The scale parameter should be adjusted to help avoid overlap of dots and
+density plots between each group.
+
+The density plot part of the figure (the raincloud) is plotted here
+using \texttt{stat\_slab()}. Its thickness is scaled by \texttt{n} (the
+number of observations in each group). Doing this and setting the scale
+properly makes the area of each density plot similar in total to its
+corresponding dotplot.
+
+The \texttt{labs(fill=NULL,\ y=NULL)} just removes the title from the
+legend which is often unnecessary as well as the y-axis title. We also
+use \texttt{theme\_ggdist()} which is a custom ggplot theme similar to
+\texttt{theme\_classic()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+ \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ Station, }\AttributeTok{x =}\NormalTok{ Total, }\AttributeTok{fill =}\NormalTok{ Station)) }\SpecialCharTok{+}
+  \FunctionTok{stat\_slab}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{thickness =} \FunctionTok{after\_stat}\NormalTok{(pdf}\SpecialCharTok{*}\NormalTok{n)), }\AttributeTok{scale =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{stat\_dotsinterval}\NormalTok{(}\AttributeTok{side =} \StringTok{"bottom"}\NormalTok{, }\AttributeTok{scale =} \FloatTok{0.7}\NormalTok{, }\AttributeTok{slab\_linewidth =} \ConstantTok{NA}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_ggdist}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{fill=}\ConstantTok{NULL}\NormalTok{, }\AttributeTok{y=}\ConstantTok{NULL}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Total June Rainfall (mm)"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"\#a6160c"}\NormalTok{, }\StringTok{"\#c97e55"}\NormalTok{, }\StringTok{"\#e0cb80"}\NormalTok{))}\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"\#a6160c"}\NormalTok{, }\StringTok{"\#c97e55"}\NormalTok{, }\StringTok{"\#e0cb80"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./rainclouds_files/figure-pdf/unnamed-chunk-6-1.pdf}
+
+}
+
+\end{figure}
+
+\hypertarget{more-advanced-raincloud-plots}{%
+\section{More Advanced Raincloud
+Plots}\label{more-advanced-raincloud-plots}}
+
+There are some elegant examples of raincloud plots being used to show
+distribution of data points between groups. The following example was
+adapted from
+\href{https://medium.com/@amorimfranchi/raincloud-plots-for-clear-precise-and-efficient-data-communication-4c71d0a37c23}{this
+blog post}. It looks at the variation in weight gain from birth to
+weaning for four genotypes of lambs from sheep breeds in Kenya. The
+original data come from the \texttt{ilri.sheep} dataset from the
+\texttt{agridat} R package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ agridat}\SpecialCharTok{::}\NormalTok{ilri.sheep}
+
+\NormalTok{df }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{birthwt=}\FunctionTok{as.numeric}\NormalTok{(birthwt),}
+                       \AttributeTok{weanwt=}\FunctionTok{as.numeric}\NormalTok{(weanwt),}
+                       \AttributeTok{weanage=}\FunctionTok{as.numeric}\NormalTok{(weanage),}
+                       \AttributeTok{weight\_gain\_gram=}\FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{round}\NormalTok{((((weanwt}\SpecialCharTok{{-}}\NormalTok{birthwt)}\SpecialCharTok{/}\NormalTok{weanage)}\SpecialCharTok{*}\DecValTok{1000}\NormalTok{),}\DecValTok{2}\NormalTok{),}\AttributeTok{na.rm=}\NormalTok{T)) }\SpecialCharTok{\%\textgreater{}\%}
+                 \FunctionTok{select}\NormalTok{(lamb, gen, weight\_gain\_gram)}
+
+
+\FunctionTok{head}\NormalTok{(df,}\DecValTok{10}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   lamb gen weight_gain_gram
+1   627  DD           108.80
+2   629  DD           138.39
+3   635  DD           111.93
+4   636  DD           119.44
+5   638  DD               NA
+6   639  DD            78.50
+7   640  RD           113.08
+8   642  DD               NA
+9   643  DD           142.99
+10  644  DD            83.18
+\end{verbatim}
+
+We also use a color palette called \texttt{SpiritedMedium} from the
+\texttt{ghibli} R package using the \texttt{scale\_fill\_ghibli\_d()}
+function. This is a blue/brown color palette. The dots are being added
+to the plot using the \texttt{stat\_dots()} function from the
+\texttt{ggdist()} package. Note that we include
+\texttt{outlier.shape=NA} inside \texttt{geom\_boxplot()} to prevent the
+outlier dots from being shown twice. \texttt{binwidth\ =\ 1.7} is used
+to ensure that the dots do not overflow into the distributions of
+neighboring groups. The half boxplots are being added using the
+\texttt{stat\_halfeye()} function from the same package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ghibli)}
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ gen, }\AttributeTok{y =}\NormalTok{ weight\_gain\_gram, }\AttributeTok{fill=}\NormalTok{gen)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.1}\NormalTok{, }\AttributeTok{outlier.shape=}\ConstantTok{NA}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{\textquotesingle{}Lamb genotype\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{\textquotesingle{}Weight gain, in g/d\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_ghibli\_d}\NormalTok{(}\StringTok{"SpiritedMedium"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_ghibli\_d}\NormalTok{(}\StringTok{"SpiritedMedium"}\NormalTok{, }\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Weight gain from birth to weaning in 4 lamb genotypes"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{(}\AttributeTok{base\_size=}\DecValTok{16}\NormalTok{, }\AttributeTok{base\_family=}\StringTok{"serif"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size=}\DecValTok{16}\NormalTok{),}
+        \AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle=}\DecValTok{0}\NormalTok{, }\AttributeTok{hjust=}\NormalTok{.}\DecValTok{5}\NormalTok{, }\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{),}
+        \AttributeTok{axis.text.y =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{),}
+        \AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{hjust =} \FloatTok{0.5}\NormalTok{),}
+        \AttributeTok{plot.subtitle =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{hjust =} \FloatTok{0.5}\NormalTok{),}
+        \AttributeTok{legend.position=}\StringTok{"none"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{breaks =} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{180}\NormalTok{, }\AttributeTok{by=}\DecValTok{20}\NormalTok{), }\AttributeTok{limits=}\FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{180}\NormalTok{), }\AttributeTok{expand =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{stat\_dots}\NormalTok{(}\AttributeTok{side =} \StringTok{"left"}\NormalTok{, }\AttributeTok{justification =} \FloatTok{1.12}\NormalTok{, }\AttributeTok{binwidth =} \FloatTok{1.7}\NormalTok{, }\AttributeTok{dotsize=}\FloatTok{1.35}\NormalTok{, }\AttributeTok{color=}\ConstantTok{NA}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{stat\_halfeye}\NormalTok{(}\AttributeTok{adjust =}\NormalTok{ .}\DecValTok{5}\NormalTok{, }\AttributeTok{width =}\NormalTok{ .}\DecValTok{6}\NormalTok{, }\AttributeTok{justification =} \SpecialCharTok{{-}}\NormalTok{.}\DecValTok{2}\NormalTok{, }\AttributeTok{.width =} \DecValTok{0}\NormalTok{, }\AttributeTok{point\_colour =} \ConstantTok{NA}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+{\centering \includegraphics{./rainclouds_files/figure-pdf/unnamed-chunk-8-1.pdf}
+
+}
+
+\end{figure}
 
 \bookmarksetup{startatroot}
 
