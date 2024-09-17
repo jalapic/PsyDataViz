@@ -108,3 +108,11 @@ write.csv(head(x[,1:8]),"data_raw/restaurant.csv", row.names = F)
 x<-read.csv("https://raw.githubusercontent.com/MaGu1997/Boston-Crime-Analysis/master/crime.csv")
 head(x)
 write.csv(x, "data_raw/bostoncrime.csv", row.names = F)
+
+
+## Bangladesh rainfall
+x<-read.csv("https://raw.githubusercontent.com/arnavgarg123/Bangladesh-Rainfall/master/historical-rainfall-data-in-bangladesh/rainfall_data_bangladesh_1948_to_2014.csv")
+x$total <- apply(as.data.frame(lapply(x[,4:34], as.numeric)),1,sum,na.rm=T)
+x$total <- ifelse(grepl("\\*",x$X1),NA,x$total)
+x <- x %>% select(Station,Year,Month,Total=total)
+write.csv(x, "data_raw/bangladesh.csv", row.names = F)
